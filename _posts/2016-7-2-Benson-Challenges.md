@@ -259,6 +259,7 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
+![_config.yml]({{ site.baseurl }}/assets/BensonChallenges_31_0.png)
 <div align='center'>
     <img style="max-width:300px;display:inline" src='/assets/BensonChallenges_31_0.png'>
 </div>
