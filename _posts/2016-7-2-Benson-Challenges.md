@@ -259,10 +259,9 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
-<p align='center'>
-    <img src='/assets/BensonChallenges_31_0.png'>
-</p>
-
+<div align='center'>
+    <img style="max-width:300px;display:inline" src='/assets/BensonChallenges_31_0.png'>
+</div>
  
 
 **Challenge 5**
