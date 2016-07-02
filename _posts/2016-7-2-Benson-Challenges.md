@@ -432,7 +432,7 @@ plt.title('Histogram of Total Riders for all Stations during One Week')
 
 
 
-    ![an image alt text]({{ site.baseurl }}/images/Benson_Challenges_53_1.png "an image title")
+    ![png]({{ site.baseurl }}/images/Benson_Challenges_53_1.png "an image title")
 
 
 
