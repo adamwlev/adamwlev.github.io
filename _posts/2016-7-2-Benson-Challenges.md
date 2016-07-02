@@ -271,9 +271,6 @@ for u,key in enumerate(d3.keys()):
 <div align='center'>
     <img style="max-width:300px;display:inline" src='/assets/Benson_Challenges_31_0.png'>
 </div>
-
-{% assign image = page.images[0] %} <-- first element of the array is zero
-{% include image.html image=image %}
  
 
 **Challenge 5**
