@@ -1,3 +1,8 @@
+---
+layout: post
+title: You're up and running!
+---
+
 
 ## Challenge Set 1
 ##### Topic:        Explore MTA turnstile data
