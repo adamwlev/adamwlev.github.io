@@ -2,12 +2,6 @@
 layout: post
 title: You're up and running!
 
-images:
-
-  - url: /assets/Benson_Challenges_31_0.png
-    alt: Image Title
-    title: Image Title
-
 ---
 
 
@@ -267,9 +261,6 @@ for u,key in enumerate(d3.keys()):
 
 
 ![image](/assets/Benson_Challenges_31_0.png)
-<div align='center'>
-    <img style="max-width:300px;display:inline" src='/assets/Benson_Challenges_31_0.png'>
-</div>
  
 
 **Challenge 5**
@@ -358,8 +349,7 @@ for u,key in enumerate(d6.keys()):
 ```
 
 
-![png](Benson_Challenges_files/Benson_Challenges_42_0.png)
-
+![png](/assets/Benson_Challenges_42_0.png)
 
  
 
