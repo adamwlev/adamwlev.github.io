@@ -4,11 +4,11 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+I am currently a student at the Metis Data Science Bootcamp.
 
 ### More Information
 
-A place to include any other types of information that you'd like to include about yourself.
+I studied Mathematics and Economics at USC. I will be posting about projects that I will be doing.
 
 ### Contact me
 
