@@ -259,7 +259,8 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
-![png](Benson_Challenges_files/Benson_Challenges_31_0.png)
+![an image alt text]({{ site.baseurl }}/images/BensonChallenges_31_0.png "an image title")
+
 
 
  
