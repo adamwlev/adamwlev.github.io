@@ -260,7 +260,7 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
-![image](/assets/Benson_Challenges_31_0.png)
+![image](/images/Benson_Challenges_31_0.png)
  
 
 **Challenge 5**
@@ -349,7 +349,7 @@ for u,key in enumerate(d6.keys()):
 ```
 
 
-![png](/assets/Benson_Challenges_42_0.png)
+![png](/images/Benson_Challenges_42_0.png)
 
  
 
@@ -377,8 +377,7 @@ plt.show()
 ```
 
 
-![png](Benson_Challenges_files/Benson_Challenges_46_0.png)
-
+![png](/images/Benson_Challenges_46_0.png)
 
  
 
@@ -450,5 +449,5 @@ plt.title('Barplot of Total Riders at for One Week for all Stations')
 
 
 
-![png](Benson_Challenges_files/Benson_Challenges_54_1.png)
+![png](/images/Benson_Challenges_54_1.png)
 
