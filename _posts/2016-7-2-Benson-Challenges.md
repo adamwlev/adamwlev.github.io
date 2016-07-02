@@ -266,7 +266,6 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
-![image title]({{ site.baseurl }}/assets/Benson_Challenges_31_0.png "image title")
 ![image](/assets/Benson_Challenges_31_0.png)
 <div align='center'>
     <img style="max-width:300px;display:inline" src='/assets/Benson_Challenges_31_0.png'>
