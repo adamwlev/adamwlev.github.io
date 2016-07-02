@@ -1,6 +1,13 @@
 ---
 layout: post
 title: You're up and running!
+
+images:
+
+  - url: /assets/BensonChallenges_31_0.png
+    alt: Image Title
+    title: Image Title
+
 ---
 
 
@@ -259,10 +266,13 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
-![_config.yml]({{ site.baseurl }}/assets/BensonChallenges_31_0.png)
+![image title]({{ site.baseurl }}/assets/BensonChallenges_31_0.png "image title")
 <div align='center'>
     <img style="max-width:300px;display:inline" src='/assets/BensonChallenges_31_0.png'>
 </div>
+
+{% assign image = page.images[0] %} <-- first element of the array is zero
+{% include image.html image=image %}
  
 
 **Challenge 5**
