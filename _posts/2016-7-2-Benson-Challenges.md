@@ -259,8 +259,9 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
-![png](/images/BensonChallenges_31_0.png)
-
+<p align='center'>
+    <img src='/images/BensonChallenges_31_0.png'>
+</p>
 
  
 
