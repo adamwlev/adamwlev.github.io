@@ -259,7 +259,7 @@ for u,key in enumerate(d3.keys()):
 ```
 
 
-![Image description](/images/BensonChallenges_31_0.png)
+![png](/images/BensonChallenges_31_0.png)
 
 
  
