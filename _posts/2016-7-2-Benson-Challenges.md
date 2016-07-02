@@ -260,7 +260,7 @@ for u,key in enumerate(d3.keys()):
 
 
 <p align='center'>
-    <img src='/images/BensonChallenges_31_0.png'>
+    <img src='./../images/BensonChallenges_31_0.png'>
 </p>
 
  
