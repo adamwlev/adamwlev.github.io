@@ -441,9 +441,9 @@ data.head() ## 5 is for Saturday
 
 
 <div>
-<table border="1" class="dataframe">
+<table border="3" class="dataframe">
   <thead>
-    <tr style="text-align: right;">
+    <tr style="text-align: center;">
       <th></th>
       <th>datetime</th>
       <th>week</th>
