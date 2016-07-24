@@ -11758,8 +11758,21 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>While at the Metis Bootcamp, I will be completing five projects. This post is about the second project.</p>
-<p>For this project, the prompt is "use a linear model to predict something to do with movies." When brainstorming ideas, one of my intructors mentioned that data from Twitter might be a really valuable data source. I agreed so I set out to predict the Opening Weekend Box Office Revenue for a set of movies based on how people were tweeting about a movie for a period of time just before the opening day.</p>
+<p>Can we create a model to predict the opening weekend box office success of a movie using tweets? Theoretically, it seems like it should be possible. A lot of people tweeting about a movie should indicate that it will be successful. Practically, is it possible to abstract meaning from data that is seemingly so noisy?</p>
+<p>It seems daunting considering that there will be plenty of instances where tweets are considered that are not even about the movie. For example, when we search for the move 'Wild (2014)', we get some results like this:</p>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">no mum these are not hickeys i was attacked by a wild racoon get off my back</p>&mdash; Jaaack (@jackofhammond) <a href="https://twitter.com/jackofhammond/status/543555896828497920">December 12, 2014</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I was undaunted by this challenge and dove straight in. In the end, without doing anything too sophisticated, I was able to produce a fairly decent model.</p>
 
 </div>
 </div>
@@ -11778,7 +11791,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I obtained data from boxofficemojo.com using the requests library and parsed it using BeautifulSoup4. I specifically worked with <a href="http://www.boxofficemojo.com/alltime/weekends/">this</a> data which as far as I can tell is all Domestic (U.S.) movies which have revenue data for a Friday-Saturday-Sunday opening weekends. I grabbed the first 1000 from this list sorted by date with recent first. I made this decision based on the <a href="http://www.internetlivestats.com/twitter-statistics/">fact</a> that Twitter's popularity has grown extreemly rapidly. I made the judgment that by around late 2009 there were been enough tweets to predict the success of a movie.</p>
+<p>I obtained data from boxofficemojo.com using the requests library and parsed it using BeautifulSoup4. I specifically worked with <a href="http://www.boxofficemojo.com/alltime/weekends/">this</a> data which is all Domestic (U.S.) movies which have revenue data for a Friday-Saturday-Sunday opening weekends. I grabbed the first 1000 from this list sorted by date with recent first. I made this decision based on the <a href="http://www.internetlivestats.com/twitter-statistics/">fact</a> that Twitter's popularity has grown extreemly rapidly. I made the judgment that by around late 2009 there were been enough tweets to predict the success of a movie.</p>
 
 </div>
 </div>
@@ -11797,7 +11810,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I used Selenium to crawl <a href="https://twitter.com/search-advanced">Twitter's Advanced Search Engine</a> and get the data. Because of time and resourse contraints (still working on my Linux skills for AWS) I constrained my data to tweets from the week before the opening of the movie.</p>
+<p>I used Selenium to crawl <a href="https://twitter.com/search-advanced">Twitter's Advanced Search Engine</a> and get the data. I used the 'This exact phrase' box for searching. Also, I did a little processing to the movies' titles. To avoid penalizing movies with long titles I stripped all years in parenthesis and subtitles. So for "Precious: Based on the Novel 'Push' by Sapphire" I searched for 'Precious'.</p>
+<p>Because of time and resourse contraints (still working on my Linux skills for AWS) I constrained my data to tweets from the week before the opening of the movie.</p>
 <p>If I made one search for each movie with the date range set to the whole week, I typically obtained a never ending stream of tweets from the first couple days before the opening. To try to capture the difference in volume of tweets across movies, I did 7 seperate searches - a day is as granular of a window you can search for - and told Selenium to scroll down the page a pre-specified number of times for each search.</p>
 <p>I ended up collecting data for 826 of the 1000 movies that I pulled from boxofficemojo.</p>
 
@@ -16284,8 +16298,9 @@ JnySJEmSNFAmfJIkSZI0UL8AfLQ0PJWv8H0AAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I believe I have demonstrated that Twitter can be a rich data source for predicting movies' success. Making this model better could be done by collecting more data (going further back than 7 days before the opening, scrolling down more that 25 times for each search) or by getting better at handling those tricky text features that are too specific to a few movies and inhibit the model.</p>
-<p>Twitter data could definetly be used to predict all sorts of other things of interest.</p>
+<p>I believe I have demonstrated that Twitter can be a rich data source for predicting movies' success. Making this model better could be done by collecting more data - i.e. going further back than 7 days before the opening, and scrolling down more that 25 times for each search. I wonder if what was holding back the summary statistic features from being predictive was the small amount of data that was collected.</p>
+<p>As for the text features, a simple improvement might be to add as stop words any words that are too specific to a few movies but are not in the titles of the movies - i.e. 'Bond'. A more complicated improvement might be to try to decipher whether a tweet is about the movie in question on a tweet by tweet basis.</p>
+<p>For generally, I think I have shown that data from Twitter can definetly have predictive value.</p>
 
 </div>
 </div>
