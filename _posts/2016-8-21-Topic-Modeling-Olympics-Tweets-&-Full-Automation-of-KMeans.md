@@ -75,7 +75,7 @@ I will show two solutions to the problem with regard to KMeans clustering - the 
 
 The goal of clustering in general is to group like observations together. With KMeans the clusters are defined by K centroids that represent the center of a cluster. Which cluster an observation is assigned depends on which centroid it is closest to. If the model is doing well, all the points are very close to their respective clusters. Thus, an natural way of accessing the performance of the model, is the sum of the squared distances between the observations and the representative centroid:
 
-<centerImage><img src="/images/OlympicKMeans/pic.gif" alt="" width="100"></centerImage>
+<center><img src="/images/OlympicKMeans/pic.gif" alt="" width="100"></center>
 
 
 
