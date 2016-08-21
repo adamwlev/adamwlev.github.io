@@ -4,6 +4,7 @@ title: Topic Modeling Olympics Tweets & Full Automation of KMeans
 excerpt: Choosing K in KMeans or the number of topics in LDA giving you a headache? Not to worry. There are solutions.
 ---
 
+<style type="text/css">
 .box
 {
   border-width: 2px;
