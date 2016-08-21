@@ -28,6 +28,13 @@ The goal of clustering in general is to group like observations together. With K
 
 <center><img src="/images/OlympicKMeans/pic.gif" alt="" width="125"></center>
 
+This is commonly known as inertia. The problem with this way of acessing the performance of the model is that it is not useful for comparing clustering models with different number of clusters. The more the clusters there are, the closer the observations will be to their respective centroids on average. So the common wisdom is to use the 'elbow' method. Here's the rationale:
+
+"At some point the marginal decrease in inertia will slow with larger and larger K. We will look for a point on this curve that looks most like a kink and choose this."
+
+Hopefully, when you plot inertia as a function of K, the plot looks like this:
+
+<center><img src="/images/OlympicKMeans/Scree.gif" alt="" width="125"></center>
 
 
   
