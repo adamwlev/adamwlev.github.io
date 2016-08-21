@@ -25,8 +25,8 @@ excerpt: Choosing K in KMeans or the number of topics in LDA giving you a headac
 
 .smallpic1
 {
-  height: 20px;
-  width: 20px;
+  height: 40px;
+  width: 40px;
   margin-left: auto;
   margin-right: auto;
 }
