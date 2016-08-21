@@ -4,6 +4,54 @@ title: Topic Modeling Olympics Tweets & Full Automation of KMeans
 excerpt: Choosing K in KMeans or the number of topics in LDA giving you a headache? Not to worry. There are solutions.
 ---
 
+.box
+{
+  border-width: 2px;
+  border-color: #000000;
+  border-style: solid;
+  padding:1px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center-text
+{
+  text-align:center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 200;
+}
+
+.smallpic1
+{
+  height: 20px;
+  width: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.medpic1
+{
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center {
+  display: inline-block;
+  text-align: center;
+  width: 100px;
+}
+
+.centerImage
+{
+text-align:center;
+display:block;
+}
+
+</style>
+
+
 At the Metis Data Science Bootcamp, our fourth project was an unsupervised, Natural Language Processing assignment. We were to choose any topic we wanted as long as it dealt with text data and was an unsupervised problem.
 
 For those unfamiliar with what unsupervised means in Machine Learning, I will quickly explain. Basically, instead a predicting or explaining a known outcome present in data, the task is to find structure in data and possibly assign labels to groups of observations.
@@ -26,7 +74,7 @@ I will show two solutions to the problem with regard to KMeans clustering - the 
 
 The goal of clustering in general is to group like observations together. With KMeans the clusters are defined by K centroids that represent the center of a cluster. Which cluster an observation is assigned depends on which centroid it is closest to. If the model is doing well, all the points are very close to their respective clusters. Thus, an natural way of accessing the performance of the model, is the sum of the squared distances between the observations and the representative centroid:
 
-![](/images/OlympicKMeans/pic.gif)
+<center><img src="/images/OlympicKMeans/pic.gif" alt="" width="500"></center>
 
 
 
