@@ -4,55 +4,6 @@ title: Topic Modeling Olympics Tweets & Full Automation of KMeans
 excerpt: Choosing K in KMeans or the number of topics in LDA giving you a headache? Not to worry. There are solutions.
 ---
 
-<style type="text/css">
-.box
-{
-  border-width: 2px;
-  border-color: #000000;
-  border-style: solid;
-  padding:1px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.center-text
-{
-  text-align:center;
-  margin-left: auto;
-  margin-right: auto;
-  width: 200;
-}
-
-.smallpic1
-{
-  height: 40px;
-  width: 40px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.medpic1
-{
-  height: 200px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.center {
-  display: inline-block;
-  text-align: center;
-  width: 100px;
-}
-
-.centerImage
-{
-text-align:center;
-display:block;
-}
-
-</style>
-
-
 At the Metis Data Science Bootcamp, our fourth project was an unsupervised, Natural Language Processing assignment. We were to choose any topic we wanted as long as it dealt with text data and was an unsupervised problem.
 
 For those unfamiliar with what unsupervised means in Machine Learning, I will quickly explain. Basically, instead a predicting or explaining a known outcome present in data, the task is to find structure in data and possibly assign labels to groups of observations.
