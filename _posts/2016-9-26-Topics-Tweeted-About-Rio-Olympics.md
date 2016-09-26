@@ -53,7 +53,7 @@ For purposes of displaying the work, I went through each model and selected the 
 
 ## Building an App
 
-I used Flask to build a simple App that let's the user pick a Sport he or she would like to see the topics for and then displays the topics. You can find the app deployed [here](https://twitter-olympics-topics.herokuapp.com/).
+I used Flask to build a simple App that let's the user pick a sport he or she would like to see the topics for and then displays the topics. You can find the app deployed [here](https://twitter-olympics-topics.herokuapp.com/).
 
 This process was challenging for someone who has little experience with front-end development. It took a lot of persistancy on my part and help from some of my classmates who were more versed in HTML and CSS.
 
@@ -61,7 +61,7 @@ This process was challenging for someone who has little experience with front-en
 
 I learned a lot from this two week project and am grateful for the experience. In the future, if I encounter MongoDB, unsupervised learning, or Flask related problems, I will draw from my experience with this project.
 
-Thank you for reading.
+You can find a repo with all the code for this project [here](https://github.com/adamwlev/Twitter-Topic-Modeling). Thank you for reading.
 
 
 
