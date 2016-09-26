@@ -4,8 +4,6 @@ title: Topics Tweeted About the Rio Olympics
 excerpt: My process of employing unsupervised learning techniques to summarize the topics tweeted about the Rio Olympics.
 ---
 
-## Intro
-
 For our fourth project at the Metis Data Science Bootcamp, we use Natural Language Processing and Unsupervised Learning techniques to extract meaning from text data. We had 11 days to conceive of an idea, collect data, clean data, perform analysis and create a front-end to display the work.
 
 I enjoyed this project because I learned a lot about data pipelining, unsupervised learning techniques, and front-end development with Flask and Python. These were topics that I was not as familiar with compared to other topics in Data Science; supervised learning was what I was most familiar with and I had never done any front-end development.
