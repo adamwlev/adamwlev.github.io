@@ -59,7 +59,7 @@ This process was challenging for someone who has little experience with front-en
 
 ## Conclusion
 
-I learned a lot from this two week project and am grateful for the experience. In the future, if I encounter MongoDB, unsupervised learning, or Flask related problems, I will draw from my experience with this project.
+I learned a lot during this two week project and am grateful for the experience. In the future, if I encounter MongoDB, unsupervised learning, or Flask related problems, I will draw from my experience with this project.
 
 You can find a repo with all the code for this project [here](https://github.com/adamwlev/Twitter-Topic-Modeling). Thank you for reading.
 
