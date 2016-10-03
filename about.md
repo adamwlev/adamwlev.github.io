@@ -4,11 +4,7 @@ title: About
 permalink: /about/
 ---
 
-I am currently a student at the Metis Data Science Bootcamp.
-
-### More Information
-
-I studied Mathematics and Economics at USC. I will be posting about projects that I will be doing.
+Hello! I am a data hacker who loves statistics! I studied Mathematics and Economics at USC and recently completed the Metis Data Science Bootcamp in NYC. Feel free to get in touch.
 
 ### Contact me
 
