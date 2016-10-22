@@ -4,6 +4,7 @@ title: Visualizing Bayes' Theorem with D3
 excerpt: Visualize a Bayesian update of a Normal Random Variable.
 ---
 
+TL;DR Go to bottom of page and click on link in all caps to play with fun web app.
 
 I have been interested in getting better at Bayesian statistics recently. For my Ranking PGA Tour golfers project, I have been looking at Approximate Bayes' Computation. This involves discretizing a probabilility distribution and updating the distribution according to data observed and a liklihood function. [Here](http://stats.stackexchange.com/questions/237862/bayesian-update-for-two-normal-random-variables-following-one-observation-of-dif) is a discussion I had online which leads me to the ABC approach.
 
@@ -13,6 +14,6 @@ For this project, I actually did the computations properly. Instead of resorting
 
 I learned a lot of D3 with this project. I was originally going to make this a Flask app and carry out the computations in Python. However, I realized that D3 is capable of doing this sort of math! This was a fun exersize in learning the limits of D3's computational ability. The one consequence that I notice is that the memory cost starts to effect D3's ability to render smoothly - you can see this if you scale the number of points up to 100.
 
-[Here](https://bayes-app.herokuapp.com/) is the app deployed with Heroku and [here](https://github.com/adamwlev/Bayes-App) is the code for the project.
+[HERE](https://bayes-app.herokuapp.com/) is the app deployed with Heroku and [here](https://github.com/adamwlev/Bayes-App) is the code for the project.
 
 As always, if anyone has feedback for improvements, please comment below!
