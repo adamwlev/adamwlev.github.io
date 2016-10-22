@@ -4,6 +4,7 @@ title: Visualizing Bayes' Theorem with D3
 excerpt: Visualize a Bayesian update of a Normal Random Variable.
 ---
 
+
 I have been interested in getting better at Bayesian statistics recently. For my Ranking PGA Tour golfers project, I have been looking at Approximate Bayes' Computation. This involves discretizing a probabilility distribution and updating the distribution according to data observed and a liklihood function. [Here](http://stats.stackexchange.com/questions/237862/bayesian-update-for-two-normal-random-variables-following-one-observation-of-dif) is a discussion I had online which leads me to the ABC approach.
 
 In the process of playing around with updating normal distributions, I was really enjoying visualizing the updating process. I also wanted to keep practicing developing visualizations with D3 after learning the basics at [Metis](http://www.thisismetis.com/).
