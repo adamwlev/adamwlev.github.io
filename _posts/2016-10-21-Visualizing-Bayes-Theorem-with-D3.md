@@ -1,4 +1,3 @@
-
 ---
 layout: post
 title: Visualizing Bayes' Theorem with D3
