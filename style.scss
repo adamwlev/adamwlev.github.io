@@ -19,7 +19,8 @@ html {
 
 body {
 	background: $white;
-  font: 18px/1.4 $helvetica;
+  font: 18px/1.4;
+  font-family: "Comic Sans MS", cursive, sans-serif
   color: $darkGray;
 }
 
@@ -52,11 +53,11 @@ h1 {
 }
 
 h2 {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 h3 {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 h4 {
