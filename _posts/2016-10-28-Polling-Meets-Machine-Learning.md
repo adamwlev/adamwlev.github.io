@@ -20,7 +20,7 @@ The problem, of course, is that there might be only 15 or so participants in the
 
 But, bickering about what the proper age buckets to divide the sample in misses the larger point. The polling companies are implicitly making estimators of the larger population but are doing so without testing. A crucial step to any model building effort is the holding out of data to see how a model generalizes to unseen data. So what I mean by this is holding out some of your sample and building a model that predicts best on the testing part of the data, using some sort of cross-validation strategy.
 
-When one approaches this as an explicit machine-learning problem, the current method of polling begs the question, why is every polling company that conducts a poll responsible for making their own estimator? Wouldn't model that has access to all the raw data that is observed across all the polls all over the country be much more powerful?
+When one approaches this as an explicit machine-learning problem, the current method of polling begs the question, why is every polling company that conducts a poll responsible for making their own estimator? Wouldn't a model that has access to all the raw data that is observed across all the polls all over the country be much more powerful?
 
 Now, you might be thinking, why is taking an average of polls not just as good as making a model that has access to all the data? Isn't the ensembling of models a hot topic in machine learning because it produces such accurate predictions? Isn't Nate Silver's methodology of aggregating polls, weighting them according the their methodological prowess, good?
 
