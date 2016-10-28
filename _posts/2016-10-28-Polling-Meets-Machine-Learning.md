@@ -8,7 +8,7 @@ The current state of polling is for polling companies to conduct interviews, get
 
 What each polling company is implicitly doing is making a model to predict the proportion of voters that will vote for a candidate or an issue on Election Day. This is the right strategy to follow because we observe some sample of intents to vote for something or another and we wish to make a prediction of how an unseen population of voters will vote. What I am getting at here is that this is just a machine-learning problem. With each poll there are attributes about the participant recorded, along with an outcome. X and y.
 
-After building a model, we wish the make a prediction given a test X that is the attributes of voters who will actually vote on Election Day. Knowing what the X is precisely before Election Day (what are the demographics of the people who will really vote) is itself its own problem, which can be handled with a combination of good data and statistics. 
+After building a model, we wish the make a prediction given a test set X-test that is the attributes of voters who will actually vote on Election Day. Knowing what the X-test is precisely before Election Day (what are the demographics of the people who will really vote) is itself its own problem, which can be handled with a combination of good data and statistics. 
 
 In this way, making a model to predict how each voter will vote is just like any other machine learning problem. It is made more complicated by the fact there is a time dependent aspect of the observations and the errors in predicting might be correlated with one another. FiveThirtyEight realizes this and bakes the potential for correlated errors into their simulations. 
 
