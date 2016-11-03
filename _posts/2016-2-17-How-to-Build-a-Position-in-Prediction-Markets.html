@@ -1,0 +1,167 @@
+---
+layout: post
+title: How to Build a Position in Prediction Markets
+excerpt: So you're thinking of playing the Prediction Markets? Let me help you build the optimal position occording to your beliefs, the price of the market, and your desired level of risk.
+---
+
+
+Hi! I had been crafting a long, elaborate blog post to discuss my ideas but it spontaneously deleted itself so maybe this is a sign that I should just keep it short and sweet.<br />
+<br />
+<div>
+I want to talk about finding the best way to build a position in predictit's Prediction Markets. The concepts I present could easily be applied to other similar markets as well.&nbsp;<a href="https://www.predictit.org/Market/1233/Who-will-win-the-2016-Republican-presidential-nomination">This</a>&nbsp;is the market I'll use as an example.</div>
+<div>
+<br /></div>
+<div>
+First, if you buy a share in predictit's market, they say you're buying a chance to earn one dollar if your prediction comes true. However, they take 10% of your profit and 5% of anything you take out of the site. So if you buy one share for Donald Trump No for 59<span style="box-sizing: border-box;"><span style="font-family: inherit;">¢ then you're profit is 41</span></span><span style="font-family: inherit;">¢, 37</span><span style="font-family: inherit;">¢ of which you keep, then they tax your 59</span><span style="font-family: inherit;">¢+37</span><span style="font-family: inherit;">¢=96</span><span style="font-family: inherit;">¢ 5% when you take it out. So all in all you</span><span style="box-sizing: border-box;"><span style="font-family: inherit;">&nbsp;will gain around 32</span></span><span style="font-family: inherit;">¢ if he does not win, and you'll lose your 59</span><span style="font-family: inherit;">¢ is he wins.</span></div>
+<div>
+<span style="font-family: inherit;"><br /></span></div>
+<div>
+<span style="font-family: inherit;">If&nbsp;</span>you make an assessment of each candidate's chance of winning, something like this - Trump .40, Rubio .20, Cruz .25, Bush .10, Kasich .10, then how should you decide what to buy and how much?</div>
+<div>
+<br /></div>
+<div>
+First thing you could do is set up random variables for each contract you own like this:</div>
+<div>
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=X_{i}=\left\{\begin{matrix}&amp;space;w&amp;space;&amp;&amp;space;w/prob&amp;space;&amp;&amp;space;p\\&amp;space;-l&amp;space;&amp;&amp;space;w/prob&amp;space;&amp;&amp;space;1-p&amp;space;\end{matrix}\right." target="_blank"><img src="https://latex.codecogs.com/gif.latex?X_{i}=\left\{\begin{matrix}&amp;space;w&amp;space;&amp;&amp;space;w/prob&amp;space;&amp;&amp;space;p\\&amp;space;-l&amp;space;&amp;&amp;space;w/prob&amp;space;&amp;&amp;space;1-p&amp;space;\end{matrix}\right." title="X_{i}=\left\{\begin{matrix} w &amp; w/prob &amp; p\\ -l &amp; w/prob &amp; 1-p \end{matrix}\right." /></a><br />
+<br />
+w is the amount you stand to gain if your prediction comes true, l is the amount you stand to lose if it does not come true. p is the probability you think that the prediction comes true.</div>
+<div>
+<br />
+For each contract,&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=\mathbb&amp;space;E[X_i]=w_ip_i-l_i(1-p_i)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\mathbb&amp;space;E[X_i]=w_ip_i-l_i(1-p_i)" title="\mathbb E[X_i]=w_ip_i-l_i(1-p_i)" /></a>&nbsp;.</div>
+<div>
+<br />
+The variance of your return on each contract is:<br />
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Var(X_{i})=\mathbb&amp;space;E[X_i^2]-\mathbb&amp;space;E[X_i]^2=w_i^2p+l_i^2(1-p_i)-(w_ip-l_i(1-p_i))^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Var(X_{i})=\mathbb&amp;space;E[X_i^2]-\mathbb&amp;space;E[X_i]^2=w_i^2p+l_i^2(1-p_i)-(w_ip-l_i(1-p_i))^2" title="Var(X_{i})=\mathbb E[X_i^2]-\mathbb E[X_i]^2=w_i^2p+l_i^2(1-p_i)-(w_ip-l_i(1-p_i))^2" /></a><br />
+<br />
+Let's say you own multiple contracts, and you want to figure out your total Expected Return and Variance of the return,<br />
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=X=\sum&amp;space;X_i\\*&amp;space;\mathbb&amp;space;E[X]=\sum&amp;space;\mathbb&amp;space;E[X_i]\\*&amp;space;Var(X)=\sum&amp;space;Var(X_i)+\sum_i&amp;space;\sum_{j\neq&amp;space;i}&amp;space;Cov(X_i,X_j)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X=\sum&amp;space;X_i\\*&amp;space;\mathbb&amp;space;E[X]=\sum&amp;space;\mathbb&amp;space;E[X_i]\\*&amp;space;Var(X)=\sum&amp;space;Var(X_i)+\sum_i&amp;space;\sum_{j\neq&amp;space;i}&amp;space;Cov(X_i,X_j)" title="X=\sum X_i\\* \mathbb E[X]=\sum \mathbb E[X_i]\\* Var(X)=\sum Var(X_i)+\sum_i \sum_{j\neq i} Cov(X_i,X_j)" /></a>
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Cov(X_i,X_j)_{i\neq&amp;space;j}=w_iw_jp_{i\cup&amp;space;j}-w_il_jp_{i\setminus&amp;space;j}-l_iw_jp_{j\setminus&amp;space;i}+l_il_jp_{\setminus&amp;space;i\setminus&amp;space;j}-\mathbb&amp;space;E[X_i]\mathbb&amp;space;E[X_j]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Cov(X_i,X_j)_{i\neq&amp;space;j}=w_iw_jp_{i\cup&amp;space;j}-w_il_jp_{i\setminus&amp;space;j}-l_iw_jp_{j\setminus&amp;space;i}+l_il_jp_{\setminus&amp;space;i\setminus&amp;space;j}-\mathbb&amp;space;E[X_i]\mathbb&amp;space;E[X_j]" title="Cov(X_i,X_j)_{i\neq j}=w_iw_jp_{i\cup j}-w_il_jp_{i\setminus j}-l_iw_jp_{j\setminus i}+l_il_jp_{\setminus i\setminus j}-\mathbb E[X_i]\mathbb E[X_j]" /></a>
+<br />
+<br />
+So naturally, positive expectation is good and too much variance is bad. So we should program the computer to make a position that maximizes the <a href="https://en.wikipedia.org/wiki/Sharpe_ratio">Sharpe Ratio</a>.<br />
+<br />
+Actually, in my opinion, there's a fundamental problem with the Sharpe Ratio. The Variance is the measure of spread from the mean of data. It does not make a difference if the spread of the data is good for us (to the right of the mean), or bad for us (to the left of the mean). In other words, the Variance can punish an investment with unlimited upside.<br />
+<br />
+Take a look at this graph of two simulated distributions. The black distribution is a Gamma Random variable which is right skewed, the blue distribution is a Normal Random variable which is symmetric. Both of these samples have a mean of .68 and a variance of .55. Therefore they have identical Sharpe ratios:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-Z8e99AdxLZA/VsaN-aArWgI/AAAAAAAAAKo/ghWg4DyWbGY/s1600/Simulated%2BHypothetical%2BInvestments.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="336" src="https://2.bp.blogspot.com/-Z8e99AdxLZA/VsaN-aArWgI/AAAAAAAAAKo/ghWg4DyWbGY/s640/Simulated%2BHypothetical%2BInvestments.png" width="640" /></a></div>
+It is not completely apparent from the graph that the black investment is "better" but if you think about it in words, the black investment has no downside. You cannot lose money (even though the graph looks like the black sample has values less than 0 it actually doesn't it's just not a very precise graph). Most people would agree that this right skewed distribution of investment returns is more favorable than a symmetric distribution.<br />
+<br />
+The Sharpe Ratio misses this fact. This is why, when measuring Variance of a potential investment, it makes more sense to look at the&nbsp;<a href="https://en.wikipedia.org/wiki/Downside_risk">Semi-Variance</a>. The semi-variance, appropriately named, measures the spread of a variable only for occurrences below its mean. When a variable is symmetric, semi-variance = variance/2. When a variable is right-skewed, semi-variance &lt; variance/2.<br />
+<br />
+For the above Investments, the blue investment has a Semi-Variance of .55/2 = .275, while the black investment has a Semi-Variance of .16. The "Sharpe Ratio" with Semi-Variance instead of Variance is now higher for the black investment.<br />
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Semivar(X)=\mathbb&amp;space;E[(X-\mathbb&amp;space;E[X])^2\times&amp;space;\mathbbm{1}_{X%3C\mathbb&amp;space;E[X]}]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Semivar(X)=\mathbb&amp;space;E[(X-\mathbb&amp;space;E[X])^2\times&amp;space;\mathbbm{1}_{X&lt;\mathbb&amp;space;E[X]}]" title="Semivar(X)=\mathbb E[(X-\mathbb E[X])^2\times \mathbbm{1}_{X&lt;\mathbb E[X]}]" /></a><br />
+<br />
+Calculating the Semi-variance is not the same as calculating variance. For one thing,<br />
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Semivar(X)\neq&amp;space;\mathbb&amp;space;E[X^2&amp;space;\times&amp;space;1_{X%3C\mathbb&amp;space;E[X]}]-\mathbb&amp;space;E[X]^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Semivar(X)\neq&amp;space;\mathbb&amp;space;E[X^2&amp;space;\times&amp;space;1_{X&lt;\mathbb&amp;space;E[X]}]-\mathbb&amp;space;E[X]^2" title="Semivar(X)\neq \mathbb E[X^2 \times 1_{X&lt;\mathbb E[X]}]-\mathbb E[X]^2" /></a>.<br />
+<br />
+Also, it is not immediately apparent how the Semi-Variance of sums of random variables should be computed. I didn't bother to think about this in too much detail since for this application the computation is perfectly easy since there are only as many outcomes possible as there are candidates.<br />
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Semivar(X)=\sum_{k:x_k%3C\mathbb%20E[X]}(x_K-\mathbb&amp;space;E[X])^2\times&amp;space;p(kwins)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Semivar(X)=\sum_{k:x_k&lt;\mathbb E[X]}(x_K-\mathbb&amp;space;E[X])^2\times&amp;space;p(kwins)" title="Semivar(X)=\sum_{k:x_k&lt;\mathbb E[X]}(x_K-\mathbb E[X])^2\times p(kwins)" /></a><br />
+&nbsp;Where k is the number of candidates, and x_k is the value of X (total gain or loss) when k wins.<br />
+<br />
+So what I propose is a simple step by step algorithm for choosing the best position. Each step, the computer has a choice to buy any of the available contracts. If it finds a step that will improve the "Sharpe Ratio", it will take the step that improves it the most. If it can't find a way to improve the position, it will stop and tell you it could not find a way to invest all of your money.<br />
+<br />
+<h3>
+Does the confidence you have in your Assessment matter?:</h3>
+<div>
+The building of the position is dependent on the view of the imput-er. Up until this point, I have assumed that this person is absolutely sure of his or her view. Perhaps the person has really sat down and carefully crafted the view. However, this ignores an important aspect of the problem - we cannot be absolutely sure in creating the view. It is not like we have this k-sided die that we have rolled over and over again and settled on different weights for the probability of the die landing on each face. Even if this was the case, we would really have to be able to roll the die many many times in order to narrow down the weights precisely.</div>
+<div>
+<br /></div>
+<div>
+When we are crafting our views of the chances each candidate will win, we are doing something similar to rolling the die a bunch of times and determining from our thought experiment the chances that each candidate will win. However, we aren't god. We don't know the exact chance of each candidate winning. Therefore, it makes sense to put distributions on our forecasts of the probabilities of each candidate winning.</div>
+<div>
+<br /></div>
+<div>
+In the 2016 race for the Republican Primary, the need for this distribution has never been more clear because of the huge elephant in the room named Donald Trump. Most people at the time of my writing think that he is the favorite to win the nomination. However, most people would say that his campaign is a wildcard and his chance of winning is very hard to pinpoint. <a href="https://www.predictit.org/Contract/838/Will-Donald-Trump-win-the-2016-Republican-presidential-nomination#data">The Market</a>&nbsp;reflects this fact - the price of his shares has fluctuated from a low of 20<span style="font-family: inherit;">¢ to a high of 55</span><span style="font-family: inherit;">¢ over the last month alone.&nbsp;</span>When forecasting his chances of winning, it's nice to be able to put a spread on his probability. It just makes the job of the forecaster easier.</div>
+<div>
+<br /></div>
+<div>
+To incorporate this into the calculation, I will ask the decision maker how sure he or she is about his or her assessment for each candidate and also how sure he or she is overall. A resulting assessment will look something like this:<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-_LJ5MTRH_OM/VsjGaYJQRhI/AAAAAAAAALM/IA607XHaI6Q/s1600/Assessing%2Bthe%2BChance.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="336" src="https://2.bp.blogspot.com/-_LJ5MTRH_OM/VsjGaYJQRhI/AAAAAAAAALM/IA607XHaI6Q/s400/Assessing%2Bthe%2BChance.png" width="400" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+That is a hypothetical assessment of three candidates chances. The assessor has said that each candidate has a 1/3 chance of winning, but he or she has said the he is pretty sure of his or her assessment of one candidate, less sure about his or her assessment of the second candidate and not very sure of the assessment of the third candidate.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Practically, if the market's view diverges from the assessor's view of each candidates chances of winning equally, the investor should be willing to put more of his or her money behind the bet on the candidate who's chances he or she is more sure about.&nbsp;</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+This is what I thought. In fact, I was wrong. To see why, let's put a specific distribution on the probabilities each candidate wins. I natural choice for this distribution is the Dirichlet distribution. If the assessor is pretty sure of his or her assessment, a distribution for the assessment might looks like this:</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-i0REsC_urmo/VttZR5DjpgI/AAAAAAAAALg/whJ3zfYDCwY/s1600/pretty%2Bsure.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://2.bp.blogspot.com/-i0REsC_urmo/VttZR5DjpgI/AAAAAAAAALg/whJ3zfYDCwY/s320/pretty%2Bsure.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+If the assessor was not as sure, the distribution would look more like this:</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-CerC3Ilk7qk/VttZaXHw67I/AAAAAAAAALk/XOlhGbAC5Hk/s1600/not%2Bas%2Bsure.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://2.bp.blogspot.com/-CerC3Ilk7qk/VttZaXHw67I/AAAAAAAAALk/XOlhGbAC5Hk/s320/not%2Bas%2Bsure.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+If the assessor make some judgement of the probabilities, and specifies how sure he is, one might think that the variance of the outcomes of draws based on this distribution should increase as the assessor becomes less sure of his judgment. This is what I thought. And it's true, if there are to be more than one draw from the distribution.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+So the draws are draws from a Multinomial distribution but since there is a Dirichlet distribution on the probabilities, they are really draws from a Dirichlet-Multinomial distribution. The sum of draws for one category has a Dirichlet-Multinomial distribution which has the following variance:</div>
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{AN})(\frac{N+A}{1+A})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{AN})(\frac{N+A}{1+A})" title="\frac{\alpha _i}{A}(1-\frac{\alpha _i}{AN})(\frac{N+A}{1+A})" /></a>&nbsp;where<a href="https://www.codecogs.com/eqnedit.php?latex=A=\sum_i^k&amp;space;\alpha&amp;space;_i" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A=\sum_i^k&amp;space;\alpha&amp;space;_i" title="A=\sum_i^k \alpha _i" /></a>.&nbsp;<a href="http://www2.math.su.se/matstat/reports/seriec/2014/rep6/report.pdf">(Source)</a><br />
+<br />
+When N=1, this variance take the simple form&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{A})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{A})" title="\frac{\alpha _i}{A}(1-\frac{\alpha _i}{A})" /></a>, which is independent of the confidence that you have in your assessment.<br />
+<br />
+In short, when there is one draw, the expectation and variance of the outcome are independent of your confidence in the assessment. Only when there is more than one draw from this distribution does the confidence of your assessment make the variance of the outcome random variable larger or smaller.<br />
+<br />
+In this example, there is only draw since there is only one election. Therefore, when you are building your position from an assessment, the confidence you have in your assessment overall and therefore in your assessment in any one candidate's chances, is irrelevant.<br />
+<br />
+Practically, if one is unsure about his or her assessment, he or she should be less willing to take a risk in making the investment. The risk taking proclivity of the assessor can be the exponent of the penalty term (the semi-variance). Traditionally, people like to look at the square root of variance or semi-variance for the penalty term. It turns out that for this problem - building a position in prediction markets, the typical risk of the investment is so large that if one uses the square root in of the semi-variance, the positions built are typically no more than a few shares of a particular contract.<br />
+<br />
+I see the choice to use square-root as somewhat arbitrary. Therefore, it should be left up to the user's preference. It's a risk-reward trade-off. If he or she is willing to risk losing more money, then the exponent that we raise the semi variance to could be .1 instead of .5. If instead the investor is risk-averse, we could raise to a higher exponent like .4 or .5.<br />
+<br />
+<div>
+If g is your risk tolerance I define the utility of an investment as:<br />
+<br /></div>
+<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\mathbb&amp;space;E[X]}{Semivar(X)^{\frac{g}{10}}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\mathbb&amp;space;E[X]}{Semivar(X)^{\frac{g}{10}}}" title="\frac{\mathbb E[X]}{Semivar(X)^{\frac{g}{10}}}" /></a>.<br />
+<br />
+I think g should be chosen based on your confidence in your assessment and your general risk tolerance.<br />
+<h3>
+A Script for calculating the Optimal Investment:</h3>
+<div>
+You can find a Python script for calculating an optimal portfolio <a href="https://github.com/adamwlev/Predict-Fund-Allocation.git">here</a>. It asks for the prices and probabilities you think each event has of occurring. It will also ask for you're risk tolerance on a scale of 1 to 5.&nbsp;</div>
+<br />
+Then I calculate the optimal position by a simple algorithm that calculates the best step to take - to maximize utility - from the current location. If the algorithm can't find a way to take another positive step from the current position, it returns the built-position and tells you it failed to find a way to allocate all the money. If it does find a way to allocate all the money, it will tell you that it has and tell you the position.<br />
+<br />
+Future work might be to create an app that scrapes the live Predictit data from the site, and let's users interact with the app to input their assessment and calculate the optimal portfolio. Also, it'd be nice to allow traders to input starting positions and add to the calculation an option to sell shares at the market available prices.<br />
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br /></div>
