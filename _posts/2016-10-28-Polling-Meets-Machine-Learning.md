@@ -4,6 +4,8 @@ title: Polling Meets Machine Learning
 excerpt: What I think about the current standard of polling and how it could be improved.
 ---
 
+This post is going to be a little different than my normal ones. I have some thoughts about polling methodology that have been brewing for quite a while now..
+
 The current state of polling is for polling companies to conduct interviews, get answers to the questions asked, and then turn this into point estimates of proportion of voters that favor a certain candidate or issue over the whole area in question - a state or the whole country. This normally involves some sort of weighting in order to make the sample that was polled more representative of whatever population the poll wishes to generalize to.
 
 What each polling company is implicitly doing is making a model to predict the proportion of voters that will vote for a candidate or an issue on Election Day. This is the right strategy to follow because we observe some sample of intents to vote for something or another and we wish to make a prediction of how an unseen population of voters will vote. What I am getting at here is that this is just a machine-learning problem. With each poll there are attributes about the participant recorded, along with an outcome. X and y.
