@@ -1,0 +1,260 @@
+---
+layout: post
+title: Bernie's got 49.6%, Hilary's got 49.8%, 90% of the precincts are reporting, DOES BERNIE STILL HAVE A CHANCE?
+excerpt: I used Python to answer this question in a few different ways. "Frequestist", Bayesian, exact, and simulation.
+---
+
+
+<div style="text-align: left;">
+<h4>
+<u>Introduction and Motivation</u>:</h4>
+</div>
+<div style="text-align: left;">
+I seek to answer the question of what is the probability of a candidate winning an election (or caucus) when not all the votes are in. Now I will not take in any other information than votes collected for each candidate and percent of votes collected so far.</div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+I will talk about my first approach and then talk about where I went from there and then finally what someone who really knows what they are doing might do when trying to answer this question.</div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+For anyone who was watching the Iowa Caucus on February 1, 2016 (to which the title refers to), you probably know that some of the most crucial information to answering the question of does Bernie have a chance is what percent of the votes have been reported from all the different counties. On CNN, they would show an overall percent of precincts that have reported but they'd also show the percent that have reported from all the different counties - some of which might be more pro-Bernie than average or more pro-Hillary than average, etc. One of the most fun parts of watching the debate was speculating what the chances are at any given moment of each candidate winning. From this experience and wanting to practice and develop my stat-comp skills, I became interested in working on this problem.&nbsp;</div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+The programs that I wrote treat the whole state as one giant population. If you had realtime access to the information that CNN has, you could extend this technique to incorporate a sum of all the different counties, treating each one as a separate population of voters. This would certainly add accuracy. For now, to keep things simple, I will treat the whole state as the same population. Also, I will ignore the fact that in the Democratic Caucus, each candidate is awarded delegates according to how well they do at each voting site. Because I don't know the rules that govern this process, I'll ignore this fact. So yes, this is a theoretical exercise..</div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+I will make the assumption that the votes will be counted randomly from a basket of votes. This seems reasonable - the votes will be thrown in a basket all together and be plucked out randomly.</div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+<h4>
+<u>First Approach</u>:</h4>
+</div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+There are two sources of uncertainty in the problem. One is estimating the true proportion of the population of voters that plan to vote for each candidate. I've always been taught to approximate the distribution of this proportion using the normal distribution. If we say the true proportion of voters who plan to vote for a candidate is <a href="https://www.codecogs.com/eqnedit.php?latex=\hat{p}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\hat{p}" title="\hat{p}" /></a>, the number of votes for a candidate is <a href="https://www.codecogs.com/eqnedit.php?latex=n" target="_blank"><img src="https://latex.codecogs.com/gif.latex?n" title="n" /></a>, and the total votes is <a href="https://www.codecogs.com/eqnedit.php?latex=N" target="_blank"><img src="https://latex.codecogs.com/gif.latex?N" title="N" /></a>, then,
+<a href="https://www.codecogs.com/eqnedit.php?latex=\hat{p}\sim&amp;space;G\left&amp;space;(&amp;space;n/N,\sqrt{\frac&amp;space;1N\frac&amp;space;nN(1-\frac&amp;space;nN)}&amp;space;\right&amp;space;)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\hat{p}\sim&amp;space;G\left&amp;space;(&amp;space;n/N,\sqrt{\frac&amp;space;1N\frac&amp;space;nN(1-\frac&amp;space;nN)}&amp;space;\right&amp;space;)" title="\hat{p}\sim G\left ( n/N,\sqrt{\frac 1N\frac nN(1-\frac nN)} \right )" /></a> . I use <a href="https://www.codecogs.com/eqnedit.php?latex=G" target="_blank"><img src="https://latex.codecogs.com/gif.latex?G" title="G" /></a> for Gaussian distribution so as not to get confused with <a href="https://www.codecogs.com/eqnedit.php?latex=N" target="_blank"><img src="https://latex.codecogs.com/gif.latex?N" title="N" /></a>, the total number of votes seen so far.<br />
+<br />
+The next source of uncertainty in the problem is in estimating the number of total votes each candidate will eventually get. Given some population proportion of voters who plan on voting for a candidate, this source of uncertainty translates to not knowing who actually showed up on voting day. If we say <a href="https://www.codecogs.com/eqnedit.php?latex=X" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X" title="X" /></a>&nbsp;is the number of votes a candidate will eventually get, and <a href="https://www.codecogs.com/eqnedit.php?latex=V" target="_blank"><img src="https://latex.codecogs.com/gif.latex?V" title="V" /></a>&nbsp;is the number of votes yet to be seen,&nbsp;then given <a href="https://www.codecogs.com/eqnedit.php?latex=\hat{p}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\hat{p}" title="\hat{p}" /></a>, <a href="https://www.codecogs.com/eqnedit.php?latex=X" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X" title="X" /></a> can also be approximated by a normal random variable: <br />
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=X\sim&amp;space;G\left&amp;space;(&amp;space;n+\hat{p}V,\sqrt{V\hat{p}(1-\hat{p})}&amp;space;\right&amp;space;)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X\sim&amp;space;G\left&amp;space;(&amp;space;n+\hat{p}V,\sqrt{V\hat{p}(1-\hat{p})}&amp;space;\right&amp;space;)" title="X\sim G\left ( n+\hat{p}V,\sqrt{V\hat{p}(1-\hat{p})} \right )" /></a>.<br />
+<br />
+Now the trouble is the Xs are not independent of one another. In other words, the candidates are competing for votes. The Xs actually belong to a multinomial distribution. Given <a href="https://www.codecogs.com/eqnedit.php?latex=\hat{p}_{i}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\hat{p}_{i}" title="\hat{p}_{i}" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=\hat{p}_{j}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\hat{p}_{j}" title="\hat{p}_{j}" /></a>, <a href="https://www.codecogs.com/eqnedit.php?latex=Cov(X_{i},X_{j})=-V\hat{p}_{i}\hat{p}_{j}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Cov(X_{i},X_{j})=-V\hat{p}_{i}\hat{p}_{j}" title="Cov(X_{i},X_{j})=-V\hat{p}_{i}\hat{p}_{j}" /></a>. The number of votes for each candidate has a negative correlation.<br />
+<br />
+My first approach was to do a simulation. With each simulated election there were different population proportions generated from random draws from normal distributions. This was my approach to an election between two candidates with some made up numbers (in pseudo-code - it's like half R, half Python):<br />
+<br />
+n1=350 ##votes for cand. 1<br />
+n2=400 ##votes for cand. 2<br />
+N=sum(n1,n2) ##total votes<br />
+prctObs=.15 ##percent of votes observed thus far<br />
+V=N/prctObs-N ##number of votes yet to be counted<br />
+numOfSims=100000 ##number of simulations<br />
+votesfor1=numeric() ##empty vector to hold number of votes for cand. 1<br />
+votesfor2=numeric() ##empty vector to hold number of votes for cand. 2<br />
+for i in 1:numOfSims<br />
+&nbsp; &nbsp; phat1=rnorm(n1/N,sqrt(1/N*n1/N*(1-n1/N))) ##1 random normal pop. proportion<br />
+&nbsp; &nbsp; phat2=rnorm(n2/N,sqrt(1/N*n2/N*(1-n2/N))) ##another random normal pop. proportion<br />
+&nbsp; &nbsp; phat1=phat1/(phat1+phat2) ##standardization (so probabilities will add to one)<br />
+&nbsp; &nbsp; phat2=phat2/(phat1+phat2) ##standardization<br />
+&nbsp; &nbsp; m=rmultinorm(V,c(phat1,phat2)) ##simulating the rest of the votes from a multinomial distribution<br />
+&nbsp; &nbsp; votesfor1.append(n1+m[1]) ##record number of votes for cand. 1 in this election<br />
+&nbsp; &nbsp; votesfor2.append(n2+m[2]) ##record number of votes for cand. 2 in this election<br />
+<br />
+If you were very astute in checking that code out, you'll notice that I made an important choice that I have not yet discussed. Within each election, I standardized the population proportions so that the sum will add to 1. I did this because it feels right - they are probabilities, they should add to one. Also the properties of this process seem to mirror the real life situation. If, according to random chance, we are underestimating one candidates population proportion, that means we should be taking away from the other candidates' proportions. This means that random variables that are the population proportions are negatively correlated as well.<br />
+<br />
+The simulation runs fairly quickly - 100,000 election simulations takes roughly 5 seconds. To get the probability of each candidate winning, all one must do is keep track of the number of times each candidate came out on top and divide by the total number of simulations.<br />
+<br />
+Here are some sample elections. I divided 150,000 votes up - 46.4% for Sanders, 46.8% for Clinton and then rest for O'malley:<br />
+<br />
+<span style="font-size: x-small;">Votes for Hilary Clinton - 74850 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Votes for Bernie Sanders - 74400 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Votes for Martin O'malley - 900</span><br />
+<span style="font-size: x-small;">Percent of Votes Observed &nbsp;- 90%</span><br />
+<span style="font-size: xx-small;"><br /></span>
+<span style="font-size: x-small;">Probability of each candidate winning: Clinton - .99991, Sanders - .00009, O'malley - 0.</span><br />
+<br />
+So, under the naive assumption that the whole state is one population and that the votes are coming in randomly, even through Clinton is only 450 votes ahead with about 16,666 votes yet to be counted, she is virtually assured of victory. Let's say the same proportion of votes have come in but this time on 80,000 votes observed and 50% of the expected number of votes.<br />
+<span style="font-size: x-small;"><br /></span>
+<span style="font-size: x-small;">Hilary Clinton - 39840 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Bernie Sanders - 39680 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Martin O'malley - 480</span><br />
+<span style="font-size: x-small;">Percent of Votes Observed &nbsp;- 50%</span><br />
+<span style="font-size: x-small;"><br /></span>
+<span style="font-size: x-small;">Probability of each candidate winning: Clinton - .822, Sanders - .178, O'malley - 0.</span><br />
+<br />
+The results seemed strange to me. Of course these numbers do not currently properly model the real life scenerio on account of the fact - as I mentioned - that I am treating the entire state as one population. Still the simulation seemed to be overly bullish for the favorite. Here are some more runs of the simulation with some hypothetical scenarios. Maybe you'll agree with me, maybe you won't.<br />
+<br />
+<span style="font-size: x-small;">Votes for Candidate 1 - 134 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Votes for Candidate 2 - 130</span><br />
+<span style="font-size: x-small;">Percent of Votes Observed - 2%</span><br />
+<span style="font-size: x-small;"><br /></span>
+<span style="font-size: x-small;">Probability of each candidate winning:&nbsp;Candidate 1 - .64, Candidate 2 - .36.</span><br />
+<span style="font-size: x-small;"><br /></span>
+<span style="font-size: x-small;">Votes for Candidate 1 - 134 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Votes for Candidate 2 - 130</span><br />
+<span style="font-size: x-small;">Percent of Votes Observed - 76%</span><br />
+<span style="font-size: x-small;"><br /></span>
+<span style="font-size: x-small;">Probability of each candidate winning:&nbsp;Candidate 1 - .70, Candidate 2 - .30.</span><br />
+<br />
+Perhaps the numbers are where they "should be". Still, I was unsatisfied and wanted a way of calculating the real distributions that the determine the probabilities. &nbsp;I didn't want to rely solely on simulations. So I tried my best to do it.<br />
+<br />
+<h4>
+<u>My next approach</u>:</h4>
+<br />
+Regrettably, I took sort of a parochial approach to trying to solve for the real probabilities. Based on how I was going about the simulation, I tried to calculate the explicit probabilities using the same model. It did not really occur to me that if I did succeed, the numbers would come out exactly the same. &nbsp;-_-<br />
+<br />
+Nonetheless, it was good practice.<br />
+<br />
+I started by asking what kind of distribution<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{X}{X+Y+Z}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{X}{X+Y+Z}" title="\frac{X}{X+Y+Z}" /></a> <br />
+should have where <a href="https://www.codecogs.com/eqnedit.php?latex=X,Y,Z" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X,Y,Z" title="X,Y,Z" /></a> are independent Gaussians. Well, unfortunately this whole distribution sort of fails on account of the denominator being potentially equal to 0. One could try to limit X,Y, and Z to the domain (0,1] and divide each pdf by<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=\Phi(\frac{1-\mu}{\sigma&amp;space;})-\Phi(-\frac\mu\sigma)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\Phi(\frac{1-\mu}{\sigma&amp;space;})-\Phi(-\frac\mu\sigma)" title="\Phi(\frac{1-\mu}{\sigma })-\Phi(-\frac\mu\sigma)" /></a>&nbsp;and then perform the triple integral to get the mean and variance of this cockamamy distribution. Instead of doing that, I just simulated these quantities. The great thing about random number generation is that the chances of the sum of these three random variables being exactly 0 is basically 0. Especially considering the the sum of the expectations of the random variables in the denominator for this problem will always be 1.<br />
+<br />
+I set up the problem like this:<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=\pi&amp;space;=\bigl(\begin{smallmatrix}&amp;space;\hat{p}_{1}&amp;space;&amp;&amp;space;\hat{p}_{2}&amp;space;&amp;&amp;space;\hat{p}_{3}&amp;space;&amp;&amp;space;...&amp;space;&amp;&amp;space;\hat{p}_{k}&amp;space;\end{smallmatrix}\bigr)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\pi&amp;space;=\bigl(\begin{smallmatrix}&amp;space;\hat{p}_{1}&amp;space;&amp;&amp;space;\hat{p}_{2}&amp;space;&amp;&amp;space;\hat{p}_{3}&amp;space;&amp;&amp;space;...&amp;space;&amp;&amp;space;\hat{p}_{k}&amp;space;\end{smallmatrix}\bigr)" title="\pi =\bigl(\begin{smallmatrix} \hat{p}_{1} &amp; \hat{p}_{2} &amp; \hat{p}_{3} &amp; ... &amp; \hat{p}_{k} \end{smallmatrix}\bigr)" /></a><br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=\mathbb&amp;space;E[\pi]&amp;space;=\bigl(\begin{smallmatrix}&amp;space;\frac{n_{1}}{N}&amp;space;&amp;&amp;space;\frac{n_{2}}{N}&amp;space;&amp;&amp;space;\frac{n_{3}}{N}&amp;space;&amp;&amp;space;...&amp;space;&amp;&amp;space;\frac{n_{k}}{N}&amp;space;\end{smallmatrix}\bigr)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\mathbb&amp;space;E[\pi]&amp;space;=\bigl(\begin{smallmatrix}&amp;space;\frac{n_{1}}{N}&amp;space;&amp;&amp;space;\frac{n_{2}}{N}&amp;space;&amp;&amp;space;\frac{n_{3}}{N}&amp;space;&amp;&amp;space;...&amp;space;&amp;&amp;space;\frac{n_{k}}{N}&amp;space;\end{smallmatrix}\bigr)" title="\mathbb E[\pi] =\bigl(\begin{smallmatrix} \frac{n_{1}}{N} &amp; \frac{n_{2}}{N} &amp; \frac{n_{3}}{N} &amp; ... &amp; \frac{n_{k}}{N} \end{smallmatrix}\bigr)" /></a>
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Var(\pi)&amp;space;=\bigl(\begin{smallmatrix}&amp;space;v_{1}&amp;space;&amp;&amp;space;v_{2}&amp;space;&amp;&amp;space;v_{3}&amp;space;&amp;&amp;space;...&amp;space;&amp;&amp;space;v_{k}&amp;space;\end{smallmatrix}\bigr)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Var(\pi)&amp;space;=\bigl(\begin{smallmatrix}&amp;space;v_{1}&amp;space;&amp;&amp;space;v_{2}&amp;space;&amp;&amp;space;v_{3}&amp;space;&amp;&amp;space;...&amp;space;&amp;&amp;space;v_{k}&amp;space;\end{smallmatrix}\bigr)" title="Var(\pi) =\bigl(\begin{smallmatrix} v_{1} &amp; v_{2} &amp; v_{3} &amp; ... &amp; v_{k} \end{smallmatrix}\bigr)" /></a>
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Cov(\pi&amp;space;)=\begin{pmatrix}&amp;space;c_{11}&amp;space;&amp;&amp;space;c_{12}&amp;space;&amp;&amp;space;\cdots&amp;space;&amp;&amp;space;c_{1k}\\&amp;space;c_{21}&amp;space;&amp;&amp;space;c_{21}&amp;space;&amp;&amp;space;&amp;&amp;space;\\&amp;space;\vdots&amp;space;&amp;&amp;space;&amp;&amp;space;\ddots&amp;space;&amp;&amp;space;\\&amp;space;c_{k1}&amp;&amp;space;&amp;&amp;space;&amp;c_{kk}&amp;space;\end{pmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Cov(\pi&amp;space;)=\begin{pmatrix}&amp;space;c_{11}&amp;space;&amp;&amp;space;c_{12}&amp;space;&amp;&amp;space;\cdots&amp;space;&amp;&amp;space;c_{1k}\\&amp;space;c_{21}&amp;space;&amp;&amp;space;c_{21}&amp;space;&amp;&amp;space;&amp;&amp;space;\\&amp;space;\vdots&amp;space;&amp;&amp;space;&amp;&amp;space;\ddots&amp;space;&amp;&amp;space;\\&amp;space;c_{k1}&amp;&amp;space;&amp;&amp;space;&amp;c_{kk}&amp;space;\end{pmatrix}" title="Cov(\pi )=\begin{pmatrix} c_{11} &amp; c_{12} &amp; \cdots &amp; c_{1k}\\ c_{21} &amp; c_{21} &amp; &amp; \\ \vdots &amp; &amp; \ddots &amp; \\ c_{k1}&amp; &amp; &amp;c_{kk} \end{pmatrix}" /></a>
+<br />
+I calculated all the v's and c's from simulation. In general all the v's were fairly similar to the variances of the normal distributions sampled from. All the c's were negative - except those on the diagonal of course - which makes intuitive sense since the higher one population proportion is, the lower any other is.<br />
+<br />
+Then, from these formulas I calculated the first two moments of the X's and the covariance between them:<br />
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Var(X_{i})&amp;space;=\mathbb&amp;space;E_{\hat{p_{i}}}\left[Var(X_{i}\mid&amp;space;\hat{p_{i}})&amp;space;\right&amp;space;]+Var_{\hat{p_{i}}}(\mathbb&amp;space;E\left[X_{i}\mid&amp;space;\hat{p_{i}}]&amp;space;\right)=\mathbb&amp;space;E\left[V&amp;space;\hat{p_{i}}(1-\hat{p_{i}})&amp;space;\right]+Var(V\hat{p}_{i})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Var(X_{i})&amp;space;=\mathbb&amp;space;E_{\hat{p_{i}}}\left[Var(X_{i}\mid&amp;space;\hat{p_{i}})&amp;space;\right&amp;space;]+Var_{\hat{p_{i}}}(\mathbb&amp;space;E\left[X_{i}\mid&amp;space;\hat{p_{i}}]&amp;space;\right)=\mathbb&amp;space;E\left[V&amp;space;\hat{p_{i}}(1-\hat{p_{i}})&amp;space;\right]+Var(V\hat{p}_{i})" title="Var(X_{i}) =\mathbb E_{\hat{p_{i}}}\left[Var(X_{i}\mid \hat{p_{i}}) \right ]+Var_{\hat{p_{i}}}(\mathbb E\left[X_{i}\mid \hat{p_{i}}] \right)=\mathbb E\left[V \hat{p_{i}}(1-\hat{p_{i}}) \right]+Var(V\hat{p}_{i})" /></a><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex==V\left&amp;space;(&amp;space;\frac&amp;space;{n_{i}}{N}-\left&amp;space;(&amp;space;\frac{n_{i}}{N}&amp;space;\right&amp;space;)^{2}-v_{i}&amp;space;\right&amp;space;)&amp;space;+V^{2}v_{i}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?=V\left&amp;space;(&amp;space;\frac&amp;space;{n_{i}}{N}-\left&amp;space;(&amp;space;\frac{n_{i}}{N}&amp;space;\right&amp;space;)^{2}-v_{i}&amp;space;\right&amp;space;)&amp;space;+V^{2}v_{i}" title="=V\left ( \frac {n_{i}}{N}-\left ( \frac{n_{i}}{N} \right )^{2}-v_{i} \right ) +V^{2}v_{i}" /></a>
+<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Cov(X_{i},X_{j})=\mathbb&amp;space;E_{\hat{p_{i}},\hat{p_{j}}}\left&amp;space;[&amp;space;cov(X_{i},X_{j}&amp;space;\mid\hat{p_{i}},\hat{p_{j}}&amp;space;)&amp;space;\right&amp;space;]+Cov(\mathbb&amp;space;E\left&amp;space;[&amp;space;X_{i}&amp;space;\mid&amp;space;\hat{p_{i}}&amp;space;\right&amp;space;],&amp;space;\mathbb&amp;space;E\left&amp;space;[&amp;space;X_{j}\mid\hat{p_{j}}&amp;space;\right&amp;space;])" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Cov(X_{i},X_{j})=\mathbb&amp;space;E_{\hat{p_{i}},\hat{p_{j}}}\left&amp;space;[&amp;space;Cov(X_{i},X_{j}&amp;space;\mid\hat{p_{i}},\hat{p_{j}}&amp;space;)&amp;space;\right&amp;space;]+Cov(\mathbb&amp;space;E\left&amp;space;[&amp;space;X_{i}&amp;space;\mid&amp;space;\hat{p_{i}}&amp;space;\right&amp;space;],&amp;space;\mathbb&amp;space;E\left&amp;space;[&amp;space;X_{j}\mid\hat{p_{j}}&amp;space;\right&amp;space;])" title="Cov(X_{i},X_{j})=\mathbb E_{\hat{p_{i}},\hat{p_{j}}}\left [ cov(X_{i},X_{j} \mid\hat{p_{i}},\hat{p_{j}} ) \right ]+Cov(\mathbb E\left [ X_{i} \mid \hat{p_{i}} \right ], \mathbb E\left [ X_{j}\mid\hat{p_{j}} \right ])" /></a>
+<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex==\mathbb&amp;space;E&amp;space;\left[&amp;space;-V\hat{p_{i}}\hat{p_{j}}&amp;space;\right&amp;space;]+Cov(V\hat{p_{i}},&amp;space;V\hat{p_{j}})=-V(c_{ij}+\frac{n_{i}}{N}\frac{n_{j}}{N})+V^{2}c_{ij}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?=\mathbb&amp;space;E&amp;space;\left[&amp;space;-V\hat{p_{i}}\hat{p_{j}}&amp;space;\right&amp;space;]+Cov(V\hat{p_{i}},&amp;space;V\hat{p_{j}})=-V(c_{ij}+\frac{n_{i}}{N}\frac{n_{j}}{N})+V^{2}c_{ij}" title="=\mathbb E \left[ -V\hat{p_{i}}\hat{p_{j}} \right ]+Cov(V\hat{p_{i}}, V\hat{p_{j}})=-V(c_{ij}+\frac{n_{i}}{N}\frac{n_{j}}{N})+V^{2}c_{ij}" /></a><br />
+Each component of the covariance is negative since each c is always dominated by the (n/N)*(n/N) term. I am not quite sure why Cov(Xi,Xi) ≠ Var(Xi). There is an additional V*(ni/N) positive term in the variance formula that makes both components of it positive. I confirmed these formulas with simulations.<br />
+<br />
+Also with simulations, I confirmed that the distributions of the Xs look pretty normal.<br />
+<br />
+So now the problem boils down to trying to find:&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=P\left&amp;space;(&amp;space;X_{1}%3Emax(X_{2},X_{3},...,X_{k})&amp;space;\right&amp;space;)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?P\left&amp;space;(&amp;space;X_{1}&gt;max(X_{2},X_{3},...,X_{k})&amp;space;\right&amp;space;)" title="P\left ( X_{1}&gt;max(X_{2},X_{3},...,X_{k}) \right )" /></a>&nbsp;since that is that probability of candidate 1 winning and then to calculate that for each of the k candidates.<br />
+<br />
+Luckily, smart people have been working on this problem, especially for the case of the max of a series of Gaussians. The normal strategy for this problem seems to take the pairwise max of each of the random variables in the series- taking advantage of the fact that<a href="https://www.codecogs.com/eqnedit.php?latex=max(X_{2},X_{3},X_{4},X_{5})&amp;space;\right&amp;space;)=max(X_{5,}max(X_{4,}max(X_{2},X_{3})))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?max(X_{2},X_{3},X_{4},X_{5})&amp;space;\right&amp;space;)=max(X_{5,}max(X_{4,}max(X_{2},X_{3})))" title="max(X_{2},X_{3},X_{4},X_{5}) \right )=max(X_{5,}max(X_{4,}max(X_{2},X_{3})))" /></a>. For Gaussians the pdf(t) of max(X,Y) with correlation coefficient <a href="https://www.codecogs.com/eqnedit.php?latex=\rho" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\rho" title="\rho" /></a>&nbsp;looks like this:<br />
+<br />
+<div class="page" title="Page 6">
+<div class="layoutArea">
+<div class="column">
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-cX8r5uUqLro/VrtanF1fgkI/AAAAAAAAAJE/NwOxYYfXkmU/s1600/pdf%2Bof%2Bmax.tiff" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="92" src="https://4.bp.blogspot.com/-cX8r5uUqLro/VrtanF1fgkI/AAAAAAAAAJE/NwOxYYfXkmU/s320/pdf%2Bof%2Bmax.tiff" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+The approach to this problem for a series of Gaussian seems to be to approximate this distribution above with it's first two moments and forming a new Gaussian. This is not a perfect approximation because the max of two Gaussians is not normal - it is right skewed. Without taking this approximation however, it would be a struggle to find the max of more than two Gaussians.<br />
+<br />
+I found&nbsp;<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.545.3226&amp;rep=rep1&amp;type=pdf">this</a>&nbsp;paper about the process of making this calculation. It suggests keeping track of the error in each approximation by looking at the total area between the true pdf of the two normals and the first-two-moments approximation. It suggests that the order that the successive max's are taken makes a difference in the eventual accuracy of the approximation.<br />
+<br />
+I started looking into trying to program this process myself but eventually determined it wasn't worth the effort. Also, I was running into some issues with the correlations between the Xs. Each X is negatively correlation with each of the other Xs, but when you approximate&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=max(X_{2},X_{3})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?max(X_{2},X_{3})" title="max(X_{2},X_{3})" /></a>&nbsp;with the first two moments of the max distribution, I could not determine how this new Gaussian should be correlated with each of the other Xs. Although the paper above was really interesting, they did not mention (as far as I can tell) how this should work. With my particular random variables, I observed the correlation between&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=max(X_{2},X_{3})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?max(X_{2},X_{3})" title="max(X_{2},X_{3})" /></a>&nbsp;and&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=X_{1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X_{1}" title="X_{1}" /></a>&nbsp;using simulations and found an interesting phenomenon:<br />
+<br />
+If&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=cor(X_{1},X_{2})%3C%3Ccor(X_{1},X_{3})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cor(X_{1},X_{2})&lt;&lt;cor(X_{1},X_{3})" title="cor(X_{1},X_{2})&lt;&lt;cor(X_{1},X_{3})" /></a>&nbsp;which happens candidate 2 has a significantly higher proportion of the votes than candidate 3, then <a href="https://www.codecogs.com/eqnedit.php?latex=cor(X_{1},max(X_{2},X_{3}))=cor(X_{1},X_{2})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cor(X_{1},max(X_{2},X_{3}))=cor(X_{1},X_{2})" title="cor(X_{1},max(X_{2},X_{3}))=cor(X_{1},X_{2})" /></a>. The correlation between the new max variable and <a href="https://www.codecogs.com/eqnedit.php?latex=X_{1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X_{1}" title="X_{1}" /></a>&nbsp;is dominated by the stronger relationship between <a href="https://www.codecogs.com/eqnedit.php?latex=X_{1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X_{1}" title="X_{1}" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=X_{1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?X_{2}" title="X_{2}" /></a>.<br />
+<br />
+&nbsp;If, however,&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=cor(X_{1},X_{2})\approx&amp;space;cor(X_{1},X_{3})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cor(X_{1},X_{2})\approx&amp;space;cor(X_{1},X_{3})" title="cor(X_{1},X_{2})\approx cor(X_{1},X_{3})" /></a>&nbsp;which happens when candidate 2 and candidate 3 have similar amounts of votes&nbsp;then&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=cor(X_{1},max(X_{2},X_{3}))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cor(X_{1},max(X_{2},X_{3}))" title="cor(X_{1},max(X_{2},X_{3}))" /></a>&nbsp;is significantly greater in magnitude (more negative).<br />
+<br />
+I did not attempt to quantify this because I didn't really know what I was doing! I just attempted to tackle the case of k=2 and k=3 and see how the results would compare with the original simulation.<br />
+<br />
+For k=2,<br />
+P(candidate 1 wins) =<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=P(X_{1}%3EX_{2})=P(X_{2}-X_{1}%3C0)=\Phi(\frac{\mathbb&amp;space;E[X_{1}]-\mathbb&amp;space;E[X_{2}]}{Var(X_{1})+Var(X_{2})-2Cov(X_{1},X_{2})})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?P(X_{1}&gt;X_{2})=P(X_{2}-X_{1}&lt;0)=\Phi(\frac{\mathbb&amp;space;E[X_{1}]-\mathbb&amp;space;E[X_{2}]}{Var(X_{1})+Var(X_{2})-2Cov(X_{1},X_{2})})" title="P(X_{1}&gt;X_{2})=P(X_{2}-X_{1}&lt;0)=\Phi(\frac{\mathbb E[X_{1}]-\mathbb E[X_{2}]}{Var(X_{1})+Var(X_{2})-2Cov(X_{1},X_{2})})" /></a>
+<br />
+<br />
+For k=3,<br />
+P(candidate 1 wins) =<br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=P(X_{1}%3Emax(X_{2},X_{3}))=\Phi(\frac{\mathbb&amp;space;E[X_{1}]-\mathbb&amp;space;E[max(X_{2},X_{3})]}{Var(X_{1})+Var(max(X_{2},X_{3}))-2Cov(X_{1},max(X_{2},X_{3}))}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?P(X_{1}&gt;max(X_{2},X_{3}))=\Phi(\frac{\mathbb&amp;space;E[X_{1}]-\mathbb&amp;space;E[max(X_{2},X_{3})]}{Var(X_{1})+Var(max(X_{2},X_{3}))-2Cov(X_{1},max(X_{2},X_{3}))}" title="P(X_{1}&gt;max(X_{2},X_{3}))=\Phi(\frac{\mathbb E[X_{1}]-\mathbb E[max(X_{2},X_{3})]}{Var(X_{1})+Var(max(X_{2},X_{3}))-2Cov(X_{1},max(X_{2},X_{3}))}" /></a>
+<br />
+<br />
+For the covariances between the Xs and the max's, I just used the minimum of the covariance between the two pair of Xs separately (this aligned with what I saw in simulations except for the case where <a href="https://www.codecogs.com/eqnedit.php?latex=\mathbb&amp;space;E[X_{2}]\approx&amp;space;\mathbb&amp;space;E[X_{3}]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\mathbb&amp;space;E[X_{2}]\approx&amp;space;\mathbb&amp;space;E[X_{3}]" title="\mathbb E[X_{2}]\approx \mathbb E[X_{3}]" /></a>&nbsp;which I just ignored since I did not know how to quantify it).<br />
+<br />
+I concluded this endeavor by comparing the results of the first simulation with this second attempt for some example scenarios using 2 and 3 candidates. And lo and behold, the results match up well! Also, the scenarios where the results match up the least well are when there are two or more candidates with close vote tallies, which is predictable since I did not know how to compute <a href="https://www.codecogs.com/eqnedit.php?latex=Cov(X_{1},max(X_{2},X_{3}))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Cov(X_{1},max(X_{2},X_{3}))" title="Cov(X_{1},max(X_{2},X_{3}))" /></a>&nbsp;in this case...</div>
+</div>
+<div class="layoutArea">
+<div class="column">
+</div>
+</div>
+</div>
+<br />
+<h4>
+<u>Bayesian Approach</u>:</h4>
+The two (really one) approaches I have taken so far are both frequentist approaches. There is another way of approaching the problem that many people would choose - the Bayesian Approach. This requires setting a prior distribution for the population proportions of the candidates. If one were really doing this seriously, experimenting with different prior distributions would be crucial to fine tuning the calculation.<br />
+<br />
+First, I will compute the probability for two candidates. This, should be simple. There is a nice solution with the Beta-Binomial distribution. Since there are only two candidates to vote for, each vote is like a coin flip heads or tails. The prior distribution is a Beta distribution. Depending on the parameters chosen, the distribution can look wildly different:<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-Rq0B7HWoHV8/Vrz7Ef_1AgI/AAAAAAAAAJY/rQol4GdaGNI/s1600/Rplot.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="400" src="https://1.bp.blogspot.com/-Rq0B7HWoHV8/Vrz7Ef_1AgI/AAAAAAAAAJY/rQol4GdaGNI/s400/Rplot.png" width="400" /></a></div>
+Polling would be an obvious way to choose a prior distribution. I'll make two computations, one with a naive prior - alpha = 1, beta = 1 - and one determined based on&nbsp;<a href="http://projects.fivethirtyeight.com/election-2016/primary-forecast/iowa-democratic/#polls-only">538's poll's only forecast of the caucus</a>&nbsp;and see if the results are much different.<br />
+<br />
+Now, I'm not interested in 538's pre-results forecast of the chance that Hillary wins, but instead I'm interested in their forecast for the percent of votes she receives (a little lower on the page). Because I am just dealing with a simplified world of 2 candidates, I will split Martin O'malley's projected proportion evenly between the candidates and I see that the projected population proportion for Hillary is around .515. This does not uniquely determine parameters for the beta distribution. As long as alpha = 1.062*beta, the mean of the beta distribution will be .515. I will eyeball 538's projection and multiply or divide both alpha and beta by a constant to try and find a good pair of parameters..<br />
+<br />
+538 made quite a confident forecast. I found (alpha = 58.41, beta = 55) to be a good pair. Now, for the calculation. First I'll do it with the naive prior:<br />
+<br />
+At first,&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=\hat{p}\sim&amp;space;Beta(1,1)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\hat{p}\sim&amp;space;Beta(1,1)" title="\hat{p}\sim Beta(1,1)" /></a>. Then after n votes for the candidate and N-n votes for the other candidate,<a href="https://www.codecogs.com/eqnedit.php?latex=\hat{p}\sim&amp;space;Beta(1+n,1+N-n)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\hat{p}\sim&amp;space;Beta(1+n,1+N-n)" title="\hat{p}\sim Beta(1+n,1+N-n)" /></a>.<br />
+<br />
+In order to win after received n out of N votes seen so far, the candidate must receive at least <a href="https://www.codecogs.com/eqnedit.php?latex=g=\frac{(N+V)}{2}+1-n" target="_blank"><img src="https://latex.codecogs.com/gif.latex?g=\frac{(N+V)}{2}+1-n" title="g=\frac{(N+V)}{2}+1-n" /></a> more votes.<br />
+<br />
+Probability of receiving k more votes out of V=<br />
+<div style="text-align: center;">
+<br /></div>
+<div style="text-align: center;">
+<a href="https://www.codecogs.com/eqnedit.php?latex=\binom{V}{k}\frac{B(k+1+n,V-k+1+N-n)}{B(1+n,\&amp;space;1+N-n)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\binom{V}{k}\frac{B(k+1+n,V-k+1+N-n)}{B(1+n,\&amp;space;1+N-n)}" title="\binom{V}{k}\frac{B(k+1+n,V-k+1+N-n)}{B(1+n,\ 1+N-n)}" /></a>&nbsp;where B is the Beta Function.</div>
+<br />
+Thus, the probability of the candidate winning is:<br />
+<div style="text-align: center;">
+<br /></div>
+<div style="text-align: center;">
+<a href="https://www.codecogs.com/eqnedit.php?latex=\sum_{k=g}^{V}\binom{V}{k}\frac{B(k+1+n,V-k+1+N-n)}{B(1+n,1+N-n)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\sum_{k=g}^{V}\binom{V}{k}\frac{B(k+1+n,V-k+1+N-n)}{B(1+n,1+N-n)}" title="\sum_{k=g}^{V}\binom{V}{k}\frac{B(k+1+n,V-k+1+N-n)}{B(1+n,1+N-n)}" /></a>.</div>
+<br />
+Here is the same sample calculation as I did earlier except I gave Martin O'malley's votes to Clinton and Sanders in the same proportions that they were receiving the other votes with.<br />
+<span style="font-size: x-small;"><br /></span>
+<span style="font-size: x-small;">Votes for Hilary Clinton - 75298 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Votes for Bernie Sanders - 74702</span><br />
+<span style="font-size: x-small;">Percent of Votes Observed &nbsp;- 90%</span><br />
+<span style="font-size: xx-small;"><br /></span><span style="font-size: x-small;">Probability of each candidate winning: Clinton - .9999996, Sanders - 4e-07.</span><br />
+<br />
+If you are an astute observer, you might be questioning how the above calculation is even possible to do. It turns out that Sympy can handle arbitrarily large numbers and is capable of doing the calculation fairly quickly.<br />
+<br />
+To give you an idea of how big the numbers that are produced by the equation above for the numbers in the example, with V = 16666 and k = 8333, &nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=\binom{V}{k}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\binom{V}{k}" title="\binom{V}{k}" /></a>&nbsp;, the number of different ways the candidate can receive k out of V votes, is around&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=5.7&amp;space;*10^{5014}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?5.7&amp;space;*10^{5014}" title="5.7 *10^{5014}" /></a>. Somehow, Sympy handles the whole thing and is seemingly accurate.<br />
+<br />
+The prior distribution turns out to be pretty much completely negligible. There are just so many votes that it makes very little difference for any prior which is not very extreme.<br />
+<br />
+Now I'd like to do the same calculation for more than two candidates.. Instead of the Beta distribution, I'll use the Dirichlet distribution as the prior and the the Dirichlet-Multinomial distribution for calculating the posterior prediction.<br />
+<br />
+If the prior parameters of the Dirichlet distribution are <a href="https://www.codecogs.com/eqnedit.php?latex=\begin{pmatrix}&amp;space;a_{1}&amp;space;&amp;a_{2}&amp;space;&amp;\cdots&amp;space;&amp;&amp;space;a_{k}&amp;space;\end{pmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{pmatrix}&amp;space;a_{1}&amp;space;&amp;a_{2}&amp;space;&amp;\cdots&amp;space;&amp;&amp;space;a_{k}&amp;space;\end{pmatrix}" title="\begin{pmatrix} a_{1} &amp;a_{2} &amp;\cdots &amp; a_{k} \end{pmatrix}" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=A=\sum_{i=1}^{k}a_{i}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A=\sum_{i=1}^{k}a_{i}" title="A=\sum_{i=1}^{k}a_{i}" /></a>&nbsp;then the posterior parameters of the Dirichlet distribution after N votes are <a href="https://www.codecogs.com/eqnedit.php?latex=\begin{pmatrix}&amp;space;a_{1}&amp;space;+n_{1}&amp;space;&amp;a_{2}+n_{2}&amp;space;&amp;&amp;space;\cdots&amp;space;&amp;&amp;space;a_{k}+n_{k}&amp;space;\end{pmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{pmatrix}&amp;space;a_{1}&amp;space;+n_{1}&amp;space;&amp;a_{2}+n_{2}&amp;space;&amp;&amp;space;\cdots&amp;space;&amp;&amp;space;a_{k}+n_{k}&amp;space;\end{pmatrix}" title="\begin{pmatrix} a_{1} +n_{1} &amp;a_{2}+n_{2} &amp; \cdots &amp; a_{k}+n_{k} \end{pmatrix}" /></a> and <a href="https://www.codecogs.com/eqnedit.php?latex=A%27=A+N" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A'=A+N" title="A'=A+N" /></a>, then the probability of this&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{pmatrix}&amp;space;y_{1}&amp;space;&amp;&amp;space;y_{2}&amp;space;&amp;&amp;space;\cdots&amp;space;&amp;&amp;space;y_{k}&amp;space;\end{pmatrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{pmatrix}&amp;space;y_{1}&amp;space;&amp;&amp;space;y_{2}&amp;space;&amp;&amp;space;\cdots&amp;space;&amp;&amp;space;y_{k}&amp;space;\end{pmatrix}" title="\begin{pmatrix} y_{1} &amp; y_{2} &amp; \cdots &amp; y_{k} \end{pmatrix}" /></a>&nbsp;distribution of the remaining V votes is:<br />
+<br />
+<div style="text-align: center;">
+<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{V*B(A%27,V)}{\prod_{k:y_{k}%3E0}^{&amp;space;}y_{k}B(a_{k}+n_{k},y_{k})}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{V*B(A',V)}{\prod_{k:y_{k}&gt;0}^{&amp;space;}y_{k}B(a_{k}+n_{k},y_{k})}" title="\frac{V*B(A',V)}{\prod_{k:y_{k}&gt;0}^{ }y_{k}B(a_{k}+n_{k},y_{k})}" /></a>&nbsp;where B is again the Beta function</div>
+<br />
+If you loop through all the possible distributions of the V remaining votes and keep track of all the times each candidate wins and sum the probabilities of each possible distribution (splitting the probabilities in the instances of ties), then you calculate the probability of each candidate winning.<br />
+<br />
+I did this, but there's an issue that comes up. The number of different ways to divide the V votes among the k candidates is <a href="https://www.codecogs.com/eqnedit.php?latex=\binom{V+k-1}{k-1}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\binom{V+k-1}{k-1}" title="\binom{V+k-1}{k-1}" /></a>. That's a massive number. For the case of k=3, when V = 500, this number is 125,751. The number of ways the vote can be distributed explodes. So, my program will run for only 3 candidates and running it for more than say 350 votes takes way too much time.<br />
+<br />
+Nonetheless, it was a good experience writing the program. Playing around with numbers of votes that are more reasonable and making different prior parameters was a good experience in getting to know the Dirichlet-Multinomial distribution.<br />
+<br />
+I could not stop here and continue by simulating from the Dirichlet-Multinomial distribution, but I'll stop here instead.<br />
+<br />
+<div>
+Comparing the results to the simulation and my second method, the results of the Bayesian methods are very similar.</div>
+<div>
+<br /></div>
+<br />
+I posted the programs I wrote&nbsp;<a href="https://github.com/adamwlev/ElectionForecast.git">here</a>.<br />
+<br />
+<br />
+EDIT: I am back to do the simulating from Dirichlet-Multinomial solution. This is the best one in my opinion because it can easily handle very large number of votes to go and even large numbers of candidates. I use numpy to generate the random numbers which conveniently has both random.dirichelt() and random.multinomial(). With about 10,000 * 10,000 iterations, the estimates of percentage of times each candidate will win is pretty stable and runs within 20 seconds on my computer.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br /></div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+<br /></div>
+<div style="text-align: left;">
+<br /></div>
