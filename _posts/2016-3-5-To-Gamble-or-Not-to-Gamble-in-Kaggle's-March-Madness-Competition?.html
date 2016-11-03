@@ -1,0 +1,389 @@
+---
+layout: post
+title: To Gamble or Not to Gamble in Kaggle's March Madness Competition
+excerpt: I use simulation in R to investigate the optimal strategy for placing in the top 5 in this Kaggle competition. 
+---
+
+
+Kaggle is running their annual March Madness competition (third year). This is my first year participating. The competition asks you to predict the games of the NCAA tournament (all 68*67/2=2278 possible match-ups) by submitting probabilities that one team will win. You are judged based on the (negative) average log-losses of your predictions.<br />
+<br />
+Log-loss is the natural logarithm of 1 minus your "miss". If you predict a team has a .1 chance of winning, and they lose, your miss for that game is .1. 1 minus your miss is .9. Your log loss for this game is -log(.9)=.105.<br />
+<br />
+Here is a plot of Log-loss versus miss for one prediction/game:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-nj9Z_j-XE1A/VudndbnT0NI/AAAAAAAAAL4/fA-oUbdoE_si9slTKAr7Zjb8D9OVimTBg/s1600/Log-loss%2Bvs.%2BMiss.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="285" src="https://4.bp.blogspot.com/-nj9Z_j-XE1A/VudndbnT0NI/AAAAAAAAAL4/fA-oUbdoE_si9slTKAr7Zjb8D9OVimTBg/s320/Log-loss%2Bvs.%2BMiss.png" width="320" /></a></div>
+<br />
+You are judged by the average of your log-losses through all the observed 63 games (the play-in games don't count).<br />
+<br />
+There are many competitors in this competition. Each competitor can submit up to two different sets of predictions. This makes for roughly 1500 different entries all trying to predict the same tournament.<br />
+<br />
+Each competitor (me included) is making a model to predict the games based on historical results. The prizes are as follows: $10,000 for first place, $6,000 for second, $4,000 for third, $2,000 for fourth, and $1,000 for fifth.<br />
+<br />
+A popular topic talked about is whether there is an incentive to extremize your predictions or employ some other scheme in order to differentiate yourself from the pack of competitors and have a better chance of winning.<br />
+<br />
+If your goal is simply to make the best prediction you can, and thus be as high as you can be on the leaderboard on average, you should go with the predictions that your model spits out. Assuming you've done the training and testing correctly, the model is doing the best it can do to minimize that score.<br />
+<br />
+Interestingly though, if your goal is only for the money earned by placing within the top 5, the optimal strategy changes. Since everyone is competing for those five places, making predictions that are close to the mean predictions of the pack actually hurts your chances of placing within the top 5, even if those predictions are the true odds associated with each game.<br />
+<br />
+This is why I like the choice of the contest administrators to allow two different submissions by each competitor. The competitor doesn't have to choose one goal or the other but instead can target one goal with each submission.<br />
+<br />
+I employed simulation to try to help answer the question of what the optimal strategy is for the second goal of having the most expected earnings.<br />
+<br />
+It first simulates the "true odds" for each of the 63 games of a tournaments from a beta distribution. I used the parameters alpha=.65, beta=.65 so the distribution is heavy tailed. This decision was informed by simulating tournaments and looking at the average log-loss scores for predictions that were exactly the true odds. If the parameters are above one, the games are too hard to predict. As the parameters get smaller, the games become easier to predict. I looked at past contest winners' scores to help make this decision. Admittedly, this is not the most informed decision since there have only been two years of competition, but I don't think this should impact the results too much.<br />
+<br />
+<div style="color: #4f4f4f; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: black;">trueprobs</span><span style="color: #061a99;">&lt;-rbeta(</span><span style="color: #045218;">63</span><span style="color: #061a99;">,</span><span style="color: black;">.65</span><span style="color: #061a99;">,</span><span style="color: black;">.65</span><span style="color: #061a99;">) </span>##true probabilities of the games</div>
+<br />
+First let's start with the simple scenario that somehow every competitor knows the "true odds" associated with each game.<br />
+<br />
+Let's look at the extremizing strategy. Here's the extremizing function:<br />
+<br />
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+extremize<span style="color: #061a99;">&lt;-</span><span style="color: #c38809;">function</span><span style="color: #061a99;">(</span>x<span style="color: #061a99;">,</span>a<span style="color: #061a99;">){</span></div>
+<div style="font-family: monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99; white-space: pre;">&nbsp;       </span><span style="color: black;">x</span><span style="color: #061a99;">[</span><span style="color: black;">x</span><span style="color: #061a99;">&gt;</span><span style="color: black;">.5</span><span style="color: #061a99;">]&lt;- </span><span style="color: black;">x</span><span style="color: #061a99;">[</span><span style="color: black;">x</span><span style="color: #061a99;">&gt;</span><span style="color: black;">.5</span><span style="color: #061a99;">]+(</span><span style="color: #045218;">1</span><span style="color: #061a99;">-</span><span style="color: black;">x</span><span style="color: #061a99;">[</span><span style="color: black;">x</span><span style="color: #061a99;">&gt;</span><span style="color: black;">.5</span><span style="color: #061a99;">])*</span><span style="color: black;">a</span></div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span class="Apple-tab-span" style="white-space: pre;">        </span><span style="color: black;">x</span>[<span style="color: black;">x</span>&lt;<span style="color: black;">.5</span>]&lt;- <span style="color: black;">x</span>[<span style="color: black;">x</span>&lt;<span style="color: black;">.5</span>]-<span style="color: black;">x</span>[<span style="color: black;">x</span>&lt;<span style="color: black;">.5</span>]*<span style="color: black;">a</span></div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span class="Apple-tab-span" style="white-space: pre;">        </span>return(<span style="color: black;">x</span>)</div>
+<span style="color: #061a99; font-family: &quot;monaco&quot;; font-size: 11px; text-indent: -4px;">}</span><br />
+<br />
+It takes in two parameters: a vector of predictions (one for each of the 63 games) and a tuning parameter that indicates what percent to extremize by. For example, a game with a prediction of .6 and a tuning parameter of .5 will come out as (1-.6)*.5+.6 = .8.<br />
+<br />
+In order to guard against predictions of 0 or 1 when competitors employ extremizing with a = 1 , I will use this simple "cap" function:<br />
+<br />
+<div style="color: #c38809; font-family: monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: black;">cap</span><span style="color: #061a99;">&lt;-</span>function<span style="color: #061a99;">(</span><span style="color: black;">x</span><span style="color: #061a99;">){</span></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">         </span></span>x<span style="color: #061a99;">[</span>x<span style="color: #061a99;">&lt;=</span><span style="color: #045218;">0</span><span style="color: #061a99;">]&lt;-</span>.001</div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span class="Apple-tab-span" style="white-space: pre;">         </span>x<span style="color: #061a99;">[</span>x<span style="color: #061a99;">&gt;=</span><span style="color: #045218;">1</span><span style="color: #061a99;">]&lt;-</span>.999</div>
+<div style="color: #061a99; font-family: monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: black;"><span class="Apple-tab-span" style="white-space: pre;">         </span></span>return(<span style="color: black;">x</span>)</div>
+<div style="line-height: normal; margin-left: 4px; text-indent: -4px;">
+</div>
+<div style="color: #061a99; font-family: monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+}</div>
+<br />
+Let's say that some of the competitors decide to employ this strategy of extremizing. To evaluate the merit of this strategy, I made 900 virtual competitors. As the index of the competitor increases, the more the competitor extremized his or her predictions. Here is the structure of the simulation:<br />
+<br />
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #c38809;">for</span><span style="color: #061a99;"> (</span>s<span style="color: #061a99;"> </span><span style="color: #c38809;">in</span><span style="color: #061a99;"> </span><span style="color: #045218;">1</span><span style="color: #061a99;">:</span>numofsims<span style="color: #061a99;">){</span></div>
+<div style="color: #4f4f4f; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span><span style="color: black;">scores</span><span style="color: #061a99;">&lt;-numeric(</span><span style="color: black;">numofcomp</span><span style="color: #061a99;">) </span>##vector for scores</div>
+<div style="color: #4f4f4f; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span><span style="color: black;">outcomes</span><span style="color: #061a99;">&lt;-rbinom(</span><span style="color: #045218;">63</span><span style="color: #061a99;">,</span><span style="color: #045218;">1</span><span style="color: #061a99;">,</span><span style="color: black;">trueprobs</span><span style="color: #061a99;">) </span>##draw to simulate game outcomes</div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span><span style="color: #c38809;">for</span><span style="color: #061a99;"> (</span>i<span style="color: #061a99;"> </span><span style="color: #c38809;">in</span><span style="color: #061a99;"> </span><span style="color: #045218;">1</span><span style="color: #061a99;">:</span>numofcomp<span style="color: #061a99;">){</span></div>
+<div style="font-family: monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<div style="font-family: Monaco; line-height: normal; margin-left: 4px;">
+<div style="font-family: Monaco; line-height: normal; margin-left: 4px;">
+<div style="color: #061a99; font-family: Monaco; line-height: normal; margin-left: 4px;">
+<span class="Apple-tab-span" style="white-space: pre;"> </span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="color: black;">assessments</span>[,<span style="color: black;">i</span>]&lt;-cap(extremize(<span style="color: black;">trueprobs</span>,(<span style="color: black;">i</span>-<span style="color: #045218;">1</span>)/<span style="color: #045218;">900</span>))</div>
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">               </span></span><span style="color: #4f4f4f;">#the bigger the index of the competitor, the more he or she extremized</span></div>
+</div>
+</div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">                </span></span>scores<span style="color: #061a99;">[</span>i<span style="color: #061a99;">]&lt;-logloss(</span>assessments<span style="color: #061a99;">[,</span>i<span style="color: #061a99;">],</span>outcomes<span style="color: #061a99;">)</span></div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span class="Apple-tab-span" style="white-space: pre;">        </span>}</div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span>score<span style="color: #061a99;">&lt;-sort(</span>scores<span style="color: #061a99;">,</span>index.return<span style="color: #061a99;">=</span><span style="color: #c38809;">TRUE</span><span style="color: #061a99;">)$</span>ix</div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span class="Apple-tab-span" style="white-space: pre;">        p</span>lacement<span style="color: #061a99;">&lt;-</span>placement<span style="color: #061a99;">+rank(</span>scores<span style="color: #061a99;">)</span></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">1</span><span style="color: #061a99;">]]&lt;-</span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">1</span><span style="color: #061a99;">]]</span><span style="color: #045218;">+10000</span></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">2</span><span style="color: #061a99;">]]&lt;-</span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">2</span><span style="color: #061a99;">]]</span><span style="color: #045218;">+6000</span></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">3</span><span style="color: #061a99;">]]&lt;-</span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">3</span><span style="color: #061a99;">]]</span><span style="color: #045218;">+4000</span></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">4</span><span style="color: #061a99;">]]&lt;-</span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">4</span><span style="color: #061a99;">]]</span><span style="color: #045218;">+3000</span></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">5</span><span style="color: #061a99;">]]&lt;-</span>money<span style="color: #061a99;">[</span>score<span style="color: #061a99;">[</span><span style="color: #045218;">5</span><span style="color: #061a99;">]]</span><span style="color: #045218;">+2000</span></div>
+<div style="color: #4f4f4f; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: #061a99;"><span class="Apple-tab-span" style="white-space: pre;">        </span></span>##record the competitors who earned money and the finishing order</div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+}</div>
+<div>
+<br /></div>
+<div>
+Now for the results of this strategy. To get an idea of what the competitors predictions were like, let's look at the predictions for one specific game. Game 4 has "true prob" = .55. Here are the competitors predictions for this game:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-7DBwC4qozfs/VuxL1cdtD3I/AAAAAAAAAMM/BUgtudkr4uMyykvIj-iXw4BNy9GhsCnqA/s1600/Predictions%2Bfor%2BGame%2B4.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="262" src="https://3.bp.blogspot.com/-7DBwC4qozfs/VuxL1cdtD3I/AAAAAAAAAMM/BUgtudkr4uMyykvIj-iXw4BNy9GhsCnqA/s320/Predictions%2Bfor%2BGame%2B4.png" width="320" /></a></div>
+So the competitors with the higher id are taking more risk - "gambling".</div>
+<div>
+<br /></div>
+<div>
+Let's see how the competitors faired in terms of average placement on the leaderboard through all the simulations (I did 700).<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-s3k4nB8hoPM/VuxMq3O0gtI/AAAAAAAAAMU/uFHdrywO8SgrGz8LfVO9SwwcvxauRt-0w/s1600/Position%252CExtremize.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://4.bp.blogspot.com/-s3k4nB8hoPM/VuxMq3O0gtI/AAAAAAAAAMU/uFHdrywO8SgrGz8LfVO9SwwcvxauRt-0w/s320/Position%252CExtremize.png" width="320" /></a></div>
+Interestingly, the competitors that extremized a little bit did the best in the average leaderboard position. As of now, I really don't know why this is the case. It runs counter to the hypothesis that the best strategy for leaderboard placement is just submitting the "true odds". This has nothing to do with some sort of glitch in the rankings having to do with ties since there are never ties. Anyway, this is not really a pronounced affect but it is interesting. Onwards.<br />
+<br />
+Now for the money! Let's see how the competitors faced in average money won.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-AjsQ4ME1AV0/VuxN-7EswZI/AAAAAAAAAMg/z5YMhV4_k_Egxqu488CsFtgI_1QUOchCA/s1600/Money%252C%2BExtremize.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://1.bp.blogspot.com/-AjsQ4ME1AV0/VuxN-7EswZI/AAAAAAAAAMg/z5YMhV4_k_Egxqu488CsFtgI_1QUOchCA/s320/Money%252C%2BExtremize.png" width="320" /></a></div>
+Yikes, that is ugly. Seems like practically no one except the first couple competitors won any money. Let's take a look at log(money) to get a clearer picture.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-iu57pnaktUQ/VuxOzfkRS4I/AAAAAAAAAMo/ylte9R90cgoz_TKSV3kfpro_e7EQIyJwQ/s1600/Log%2BMoney%252CExtremize.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="291" src="https://2.bp.blogspot.com/-iu57pnaktUQ/VuxOzfkRS4I/AAAAAAAAAMo/ylte9R90cgoz_TKSV3kfpro_e7EQIyJwQ/s320/Log%2BMoney%252CExtremize.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+There is a sharp drop off from competitor 4 to competitor 5. In fact there is a fairly perfect monotonically negative relationship between money won and amount extremized. Here are the first six values in the average money won vector:</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+5057.14286 &nbsp; &nbsp; 3050.00000 &nbsp; &nbsp; &nbsp;2057.14286 &nbsp; &nbsp; 1580.00000 &nbsp; &nbsp;1051.42857 &nbsp; &nbsp; &nbsp;31.42857</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Ok. Some clarity, some more questions. Let's move on and look at another strategy. Sticking with the basic assumption that everyone knows the true odds associated with each game, let's have competitors add random amounts of noise to their predictions with the hopes of distinguishing themselves from the crowd.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Here is a function I call perturb (name inspired by <a href="https://www.kaggle.com/c/march-machine-learning-mania-2016/forums/t/19329/please-steal-this-entry">this</a> thread in the Kaggle competition):</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+perturb<span style="color: #061a99;">&lt;-</span><span style="color: #c38809;">function</span><span style="color: #061a99;">(</span>x<span style="color: #061a99;">,</span>a<span style="color: #061a99;">){</span></div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="white-space: pre;">&nbsp;       </span>return(<span style="color: black;">x</span>+rnorm(length(<span style="color: black;">x</span>),<span style="color: #045218;">0</span>,<span style="color: black;">a</span>))</div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+</div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+}</div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<br /></div>
+<div style="line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="font-family: inherit;">"perturb" takes in two inputs: a vector of predictions, and a tuning parameter for how much noise to add.</span></div>
+<div style="color: #c38809; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<br /></div>
+<div style="line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="font-family: inherit;">Now, instead of each competitor extremizing by an amount&nbsp;proportional to his or her index number, the competitors will add an amount of noise&nbsp;proportional&nbsp;to his or her index number.</span></div>
+<div style="color: #061a99; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<div style="line-height: normal; margin-left: 4px;">
+<div style="line-height: normal; margin-left: 4px;">
+<div style="font-family: Monaco; line-height: normal; margin-left: 4px;">
+<span style="color: black;"><br /></span></div>
+<div style="line-height: normal; margin-left: 4px;">
+<div style="font-family: Monaco; line-height: normal; margin-left: 4px;">
+<span style="color: black;">assessments</span>[,<span style="color: black;">i</span>]&lt;-cap(perturb(<span style="color: black;">trueprobs</span>,(<span style="color: black;">i</span>-<span style="color: #045218;">1</span>)/<span style="color: #045218;">2500</span>))</div>
+<div>
+<br /></div>
+</div>
+</div>
+</div>
+</div>
+<div style="line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="font-family: inherit;">I choose the 2500 because they seemed like nice&nbsp;amount to start with. We can try different amounts of noise later. So the competitors with low indexes will have predictions that are perturbed very small random amounts, and the competitors at the end will have predictions that are perturbed by much&nbsp;larger amounts. Competitor #1 will not have noise added to his or her predictions. Competitor #900 will have noise with N(0,.36) added to all of his or her predictions..</span><br />
+<span style="font-family: inherit;"><br /></span>
+<span style="font-family: inherit;">Now let's first by looking at the predictions of the competitors for a single game to get a sense of what's going on. Game #8 in this simulation had "trueprob" .67. Here are the predictions of the competitors for this game:</span><br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-IagKBxxk0l8/VuxXJtKnuJI/AAAAAAAAANA/UBxIB2M4_VIBh9aMYpEIvJDGLiDtfwW0A/s1600/Predictions%2Bfor%2BGame%2B%25238.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="284" src="https://3.bp.blogspot.com/-IagKBxxk0l8/VuxXJtKnuJI/AAAAAAAAANA/UBxIB2M4_VIBh9aMYpEIvJDGLiDtfwW0A/s320/Predictions%2Bfor%2BGame%2B%25238.png" width="320" /></a></div>
+<span style="font-family: inherit;">So yes, this seems to be a lot of randomness to add. Some of the predictions of the competitors with higher id's are around 0.</span><br />
+<span style="font-family: inherit;"><br /></span>
+<span style="font-family: inherit;">Let's see the average leaderboard positions of the competitors:</span><br />
+<span style="font-family: inherit;"><br /></span>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-HEEOZgul9BU/VuxX5n5jRzI/AAAAAAAAANI/wzqzkMNOQ-0FucTifmyUc2dfkRSTKSbOA/s1600/Position%2BPerturb%2B1%253A2500.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="265" src="https://1.bp.blogspot.com/-HEEOZgul9BU/VuxX5n5jRzI/AAAAAAAAANI/wzqzkMNOQ-0FucTifmyUc2dfkRSTKSbOA/s320/Position%2BPerturb%2B1%253A2500.png" width="320" /></a></div>
+<span style="font-family: inherit;">As expected, the average finish of the competitors with the most accurate predictions (least amount of noise added) is the best. It is a monotone relationship.</span><br />
+<span style="font-family: inherit;"><br /></span>
+<span style="font-family: inherit;">Now, what about&nbsp;the average money won? Drumroll please....</span><br />
+<span style="font-family: inherit;"><br /></span></div>
+</div>
+<div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://1.bp.blogspot.com/-GLNN9cI4O4A/VuxYu5AEQaI/AAAAAAAAANU/LTQt55uF4LMRUw8fkJSoQ89hk6dpbAUuw/s1600/Ave%2BMoney%2BWon%2BPerturb%2Bi%253A2500.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="333" src="https://1.bp.blogspot.com/-GLNN9cI4O4A/VuxYu5AEQaI/AAAAAAAAANU/LTQt55uF4LMRUw8fkJSoQ89hk6dpbAUuw/s400/Ave%2BMoney%2BWon%2BPerturb%2Bi%253A2500.png" width="400" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+So, perhaps surprisingly, the peak of average money won occurs not for those competitors who had the most accurate predictions, but instead for the competitors who added noise. Most surprising to me is the fact that none of the first 88 competitors made ANY money. The accuracy of their predictions lost to the randomness of the rest of the field's predictions for placement inside the top 5. Even the competitors who added lots of noise beat those with the most accurate predictions.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Ok, so this is perhaps interesting. But is it a by product of the simple assumption made that everyone knows the "true probability" associated with each game?</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Let's test this out by adding a wrinkle. Let's say now, there are different classes of accuracy. Let's say 30 classes. 1 group know the correct odds perfectly (they spent a lot of time on their model or they're just really smart). The next group is a little less accurate, and so on and so forth until the last class is not very accurate at all.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Here's a function for making prediction inaccurate:</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+make_inaccurate<span style="color: #061a99;">&lt;-</span><span style="color: #c38809;">function</span><span style="color: #061a99;">(</span>x<span style="color: #061a99;">,</span>a<span style="color: #061a99;">){</span></div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span class="Apple-tab-span" style="white-space: pre;">        </span>return(<span style="color: black;">a</span>*runif(length(<span style="color: black;">x</span>))+(<span style="color: #045218;">1</span>-<span style="color: black;">a</span>)*<span style="color: black;">x</span>)</div>
+<div class="separator" style="clear: both;">
+</div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+}</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+x is again the vector of predictions, a is again a tuning parameter. This time a indicates what percent of a random uniform variable to use as the prediction. If a is 0, the predictions are returned as is. If a is 1 the predictions are changed to random predictions.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Now the first 30 of the 900 competitors are the smart ones so they're predictions will be the trueprobs. The last 30 of the 900 will have completely random predictions.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+The goal is to test the two strategies - extremizing and adding noise - to see how they fare intragroup. Is there a benefit to employing either of these strategies to gain an advantage towards one of the goals against the competitors in your class of accuracy? Is the benefit/detriment different between the classes? Let's see.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+The trueprobs will now be replaced with fakeprobs:</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div style="font-family: monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<div style="color: #061a99; font-family: Monaco; line-height: normal; margin-left: 4px;">
+fakeprobs&lt;-matrix(<span style="color: #045218;">0</span>,<span style="color: #045218;">63</span>,numofclasses)</div>
+<div style="color: #061a99; font-family: Monaco; line-height: normal; margin-left: 4px;">
+<span style="color: #c38809;">for</span> (i <span style="color: #c38809;">in </span><span style="color: #045218;">1</span>:numofclasses){</div>
+<div style="font-family: Monaco; line-height: normal; margin-left: 4px;">
+<span style="color: #061a99;">&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span><span style="color: black;">fakeprobs</span><span style="color: #061a99;">[,</span><span style="color: black;">i</span><span style="color: #061a99;">]&lt;-make_inaccurate(</span><span style="color: black;">trueprobs</span><span style="color: #061a99;">,(</span><span style="color: black;">i</span><span style="color: #061a99;">-</span><span style="color: #045218;">1</span><span style="color: #061a99;">)/</span><span style="color: #045218;">100</span><span style="color: #061a99;">)</span></div>
+<div style="color: #061a99;">
+</div>
+<div style="color: #061a99; font-family: Monaco; line-height: normal; margin-left: 4px;">
+}</div>
+</div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<br /></div>
+<div class="separator" style="clear: both;">
+Each classes' size is 30. 100 is again a random choice. It makes it so the final class will have 30 percent random guesses along with 70 percent of the trueprobs for their predictions. Here is a plot of the amount of random guess incorporated in assessment for all the competitors:</div>
+<div class="separator" style="clear: both;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-kb0o8-5uTZk/VuxhAe0JdBI/AAAAAAAAANs/nBlpYU-bHY4haInBaQNnOotMqOpCYZFrg/s1600/Amount%2BRandom%2BGuess.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="251" src="https://3.bp.blogspot.com/-kb0o8-5uTZk/VuxhAe0JdBI/AAAAAAAAANs/nBlpYU-bHY4haInBaQNnOotMqOpCYZFrg/s320/Amount%2BRandom%2BGuess.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both;">
+Now, let's test the strategies intragroup. First the extremizing strategy:</div>
+<div>
+<div style="color: #061a99; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<div style="font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px;">
+<div style="font-family: Monaco; line-height: normal; margin-left: 4px;">
+<br /></div>
+<div style="font-family: Monaco; line-height: normal; margin-left: 4px;">
+assessments[,i]&lt;-cap(extremeize(fakeprobs[,(i-<span style="color: #045218;">1</span>)%/%numofclasses+<span style="color: #045218;">1</span>],(i-<span style="color: #045218;">1</span>)%%numofclasses/(numofclasses-<span style="color: #045218;">1</span>)))</div>
+<div>
+<br /></div>
+</div>
+<div class="separator" style="-webkit-text-stroke-width: 0px; clear: both; color: black; font-family: -webkit-standard; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; margin: 0px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px;">
+<span style="font-family: inherit;">Class members with the lowest index number will not extremize and class members with the highest index number will extremize as much as possible.&nbsp;</span></div>
+</div>
+</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+First let's start by looking at what the predictions look like for a particular game. In this run, the true probability of game #50 was .30. Here are what the predictions look like for all the competitors now:</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-E_K1_p8xxvc/Vuxpd4ioTVI/AAAAAAAAAOA/pfBinPRfhpc57mFfd9T1b5rZCdIGyxupA/s1600/Predictions%2Bfor%2BGame%2B%252350.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="263" src="https://4.bp.blogspot.com/-E_K1_p8xxvc/Vuxpd4ioTVI/AAAAAAAAAOA/pfBinPRfhpc57mFfd9T1b5rZCdIGyxupA/s400/Predictions%2Bfor%2BGame%2B%252350.png" width="400" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+As you go to the right the predictions of a particular group are less accurate, and as you go to the right inside a particular group, the predictions are more extremized. For games with trueprobs close to .5, the picture will look a little bit strange since some of the groups might come to the conclusion that the odds are on the wrong side of .5 and so will extremize in the exact wrong direct. But such is the risk of extremizing.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Let's take a look at the results intragroup across all simulations of average placement on the leaderboard. Let's start with group 1:</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-fmQ4YkYA8Cw/Vuxqj7T7vEI/AAAAAAAAAOI/ALIE8f7rrzoo6WludQB0Gn2WjFbjcl30g/s1600/Placement%2Bfor%2BClass%25231.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="288" src="https://2.bp.blogspot.com/-fmQ4YkYA8Cw/Vuxqj7T7vEI/AAAAAAAAAOI/ALIE8f7rrzoo6WludQB0Gn2WjFbjcl30g/s320/Placement%2Bfor%2BClass%25231.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+This result is the same as it was the first time around and is the same globally this time around as well as within each group: it does not make sense to extremize for the sake of placement on the leaderboard.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Now what about extremizing for the sake of average money won within a group? Let's start with group 1:</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-y4ZK8xN-wCM/Vuxynk7aFZI/AAAAAAAAAO8/k35JvM4tTZQL4t005j48pBogo94HBRepw/s1600/Money%2BWon%2BGroup%2B1.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://4.bp.blogspot.com/-y4ZK8xN-wCM/Vuxynk7aFZI/AAAAAAAAAO8/k35JvM4tTZQL4t005j48pBogo94HBRepw/s320/Money%2BWon%2BGroup%2B1.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+That's a bit different. The competitor who earned the most extremized the least as before, but now the competitor who extremized the most actually came in second place. Is this just random noise? Possibly. This is only the result of 700 simulations. Let's take a look at another group..&nbsp;</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-_hVly_54QFE/VuxzelN8rtI/AAAAAAAAAPE/LT2nob0_8q4SzBvCyZxWLrldjRRVKu1MQ/s1600/Money%2BWon%2BGroup%2B2.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://2.bp.blogspot.com/-_hVly_54QFE/VuxzelN8rtI/AAAAAAAAAPE/LT2nob0_8q4SzBvCyZxWLrldjRRVKu1MQ/s320/Money%2BWon%2BGroup%2B2.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+Wow, this is a large difference. Perhaps it does pay to extremize for the sake of winning money, especially for those with less accurate models. Let's take a look at another group. Say #7:</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://2.bp.blogspot.com/-imqARoHOvZE/Vux1NrrdeoI/AAAAAAAAAPU/7_5NL0xYxmc8eat0N_T9YvrTL-9aS11dg/s1600/Money%2BWon%2BGroup%2B7.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://2.bp.blogspot.com/-imqARoHOvZE/Vux1NrrdeoI/AAAAAAAAAPU/7_5NL0xYxmc8eat0N_T9YvrTL-9aS11dg/s320/Money%2BWon%2BGroup%2B7.png" width="320" /></a></div>
+<div class="separator" style="clear: both; text-align: left;">
+More simulations must be run to come to a more confident conclusion. Initially, it seems that it might pay to employ extremizing for those with less than the best models.</div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: center;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Ok, finally, what about the second strategy of adding random noise to predictions. When every competitor had the same baseline accuracy, the results were that there was no point in terms of leadership placement to add noise. However, towards the goal of money earned, there was a benefit of adding random noise. Will the same hold within accuracy classes? Will there be a difference in this effect between different groups?</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+First, the code for this strategy:</div>
+<div class="separator" style="clear: both; text-align: left;">
+<span style="font-family: &quot;monaco&quot;; font-size: 11px; text-indent: -4px;"><br /></span></div>
+<div style="color: #061a99; font-family: Monaco; font-size: 11px; line-height: normal; margin-left: 4px; text-indent: -4px;">
+<span style="color: black;">assessments</span>[,<span style="color: black;">i</span>]&lt;-cap(perturb(<span style="color: black;">fakeprobs</span>[,(<span style="color: black;">i</span>-<span style="color: #045218;">1</span>)%/%<span style="color: black;">numofclasses</span>+<span style="color: #045218;">1</span>],(<span style="color: black;">i</span>-<span style="color: #045218;">1</span>)%%<span style="color: #045218;">30</span>/<span style="color: #045218;">81</span>))</div>
+<div>
+<br /></div>
+<div>
+I chose 81 specifically because it is about the same amount of noise that (i-1)/2500 yielded at the extreme indexes when all the competitors were in one large accuracy class.<br />
+<br />
+First, here are the predictions for one game and one group. Here's Group 1's prediction for game 5. Game 5 trueprob was .46:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-CmMYh-FmIA4/Vux8a_GtaRI/AAAAAAAAAPs/ceTf8QhxIuwDZm2wrHE-HnnqnCWk_agYA/s1600/Group%2B1%2BGame%2B5.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="260" src="https://4.bp.blogspot.com/-CmMYh-FmIA4/Vux8a_GtaRI/AAAAAAAAAPs/ceTf8QhxIuwDZm2wrHE-HnnqnCWk_agYA/s320/Group%2B1%2BGame%2B5.png" width="320" /></a></div>
+Ok, how did adding random noise affect average leaderboard placement within an accuracy class? I will spoil the surprise, and for the sake of brevity, tell you that it was the same as with one big accuracy class, it was uniformly bad for average leaderboard placement to add random noise no matter what accuracy class you were in.<br />
+<br />
+But what about Money within an accuracy class? Did it help for average money earned to add random noise just as it did before? Let's take a look. Group #1:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://3.bp.blogspot.com/-c7dBMv9RjdQ/Vux-GuDfA8I/AAAAAAAAAP4/h1aSaEwfxdA_yVmCdMXl_c9p8dAa1qj0w/s1600/Money%2BGroup%2B1.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="313" src="https://3.bp.blogspot.com/-c7dBMv9RjdQ/Vux-GuDfA8I/AAAAAAAAAP4/h1aSaEwfxdA_yVmCdMXl_c9p8dAa1qj0w/s320/Money%2BGroup%2B1.png" width="320" /></a></div>
+<br /></div>
+<div>
+<span style="color: #061a99;">This pattern looks very similar as before! No money won by the competitors who did not add any noise. The peak is somewhere around 1/3 of the way to the extreme (note this will probably depends on the amount of noise added relative to index number which I have just chosen arbitrarily).</span><br />
+<span style="color: #061a99;"><br /></span>
+<span style="color: #061a99;">Let's take a look at just one more group to see if the pattern is similar.</span><br />
+<span style="color: #061a99;"><br /></span>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="https://4.bp.blogspot.com/-frSw5b8sGUE/Vux-1lBJg8I/AAAAAAAAAP8/Q3ur1jnFsz4ENgOlT-w74Bsc9XF9Ej5lw/s1600/Money%2BWon%2BGroup%2B4.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="https://4.bp.blogspot.com/-frSw5b8sGUE/Vux-1lBJg8I/AAAAAAAAAP8/Q3ur1jnFsz4ENgOlT-w74Bsc9XF9Ej5lw/s320/Money%2BWon%2BGroup%2B4.png" width="320" /></a></div>
+<span style="color: #061a99;"><br /></span></div>
+<div class="separator" style="clear: both; text-align: left;">
+Again, similar pattern.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<h4>
+Conclusion</h4>
+<div class="separator" style="clear: both; text-align: left;">
+I don't think anything new was really discovered towards the goal of average placement on the leaderboard but certainly interesting results as to the strategy one should employ towards the goal of winning the most money on average.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+There is definitely more that can be done here.&nbsp;</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Thinking about how much noise precisely to add to your predictions to most positively impact your average money won is one question. Also, should your decision depend on what you think others will do?</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+Also, which is better extremizing or adding noise and for who (i.e. what accuracy class). I did not really compare the two strategies directly but instead analyzed each separately.</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+I'd welcome feedback!</div>
+<div class="separator" style="clear: both; text-align: left;">
+<br /></div>
+<div class="separator" style="clear: both; text-align: left;">
+<a href="https://github.com/adamwlev/Kaggle-March-Madness-To-Gamble-or-Not-to-Gamble.git">Here</a> is the R code for this project.</div>
+</div>
+<br />
