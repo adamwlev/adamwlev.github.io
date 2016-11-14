@@ -11797,7 +11797,7 @@ $$RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n} (y_i - h(x_i))^2} $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>"How much error we expect to see on average" is words for expected error. What is "error" you might ask. I think, and I think most other people do to, that it the absolute deviation of a prediction from it's true value.</p>
+<p>"How much error we expect to see on average" is words for expected error. What is "error" you might ask. I think, and I think most other people do to, that it is the absolute deviation of a prediction from it's true value.</p>
 <p>We could estimate that by taking the average over all data points of the error (it would be good to do this on a test set). For a data set, the formula would be:</p>
 
 </div>
@@ -11828,7 +11828,7 @@ $$\mathbb{E}[error] = \frac{1}{n}\sum_{i=1}^{n}|y_i-h(x_i)|$$<p></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now I'll guess what you're thinking - "ok, ok Adam, but aren't these numbers just basically the same in practice?". The answer is no! RMSE is always <strong>higher</strong> than MAE. Let me show you an example with R.</p>
+<p>Now I'll guess what you're thinking - "ok, ok Adam, but aren't these numbers just basically the same in practice?". The answer is no! RMSE is always <strong>higher</strong> than MAE (except for the weird case where all the errors are the same in which case RMSE equals MAE). Let me show you an example with R.</p>
 
 </div>
 </div>
