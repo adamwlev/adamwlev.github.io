@@ -6,12 +6,11 @@ excerpt: I am not a conspiracy theorist, I promise.
 
 Was the election rigged? There has been [talk](https://medium.com/@jhalderm/want-to-know-if-the-election-was-hacked-look-at-the-ballots-c61a6113b0ba#.ehjzgtk8k) of the ease with which this can happen. From the story by Alex Halderman:
 
-    > This malware would likely be designed to remain inactive during pre- 
-    > election tests, do its dirty business during the election, then erase 
-    > itself when the polls close. A skilled attacker’s work might leave no
-    > visible signs — though the country might be surprised when results in 
-    > several close states were off from pre-election polls.
-    
+> This malware would likely be designed to remain inactive during pre- 
+> election tests, do its dirty business during the election, then erase 
+> itself when the polls close. A skilled attacker’s work might leave no
+> visible signs — though the country might be surprised when results in 
+> several close states were off from pre-election polls.
 
 I am not a conspiracy theorist. I promise. I am just writing to rebuke the hasty dismissals of the possibility of rigging from the pop-statisticians [Nate Silver](https://twitter.com/NateSilver538/status/801229000366575616) and [Nate Cohn](https://twitter.com/Nate_Cohn/status/801226924156719104) via Twitter.
 
