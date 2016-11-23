@@ -4,7 +4,6 @@ title: Re: Was the Election Hacked? A comment
 excerpt: I am not a conspiracy theorist, I promise.
 ---
 
-
 Was the election rigged? There has been [talk](https://medium.com/@jhalderm/want-to-know-if-the-election-was-hacked-look-at-the-ballots-c61a6113b0ba#.ehjzgtk8k) of the ease with which this can happen. From the story by Alex Halderman:
 
     > This malware would likely be designed to remain inactive during pre-election tests, do its dirty business during the election, then erase itself when the polls close. A skilled attacker’s work might leave no visible signs — though the country might be surprised when results in several close states were off from pre-election polls.
