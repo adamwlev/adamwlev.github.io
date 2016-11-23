@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Re: Was the Election Hacked? A comment
+title: Re Was the Election Hacked? A comment
 excerpt: I am not a conspiracy theorist, I promise.
 ---
 
