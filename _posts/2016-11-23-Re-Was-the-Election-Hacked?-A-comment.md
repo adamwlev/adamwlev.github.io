@@ -16,9 +16,9 @@
 
     The Nates are responding to an NY Mag (article)[http://nymag.com/daily/intelligencer/2016/11/activists-urge-hillary-clinton-to-challenge-election-results.html] that says that in the counties that relied on electronic-voting, Hilary received 7% fewer votes than in counties than in counties that relied on paper ballots and optical scanners. The Nates both run regressions on the improvement of Hilary in each county of certain swing states measured by the "clintonshift" - a change in the proportion of votes that went for Hilary. They say that by including demographics in their regressions they can explain the "clintonshift" without significant contribution from the fact that a county used paper ballots exclusively. The problem is this misses an entirely possible method of rigging the election that this data would not capture - the random destruction (or fabrication) of votes in counties that relatively more (or less) Hilary voters.
 
-    If the hacking was done in the following fashion - target the most dense Hilary counties and randomly destroy 5% of the votes - this analysis based of the proportion of votes that went for each candidate would not catch it because the proportion of votes in each county would not be affected. Unfortunately, a recount of votes would not even be able to detect this sort of hack. The only way to detect it would be to talk to people who voted and investigate if any votes were missing.
+    If the hacking was done in the following fashion - target the most dense Hilary counties and randomly destroy 5% of the votes (both Hilary and Trump votes) - this analysis based of the proportion of votes that went for each candidate would not catch it because the proportion of votes in each county would not be affected. Unfortunately, a recount of votes would not even be able to detect this sort of hack. The only way to detect it would be to talk to people who voted and investigate if any votes were missing.
 
-    Again, I promise I am not a conspiracy theorist. Just proving out that the statistic being analyzed is not sufficient to say whether or not there was hacking on the election.
+    Again, I promise I am not a conspiracy theorist. Just pointing out that the statistic being used in the discussion does not allow us to know for sure whether or not he election was hacked.
 
 
 
