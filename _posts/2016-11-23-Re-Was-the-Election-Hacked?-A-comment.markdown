@@ -18,7 +18,7 @@
 
     If the hacking was done in the following fashion - target the most dense Hilary counties and randomly destroy 5% of the votes (both Hilary and Trump votes) - this analysis based of the proportion of votes that went for each candidate would not catch it because the proportion of votes in each county would not be affected. Unfortunately, a recount of votes would not even be able to detect this sort of hack. The only way to detect it would be to talk to people who voted and investigate if any votes were missing.
 
-    Again, I promise I am not a conspiracy theorist. Just pointing out that the statistic being used in the discussion does not allow us to know for sure whether or not he election was hacked.
+    Again, I promise I am not a conspiracy theorist. Just pointing out that the statistic being used in the discussion does not allow us to know for sure whether or not the election was hacked.
 
 
 
