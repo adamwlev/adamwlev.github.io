@@ -11,8 +11,8 @@ Was the election rigged? There has been [talk](https://medium.com/@jhalderm/want
 
 I am not a conspiracy theorist. I promise. I am just writing to rebuke the hasty dismissals of the possibility of rigging from the pop-statisticians (Nate Silver)[https://twitter.com/NateSilver538/status/801229000366575616] and (Nate Cohn)[https://twitter.com/Nate_Cohn/status/801226924156719104] via Twitter.
 
-![Cohn](./../images/cohn)
-![Silver](./../images/silver)
+![Cohn](./../images/cohn.tiff)
+![Silver](./../images/silver.tiff)
 
 The Nates are responding to an NY Mag (article)[http://nymag.com/daily/intelligencer/2016/11/activists-urge-hillary-clinton-to-challenge-election-results.html] that says that in the counties that relied on electronic-voting, Hilary received 7% fewer votes than in counties than in counties that relied on paper ballots and optical scanners. The Nates both run regressions on the improvement of Hilary in each county of certain swing states measured by the "clintonshift" - a change in the proportion of votes that went for Hilary. They say that by including demographics in their regressions they can explain the "clintonshift" without significant contribution from the fact that a county used paper ballots exclusively. The problem is this misses an entirely possible method of rigging the election that this data would not capture - the random destruction (or fabrication) of votes in counties that relatively more (or less) Hilary voters.
 
