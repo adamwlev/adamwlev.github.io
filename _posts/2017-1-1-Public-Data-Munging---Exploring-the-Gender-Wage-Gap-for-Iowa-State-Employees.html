@@ -13228,7 +13228,7 @@ Number of unique Position values:  4654
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Since there are so many nulls in the Agency/Institution field, I do not think it will be usefull. Overall there are more female employees than males. The Place of Residency seems to be a mishmash of cities and counties from what I can tell. This will be useful because wages depend on the cost of living which can vary intrastate. There are a ton of unique values for Position because of the level of detail specified and some redundancy - Associate Professor and Assoc Professor. To eliminate the redundancy would take a lot of work so I will not bother with this for this simple fun analysis.</p>
+<p>Since there are so many nulls in the Agency/Institution field, I do not think it will be useful. Overall there are more female employees than males. The Place of Residency seems to be a mishmash of cities and counties from what I can tell. This will be useful because wages depend on the cost of living which can vary intrastate. There are a ton of unique values for Position because of the level of detail specified and some redundancy - Associate Professor and Assoc Professor. To eliminate the redundancy would take a lot of work so I will not bother with this for this simple fun analysis.</p>
 
 </div>
 </div>
@@ -13238,7 +13238,7 @@ Number of unique Position values:  4654
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to make the fairest comparison possible of employees salaries', the employees being compared should be in the same department, hold the same position, live in the same place, and be paid at the same frequency.</p>
+<p>In order to make the fairest comparison possible of employees' salaries, the employees being compared should be in the same department, hold the same position, live in the same place, and be paid at the same frequency.</p>
 <p>They should be in the same department because rates of pay can vary from department to department. They should hold the same position for obvious reasons. They should live in the same place because as said before, pay can vary from place to place because of the cost of living. And finally, they should be paid with the same frequency. This last point is subtle. One could try to standardize hourly, weekly and yearly salaries all to the same unit like hourly pay but to do this one must assume how many hours per year and per week each employee is working, which is not in the data. Making this assumption might seem harmless but it's possible that this could obscure the goal of comparing the pay of the two genders. For example, if one converts the hourly rate of pay to a yearly salary for positions where hours are scarce, this will misrepresent the true compensation of these employees. If one gender posesses these hourly positions disproportionately, this will distort the comparison between genders. Likewise, if one does the opposite and converts yearly salaries to hourly rates by assuming the hours worked per year, this will overestimate the compensation of workers who hold position where more hours or harder work is expected of them. If one gender disproportionately holds these sorts of positions, this too could confuse the comparison of wages between genders.</p>
 
 </div>
@@ -13366,8 +13366,8 @@ Number of unique Position values:  4654
 <div class="prompt input_prompt">In&nbsp;[36]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="s1">&#39;Num. of (Pl,Pos,Dept,Freq) tuples with over 200 employees&#39;</span><span class="p">,</span>\
-      <span class="s1">&#39;in data set:&#39;</span><span class="p">,</span>\
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="s1">&#39;Num. of (Pl,Pos,Dept,Freq) tuples with &gt;200 employees&#39;</span><span class="p">,</span>\
+      <span class="s1">&#39;in data:&#39;</span><span class="p">,</span>\
       <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;Place of Residence&#39;</span><span class="p">,</span><span class="s1">&#39;Position&#39;</span><span class="p">,</span>
                      <span class="s1">&#39;Department&#39;</span><span class="p">,</span><span class="s1">&#39;pay frequency&#39;</span><span class="p">])</span>\
                             <span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -13383,7 +13383,7 @@ Number of unique Position values:  4654
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Num. of (Pl,Pos,Dept,Freq) tuples with over 200 employees in data set: 263
+<pre>Num. of (Pl,Pos,Dept,Freq) tuples with &gt;200 employees in data: 263
 </pre>
 </div>
 </div>
@@ -13432,8 +13432,9 @@ Number of unique Position values:  4654
                         <span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> 
                                          <span class="n">x</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
 
-<span class="n">over_60_each_gender</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">min_freq_gender</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">num_unique_genders</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span>\
-                                                <span class="o">&amp;</span> <span class="p">(</span><span class="n">min_freq_gender</span><span class="o">&gt;</span><span class="mi">60</span><span class="p">)])</span>
+<span class="n">over_60_each_gender</span> <span class="o">=</span> \
+        <span class="nb">set</span><span class="p">(</span><span class="n">min_freq_gender</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">num_unique_genders</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span>\
+                                  <span class="o">&amp;</span> <span class="p">(</span><span class="n">min_freq_gender</span><span class="o">&gt;</span><span class="mi">60</span><span class="p">)])</span>
 </pre></div>
 
 </div>
@@ -13475,7 +13476,7 @@ Number of unique Position values:  4654
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The plan is to compare the median salary between men and women for each of these 164 different place,position,departments,pay frequency tuples to see how the wages of men and women compare. Before we can get to this very exciting part, I have to do one more munging step. The data represents wages over 9 years, and over this 9 years pay has been rising. In order to retain the decent sample sizes that I have for comparisons, I am going to adjust wages so that they are all in terms of 2007 dollars. I'll do this by examining the median change in income for each pay frequency and gender and then adjusting all wages by assuming all jobs with the same pay frequency are changing by the same amount. This will not be perfect, but it'll be fine for getting an idea of how the wages of the two genders compare for the different types of jobs.</p>
+<p>The plan is to compare the median salary between men and women for each of these 164 different place,position,departments,pay frequency tuples to see how the wages of men and women compare. Before we can get to this very exciting part, I have to do one more munging step. The data represents wages over 9 years, and over this 9 years pay has been rising. In order to retain the decent sample sizes that I have for comparisons, I am going to adjust wages so that they are all in terms of 2007 dollars. I'll do this by using the change in median wages for each pay frequency and gender and then adjusting all wages by assuming all jobs with the same pay frequency and gender are changing by the same proportion. This is not perfect, but it'll be fine for getting an idea of how the wages of the two genders compare for the different types of jobs since the sample size will be big enough that it should not throw off the comparison much.</p>
 
 </div>
 </div>
@@ -14508,7 +14509,7 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It is interesting to see in aggregate that female's wages are significantly higher for employees who get paid hourly and daily, while much lower for employees who get paid yearly. The fact that median wages for females who get paid yearly is lower than males was expected for me but I did not expect that in aggregate females' hourly pay would be higher than males'.</p>
-<p>Also cool to see that the gap in median weekly has closed over the past 9 years spanned by the dataset.</p>
+<p>Also cool to see that the gap in median weekly pay has closed over the 9 years spanned by the dataset.</p>
 
 </div>
 </div>
@@ -14518,7 +14519,7 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, the aggregate statistics, while interesting, do not really tell us specific information. For example, what if skilled female workers end up taking more hourly paying jobs rather than longer commitment jobs because they do not plan to be in the work force for extended periods of times. This would mean that hourly female workers could be more skilled than hourly male workers in aggregate. To really examine any gap in pay, we will use the tuples saved from before of places,positions,departments,pay frequency with large enough samples of both genders to see how the wages of the two genders compare. Of course this is not the complete story since within one position and department and pay frequency, there could be different levels of responsibility or seniority that might correspond with rightly higher earnings. However, with this informantion this is the best we can do.</p>
+<p>Now, the aggregate statistics, while interesting, do not really tell us specific information in regards to fairness of wages. For example, what if skilled female workers end up taking more hourly paying jobs rather than longer commitment jobs because they do not plan to be in the work force for extended periods of time. This would mean that female hourly workers are more skilled in aggregate than male hourly workers and should thus command a higher wage. To really examine any gap in pay, we will use the tuples saved from before of places,positions,departments,pay frequency with large enough samples of both genders to see how the wages of the two genders compare. Of course this is not the complete story since within one position and department and pay frequency, there could be different levels of responsibility or seniority that might correspond with rightly higher earnings. However, with this informantion, this is the best we can do.</p>
 
 </div>
 </div>
@@ -14615,7 +14616,7 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I'll display the table ordered by the size of the effect. But I will order by the lower bound of the confidence interval of the effect size in order to give show more significant results higher. A negative Pay Gap indicates that the median income of women is more than the median income of men, while a positive indicated higher pay for men.</p>
+<p>I'll display the table ordered by the size of the effect. But I will order by the lower bound of the confidence interval of the effect size in order to show more significant results higher. A negative Pay Gap indicates that the median income of women is more than the median income of men, while a positive indicates higher pay for men.</p>
 
 </div>
 </div>
@@ -14678,8 +14679,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>114</td>
       <td>95</td>
       <td>-107.25</td>
-      <td>25.36</td>
-      <td>(-148.17, -55.26)</td>
+      <td>25.87</td>
+      <td>(-149.22, -53.95)</td>
     </tr>
     <tr>
       <th>1</th>
@@ -14692,8 +14693,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>841</td>
       <td>722</td>
       <td>36.30</td>
-      <td>4.27</td>
-      <td>(27.99, 44.02)</td>
+      <td>4.26</td>
+      <td>(27.99, 44.08)</td>
     </tr>
     <tr>
       <th>2</th>
@@ -14706,8 +14707,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>1072</td>
       <td>1230</td>
       <td>29.13</td>
-      <td>2.26</td>
-      <td>(24.69, 33.48)</td>
+      <td>2.29</td>
+      <td>(24.65, 33.52)</td>
     </tr>
     <tr>
       <th>3</th>
@@ -14720,8 +14721,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>216</td>
       <td>116</td>
       <td>29.37</td>
-      <td>4.50</td>
-      <td>(22.02, 38.95)</td>
+      <td>4.42</td>
+      <td>(22.11, 38.66)</td>
     </tr>
     <tr>
       <th>4</th>
@@ -14734,8 +14735,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>264</td>
       <td>213</td>
       <td>34.00</td>
-      <td>8.65</td>
-      <td>(16.56, 51.09)</td>
+      <td>8.55</td>
+      <td>(17.07, 51.18)</td>
     </tr>
     <tr>
       <th>5</th>
@@ -14748,8 +14749,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>5454</td>
       <td>1429</td>
       <td>18.51</td>
-      <td>1.50</td>
-      <td>(16.02, 21.95)</td>
+      <td>1.48</td>
+      <td>(16.07, 21.77)</td>
     </tr>
     <tr>
       <th>6</th>
@@ -14762,8 +14763,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>2709</td>
       <td>1612</td>
       <td>16.98</td>
-      <td>1.06</td>
-      <td>(14.78, 18.84)</td>
+      <td>1.05</td>
+      <td>(14.87, 18.89)</td>
     </tr>
     <tr>
       <th>7</th>
@@ -14777,7 +14778,7 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>227</td>
       <td>26.05</td>
       <td>5.82</td>
-      <td>(14.12, 37.8)</td>
+      <td>(14.23, 38.13)</td>
     </tr>
     <tr>
       <th>8</th>
@@ -14790,8 +14791,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>604</td>
       <td>265</td>
       <td>22.20</td>
-      <td>4.99</td>
-      <td>(13.96, 33.6)</td>
+      <td>4.93</td>
+      <td>(14.0, 33.35)</td>
     </tr>
     <tr>
       <th>9</th>
@@ -14804,8 +14805,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>1916</td>
       <td>1329</td>
       <td>16.43</td>
-      <td>1.25</td>
-      <td>(13.79, 18.58)</td>
+      <td>1.28</td>
+      <td>(13.7, 18.59)</td>
     </tr>
     <tr>
       <th>10</th>
@@ -14819,7 +14820,7 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>1306</td>
       <td>13.76</td>
       <td>0.85</td>
-      <td>(12.02, 15.4)</td>
+      <td>(12.01, 15.41)</td>
     </tr>
     <tr>
       <th>11</th>
@@ -14832,8 +14833,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>120</td>
       <td>272</td>
       <td>15.68</td>
-      <td>2.83</td>
-      <td>(11.24, 22.33)</td>
+      <td>2.85</td>
+      <td>(11.25, 22.56)</td>
     </tr>
     <tr>
       <th>12</th>
@@ -14846,8 +14847,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>557</td>
       <td>813</td>
       <td>15.41</td>
-      <td>3.23</td>
-      <td>(10.82, 23.91)</td>
+      <td>3.26</td>
+      <td>(10.92, 23.88)</td>
     </tr>
     <tr>
       <th>13</th>
@@ -14861,7 +14862,7 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>1029</td>
       <td>12.74</td>
       <td>1.17</td>
-      <td>(10.35, 14.98)</td>
+      <td>(10.35, 14.92)</td>
     </tr>
     <tr>
       <th>14</th>
@@ -14874,8 +14875,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>110</td>
       <td>336</td>
       <td>13.84</td>
-      <td>2.24</td>
-      <td>(9.46, 18.68)</td>
+      <td>2.15</td>
+      <td>(9.71, 18.31)</td>
     </tr>
     <tr>
       <th>15</th>
@@ -14888,25 +14889,11 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>305</td>
       <td>377</td>
       <td>17.82</td>
-      <td>5.03</td>
-      <td>(8.66, 29.53)</td>
+      <td>5.05</td>
+      <td>(8.76, 29.84)</td>
     </tr>
     <tr>
       <th>16</th>
-      <td>163</td>
-      <td>Iowa State University</td>
-      <td>STORY</td>
-      <td>PROF</td>
-      <td>YR</td>
-      <td>112261</td>
-      <td>3004</td>
-      <td>654</td>
-      <td>11.10</td>
-      <td>1.33</td>
-      <td>(8.51, 13.56)</td>
-    </tr>
-    <tr>
-      <th>17</th>
       <td>148</td>
       <td>University of Iowa</td>
       <td>JOHNSON</td>
@@ -14916,8 +14903,22 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>77</td>
       <td>160</td>
       <td>17.80</td>
-      <td>4.59</td>
-      <td>(8.25, 25.49)</td>
+      <td>4.63</td>
+      <td>(8.61, 25.42)</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>163</td>
+      <td>Iowa State University</td>
+      <td>STORY</td>
+      <td>PROF</td>
+      <td>YR</td>
+      <td>112261</td>
+      <td>3004</td>
+      <td>654</td>
+      <td>11.10</td>
+      <td>1.31</td>
+      <td>(8.56, 13.51)</td>
     </tr>
     <tr>
       <th>18</th>
@@ -14930,8 +14931,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>386</td>
       <td>136</td>
       <td>10.53</td>
-      <td>1.82</td>
-      <td>(7.37, 14.41)</td>
+      <td>1.79</td>
+      <td>(7.38, 14.41)</td>
     </tr>
     <tr>
       <th>19</th>
@@ -14944,8 +14945,8 @@ RbmIiIiISMJUlIuIiIiIJOz/A69SUaFkJsj6AAAAAElFTkSuQmCC
       <td>150</td>
       <td>287</td>
       <td>-12.64</td>
-      <td>2.31</td>
-      <td>(-15.83, -7.12)</td>
+      <td>2.37</td>
+      <td>(-15.83, -6.98)</td>
     </tr>
   </tbody>
 </table>
@@ -15417,8 +15418,9 @@ JKlGDG+SJEk1YniTJEmqEcObJElSjRjeJEmSasTwJkmSVCP/H5+zqgLjM0kCAAAAAElFTkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[53]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">yearly</span> <span class="o">=</span> <span class="n">results_df</span><span class="p">[(</span><span class="n">results_df</span><span class="p">[</span><span class="s1">&#39;Pay Frequency&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;YR&#39;</span><span class="p">)]</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">## matplotlib is amazing!</span>
 
+<span class="n">yearly</span> <span class="o">=</span> <span class="n">results_df</span><span class="p">[(</span><span class="n">results_df</span><span class="p">[</span><span class="s1">&#39;Pay Frequency&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;YR&#39;</span><span class="p">)]</span>
 <span class="n">n_bins</span> <span class="o">=</span> <span class="mi">6</span>
 <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">yearly</span><span class="p">[</span><span class="s1">&#39;Median Wage&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="n">n_bins</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">yearly</span><span class="p">[</span><span class="s1">&#39;Median Wage&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">edges</span><span class="p">)</span>
