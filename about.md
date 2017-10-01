@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-I am a Data Scientist living in San Francisco. I studied Mathematics and Economics at USC and recently completed the Metis Data Science Bootcamp in NYC. I am currently looking for a position as a Data Scientist. [Link to my resume](https://www.scribd.com/document/328892511/Resume).
+Hacking with Data. Working to bring golf analytics into 21st century.
 
 ### Contact me
 
