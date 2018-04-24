@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-Hacking with Data. Working to bring golf analytics into 21st century.
+I currently work for Capital One as a Data Analyst in the Bay Area. I love working with Golf data, playing basketball, playing golf, and coding. 
 
 ### Contact me
 
