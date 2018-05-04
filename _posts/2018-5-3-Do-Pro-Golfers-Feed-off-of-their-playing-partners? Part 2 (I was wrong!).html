@@ -5,7 +5,6 @@ excerpt: I revisited my analysis from last year and discovered that my earlier c
 ---
 
 
-
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
@@ -11783,7 +11782,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In part one of this post (<a href="link">here</a>), I explored whether there is a statistically significant correlation between the performance of players playing in the same grouping on the PGA Tour. I found evidence that there is a statistically significant correlation by comparing the within group variation of performance to the between group variation with ANOVA and the Kruskal-Wallis H-test. I also ran a non-parametric permutation test which also provided strong evidence for correlation of performance within a group.</p>
+<p>In part one of this post (<a href="https://adamwlev.github.io/Do-Pro-Golfers-Feed-off-of-their-playing-partners/" target="_blank">here</a>), I explored whether there is a statistically significant correlation between the performance of players playing in the same grouping on the PGA Tour. I found evidence that there is a statistically significant correlation by comparing the within group variation of performance to the between group variation with ANOVA and the Kruskal-Wallis H-test. I also ran a non-parametric permutation test which also provided strong evidence for correlation of performance within a group.</p>
 <p>In this part, I am going to go back over my assumptions and make my analysis more robust by controlling for a possible lurking variable. Then, if the evidence is still strong that there is an effect, I will explore some of the questions that I posed at the beginning of part 1: does this effect exist especially at certain tournaments? On certain courses? For certain players? During certain times? Under certain circumstances?</p>
 
 </div>
@@ -11793,7 +11792,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I will start by fastforwarding through all the data cleaning and validation steps that I performed in part one. I have made a script which performs all the transformations (motivated in part 1) and writes out a clean dataframe.</p>
+<p>I will start by fastforwarding through all the data cleaning and validation steps that I performed in part one. I have made a <a href="https://github.com/adamwlev/adamwlev.github.io/blob/master/scripts/FeedOffEffect/clean_data.py" target="_blank">script</a> which performs all the transformations (motivated in part 1) and writes out a clean dataframe.</p>
 
 </div>
 </div>
