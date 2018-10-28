@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-I currently work for Capital One as a Data Analyst in the Bay Area. I love working with golf data, playing basketball, playing golf, and coding. 
+I currently work for Capital One as a Data Analyst in the Bay Area. I love working with golf data, playing basketball, playing golf, and coding.
 
 ### Contact me
 
