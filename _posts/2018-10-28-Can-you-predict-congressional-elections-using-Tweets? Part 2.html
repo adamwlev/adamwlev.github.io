@@ -1,14 +1,14 @@
 ---
 layout: post
-title: Can you predict congressional elections using Tweets?
-excerpt: I harvested some tweets from the month prior to the 2014 Congressional Elections and used them to predict the outcome of the races. 
+title: Can you predict congressional elections using Tweets? Part 2
+excerpt: I used a model trained on tweets from the month prior to the 2014 Congressional Elections to predict the outcome of the 2016 races. 
 ---
 
 
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Twitter_Movies4</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>2016CongresTweets</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11782,7 +11782,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From time to time, I enjoy collecting tweets and trying to predict things with them. At Metis, I collected tweets to predict the opening weekend gross box office sales of new movies (<a href="https://adamwlev.github.io/Predicting-A-Movies-Opening-Weekend-Success-Using-Tweets/">blog post here</a>). This time, I collected tweets about political candidates (specifcally ones with their full name in the tweet) in the month leading up to the 2014 US Congressional elections with the intent of predicting the outcome of the election.</p>
+<p>As promised in <a href="https://adamwlev.github.io/Can-you-predict-congressional-elections-using-Tweets/">this</a> post, I am back to predict all of the midterm elections from 2016 using the tweets from the month leading up to the election and a model trained on the races from the 2014 midterms.</p>
 
 </div>
 </div>
@@ -11791,7 +11791,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I collected the tweets using Python, BeautifulSoup, Selenium and Chromedriver (<a href="https://github.com/adamwlev/adamwlev.github.io/blob/master/scripts/election-twitter/get-tweets.py">script here</a>). I collected tweets from all House and Senate races in 2014 (except a few that got lost in the shuffle). Lucky for you, with the data collection headache out of the way, we get to skip right to the fun part - the analysis and model building!</p>
+<p>Refresher: I used a <a href="https://github.com/adamwlev/adamwlev.github.io/blob/master/scripts/election-twitter/get-tweets.py">script</a> that queries the twitter advanced search feature for all the tweets that contain each candidates full name. I saved all such tweets that were written in the month leading up to the 2014 midterm elections and now for the month leading up to the 2016 midterm elections.</p>
+<p>Now, I will build the same model that I built in the previous post except this time I will train on the 2014 races and evaluate on the 2016 races. Let's see how the model performs!</p>
 
 </div>
 </div>
@@ -11808,7 +11809,6 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 </pre></div>
 
 </div>
@@ -11822,6 +11822,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">race_metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;~/election-twitter/elections-twitter/data/race-metadata.csv&#39;</span><span class="p">)</span>
+<span class="n">race_metadata_2016</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;~/election-twitter/elections-twitter/data/race-metadata-2016.csv&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11834,8 +11835,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## here is the race metadata</span>
-<span class="n">race_metadata</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">race_metadata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11895,6 +11895,18 @@ div#notebook {
       <td>[["Mike Rogers", "Republican", 66.1], ["Jesse ...</td>
       <td>House</td>
     </tr>
+    <tr>
+      <th>3</th>
+      <td>Alabama 5</td>
+      <td>[["Mo Brooks", "Republican", 74.4], ["Mark Bra...</td>
+      <td>House</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Alabama 6</td>
+      <td>[["Gary Palmer", "Republican", 76.2], ["Mark L...</td>
+      <td>House</td>
+    </tr>
   </tbody>
 </table>
 </div>
@@ -11911,8 +11923,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## each row has this info</span>
-<span class="n">race_metadata</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Result</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11929,9 +11940,64 @@ div#notebook {
 
 
 
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;[[&#34;Bradley Byrne&#34;, &#34;Republican&#34;, 68.2], [&#34;Burton LeFlore&#34;, &#34;Democratic&#34;, 31.7]]&#39;</pre>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Race</th>
+      <th>Result</th>
+      <th>Chamber</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Alaska at-large</td>
+      <td>[["Don Young", "Republican", 50.3], ["Steve Li...</td>
+      <td>House</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Arizona 1</td>
+      <td>[["Tom O'Halleran", "Democratic", 50.7], ["Pau...</td>
+      <td>House</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Arizona 7</td>
+      <td>[["Ruben Gallego", "Democratic", 75.2], ["Eve ...</td>
+      <td>House</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Arizona 8</td>
+      <td>[["Trent Franks", "Republican", 68.5], ["Mark ...</td>
+      <td>House</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Colorado 1</td>
+      <td>[["Diana DeGette", "Democratic", 67.9], ["Casp...</td>
+      <td>House</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 
 </div>
@@ -11939,26 +12005,37 @@ div#notebook {
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>That's JSON data that has each candidate, their party affiliation, and the percent of the vote they recieved.</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## put a column in that grabs the winner out</span>
-<span class="n">race_metadata</span><span class="p">[</span><span class="s1">&#39;winner&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">race_metadata</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## How many races in the train and test sets?</span>
+<span class="n">race_metadata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(441, 177)</pre>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -11968,8 +12045,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## split into train and test sets</span>
-<span class="n">race_metadata_train</span><span class="p">,</span> <span class="n">race_metadata_test</span>  <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">race_metadata</span><span class="p">,</span><span class="n">test_size</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">44</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## put a column in that grabs the winner out</span>
+<span class="n">race_metadata</span><span class="p">[</span><span class="s1">&#39;winner&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">race_metadata</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">race_metadata_2016</span><span class="p">[</span><span class="s1">&#39;winner&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11977,21 +12055,12 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>How many races are we dealing with? you might ask..</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">race_metadata_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">race_metadata_test</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">race_metadata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12005,504 +12074,6 @@ div#notebook {
 <div class="output_area">
 
 <div class="prompt output_prompt">Out[7]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>((308, 4), (133, 4))</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>So we will train on 308 races worth of tweets, and test on 133.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The first step will be to read in the tweets and get them into a nice tidy dataframe that we can easily compute statistics on and train models. We need to think about how to set up the prediction problem. Obviously, this is classification, since we are trying to predict choices (candidates). But, how many classes are there?</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## how many candidates in each race?</span>
-<span class="n">race_metadata_train</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[8]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>count    308.000000
-mean       2.724026
-std        1.166221
-min        2.000000
-25%        2.000000
-50%        2.000000
-75%        3.000000
-max       12.000000
-Name: Result, dtype: float64</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>There are a variable number of classes - not something I've frequently encountered and not very straightforward to deal with. I thought the best way to deal with this is to "map" this problem down to a binary classification problem, in which each candidate has his or her own row which has the independent variables and the dependent variable - a 0 for if they lost their race, and a 1 if they won their race.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Mapping back up to predict the outcome of each race can be done in a few ways. First, I am not trying to predict the percentage of the vote each candidate will receive. That would be a different task. I am strictly looking at this from a classification point of view. With that in mind, the end goal could be to #1 pick the winning candidate for each race or #2 produce a probability that each candidate will win each race. For #1, we can simply use the output of the binary classification model by taking the maximium probability predicted for each race. For #2, we would have to do some more legwork. We can't simply take the output of the binary model and translate that into the probability that each candidate will win. For example, let's say the binary model spits out the following:</p>
-<ul>
-<li>Candidate 1 has a 55% chance of being a winner</li>
-<li>Candidate 2 has a 44% chance of being a winner</li>
-<li>Candidate 3 has a 33% chance of being a winner</li>
-</ul>
-<p>--&gt; there is no way of translating the above to what we'd want - chance Candidate 1 wins the race vs. Candidate 2 and Candidate 3 since the above probabilities are not even in the correct <a href="http://planning.cs.uiuc.edu/node432.html">Event Space</a>.</p>
-<p>If we wanted to get #2, the probability each candidate will win each race, I think we would have build seperate models for each number of classes: One model for each race with 2 candidates, another for each race with 3 candidates, and so on.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>I am going to go with #1, picking the winning candidate for each race, since I don't think the result from 2. will be worth the legwork.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For the binary classification problem, we would like a row for each candidate with his or her features, a boolean indicating whether or not they won their race, and a race indentifier so that later we can group by this identifier and take the maximum within the group to get out predicted winner.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">make_ascii</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">make_df</span><span class="p">(</span><span class="n">race_metadata</span><span class="p">):</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">row_ind</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">race_metadata</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/Users/adamwlevin/election-twitter/elections-twitter/data/tweets/</span><span class="si">%s</span><span class="s1">.json&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">make_ascii</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">Race</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">),),</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">tweets</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Did not find </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">Race</span><span class="p">,))</span>
-            <span class="k">continue</span>
-        <span class="k">for</span> <span class="n">candidate</span><span class="p">,</span><span class="n">data</span> <span class="ow">in</span> <span class="n">tweets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">record</span> <span class="o">=</span> <span class="p">[[]]</span><span class="o">*</span><span class="mi">4</span>
-            <span class="k">for</span> <span class="n">date</span><span class="p">,</span><span class="n">data_</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">data_</span><span class="p">:</span>
-                    <span class="n">data_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-                        <span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> \
-                        <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">data_</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">!=</span><span class="mi">0</span> <span class="k">else</span> <span class="n">data_</span><span class="p">[:,</span><span class="n">i</span><span class="p">]])</span>
-            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">+</span><span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">candidate</span><span class="o">==</span><span class="n">row</span><span class="o">.</span><span class="n">winner</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span><span class="n">row_ind</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tweets&#39;</span><span class="p">,</span><span class="s1">&#39;replies&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;retweets&#39;</span><span class="p">,</span><span class="s1">&#39;favorites&#39;</span><span class="p">,</span>
-                                        <span class="s1">&#39;winner&#39;</span><span class="p">,</span><span class="s1">&#39;race_index&#39;</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span> <span class="o">=</span> <span class="n">make_df</span><span class="p">(</span><span class="n">race_metadata_train</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Did not find Arkansas 
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>A few races - looks like senate races - seem to have gotten lost in the shuffle.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## take a look at the result</span>
-<span class="n">df_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[11]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>tweets</th>
-      <th>replies</th>
-      <th>retweets</th>
-      <th>favorites</th>
-      <th>winner</th>
-      <th>race_index</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>[\nLove to see Paul Ryan bring his new pal Gle...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, ...</td>
-      <td>[0.0, 2.0, 0.0, 0.0, 1.0, 0.0, 3.0, 7.0, 0.0, ...</td>
-      <td>[0.0, 0.0, 2.0, 0.0, 1.0, 1.0, 0.0, 3.0, 0.0, ...</td>
-      <td>1</td>
-      <td>400</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>[\n6th District Candidate for Congress Mark Ha...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[2.0, 1.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>0</td>
-      <td>400</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>[\nGus Fahrendorf: Not a fan ObamaCare. It's i...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, ...</td>
-      <td>0</td>
-      <td>400</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>[\nMarshall Adame is an excellent candidate fo...</td>
-      <td>[0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]</td>
-      <td>[0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</td>
-      <td>1</td>
-      <td>263</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>[\nELECT Democratic Nominee MARSHALL ADAME @Ad...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[9.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>0</td>
-      <td>263</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## each row has vectors for the features:</span>
-<span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[12]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>tweets        [\nLove to see Paul Ryan bring his new pal Gle...
-replies       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, ...
-retweets      [0.0, 2.0, 0.0, 0.0, 1.0, 0.0, 3.0, 7.0, 0.0, ...
-favorites     [0.0, 0.0, 2.0, 0.0, 1.0, 1.0, 0.0, 3.0, 0.0, ...
-winner                                                        1
-race_index                                                  400
-Name: 0, dtype: object</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## a tweet</span>
-<span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;tweets&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[13]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;\nLove to see Paul Ryan bring his new pal Glenn Grothman on his campaign stops courting black voters http://www.bloomberg.com/politics/features/2014-11-03/what-would-a-gop-candidate-say-if-he-absolutely-positively-couldnt-lose\xa0…\n&#39;</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## total number of tweets in the train set</span>
-<span class="n">df_train</span><span class="o">.</span><span class="n">tweets</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[14]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>203713</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## which candidate had the most tweets about him/her</span>
-<span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">df_train</span><span class="o">.</span><span class="n">tweets</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">==</span><span class="n">df_train</span><span class="o">.</span><span class="n">tweets</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">())[</span><span class="mi">0</span><span class="p">]]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[15]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>tweets</th>
-      <th>replies</th>
-      <th>retweets</th>
-      <th>favorites</th>
-      <th>winner</th>
-      <th>race_index</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>65</th>
-      <td>[\nJames Brown "Sex Machine"  Rome on April 24...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 2.0, 1.0, ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, ...</td>
-      <td>[0.0, 1.0, 0.0, 0.0, 0.0, 3.0, 3.0, 0.0, 0.0, ...</td>
-      <td>0</td>
-      <td>81</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">race_metadata</span><span class="p">[</span><span class="n">race_metadata</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;James Brown&#39;</span><span class="p">)]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[16]:</div>
 
 
 
@@ -12533,11 +12104,39 @@ Name: 0, dtype: object</pre>
   </thead>
   <tbody>
     <tr>
-      <th>81</th>
-      <td>Connecticut 3</td>
-      <td>[["Rosa DeLauro", "Democratic", 67.1], ["James...</td>
+      <th>0</th>
+      <td>Alabama 1</td>
+      <td>[["Bradley Byrne", "Republican", 68.2], ["Burt...</td>
       <td>House</td>
-      <td>Rosa DeLauro</td>
+      <td>Bradley Byrne</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Alabama 2</td>
+      <td>[["Martha Roby", "Republican", 67.3], ["Erick ...</td>
+      <td>House</td>
+      <td>Martha Roby</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Alabama 3</td>
+      <td>[["Mike Rogers", "Republican", 66.1], ["Jesse ...</td>
+      <td>House</td>
+      <td>Mike Rogers</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Alabama 5</td>
+      <td>[["Mo Brooks", "Republican", 74.4], ["Mark Bra...</td>
+      <td>House</td>
+      <td>Mo Brooks</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Alabama 6</td>
+      <td>[["Gary Palmer", "Republican", 76.2], ["Mark L...</td>
+      <td>House</td>
+      <td>Gary Palmer</td>
     </tr>
   </tbody>
 </table>
@@ -12550,22 +12149,553 @@ Name: 0, dtype: object</pre>
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Race</th>
+      <th>Result</th>
+      <th>Chamber</th>
+      <th>winner</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Alaska at-large</td>
+      <td>[["Don Young", "Republican", 50.3], ["Steve Li...</td>
+      <td>House</td>
+      <td>Don Young</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Arizona 1</td>
+      <td>[["Tom O'Halleran", "Democratic", 50.7], ["Pau...</td>
+      <td>House</td>
+      <td>Tom O'Halleran</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Arizona 7</td>
+      <td>[["Ruben Gallego", "Democratic", 75.2], ["Eve ...</td>
+      <td>House</td>
+      <td>Ruben Gallego</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Arizona 8</td>
+      <td>[["Trent Franks", "Republican", 68.5], ["Mark ...</td>
+      <td>House</td>
+      <td>Trent Franks</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Colorado 1</td>
+      <td>[["Diana DeGette", "Democratic", 67.9], ["Casp...</td>
+      <td>House</td>
+      <td>Diana DeGette</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## how many candidates in each race in the train set?</span>
+<span class="n">race_metadata</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[9]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>count    441.000000
+mean       2.725624
+std        1.101446
+min        2.000000
+25%        2.000000
+50%        2.000000
+75%        3.000000
+max       12.000000
+Name: Result, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## how many candidates in each race in the test set?</span>
+<span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">Result</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>count    177.00000
+mean       3.59887
+std        1.24435
+min        3.00000
+25%        3.00000
+50%        3.00000
+75%        4.00000
+max       12.00000
+Name: Result, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This shows that using the name to search on Twitter is not an exact science. <a href="https://ballotpedia.org/James_Brown_(Connecticut)" target="_blank">This guy</a>, is the politician, but seems like most people tweeting "James Brown" are talking about the artist.</p>
+<p>The below is the same code as last post with a couple modifications:</p>
+<ul>
+<li>the 2016 tweets are in a different directory so I added an argument to the function that modifies the path for the year.</li>
+<li>The 2016 race metadata has some data quality issues which I didn't notice until now - some of the candidate names are not actual people but really '–' or 'Write-Ins'. I am filtering these out since there are not helpful for our goal of predicting who will win a race.</li>
+</ul>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## now for some ML stuff</span>
-<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">make_ascii</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">make_df</span><span class="p">(</span><span class="n">race_metadata</span><span class="p">,</span><span class="n">year</span><span class="o">=</span><span class="mi">2014</span><span class="p">):</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/Users/adamwlevin/election-twitter/elections-twitter/data/tweets&#39;</span>
+    <span class="k">if</span> <span class="n">year</span><span class="o">==</span><span class="mi">2016</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">+=</span> <span class="s1">&#39;/t2016&#39;</span>
+    <span class="k">for</span> <span class="n">row_ind</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">race_metadata</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">.json&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">make_ascii</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">Race</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">),),</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">tweets</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Did not find </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">Race</span><span class="p">,))</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">candidate</span><span class="p">,</span><span class="n">data</span> <span class="ow">in</span> <span class="n">tweets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;–&#39;</span><span class="p">,</span><span class="s1">&#39;Blank/Void/Scattering&#39;</span><span class="p">,</span><span class="s1">&#39;Write-Ins&#39;</span><span class="p">,</span><span class="s1">&#39;Others&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">record</span> <span class="o">=</span> <span class="p">[[]]</span><span class="o">*</span><span class="mi">4</span>
+            <span class="k">for</span> <span class="n">date</span><span class="p">,</span><span class="n">data_</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">data_</span> <span class="ow">and</span> <span class="n">data_</span><span class="o">!=</span><span class="s1">&#39;Made 5 attempts, all unsucessful.&#39;</span><span class="p">:</span>
+                    <span class="n">data_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                        <span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">data_</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">!=</span><span class="mi">0</span> <span class="k">else</span> <span class="n">data_</span><span class="p">[:,</span><span class="n">i</span><span class="p">]])</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">candidate</span><span class="p">]</span><span class="o">+</span><span class="n">record</span><span class="o">+</span><span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">candidate</span><span class="o">==</span><span class="n">row</span><span class="o">.</span><span class="n">winner</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span><span class="n">row_ind</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">values</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;candidate&#39;</span><span class="p">,</span><span class="s1">&#39;tweets&#39;</span><span class="p">,</span><span class="s1">&#39;replies&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;retweets&#39;</span><span class="p">,</span><span class="s1">&#39;favorites&#39;</span><span class="p">,</span>
+                                        <span class="s1">&#39;winner&#39;</span><span class="p">,</span><span class="s1">&#39;race_index&#39;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## make the train set and test set</span>
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">make_df</span><span class="p">(</span><span class="n">race_metadata</span><span class="p">)</span>
+<span class="n">df_test</span> <span class="o">=</span> <span class="n">make_df</span><span class="p">(</span><span class="n">race_metadata_2016</span><span class="p">,</span><span class="n">year</span><span class="o">=</span><span class="mi">2016</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Did not find Alaska 
+Did not find Arkansas 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## take a look at the result</span>
+<span class="n">df_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[13]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>candidate</th>
+      <th>tweets</th>
+      <th>replies</th>
+      <th>retweets</th>
+      <th>favorites</th>
+      <th>winner</th>
+      <th>race_index</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Bradley Byrne</td>
+      <td>[\nThings to do Tuesday:\n-VOTE; remind friend...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 3.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, ...</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Burton LeFlore</td>
+      <td>[\nWATCH: http://ln.is/youtu.be/jvTA8    ELECT...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 7.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, ...</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Martha Roby</td>
+      <td>[\nGlad to see and hear Martha Roby at Rotary ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0,...</td>
+      <td>[0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, ...</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Erick Wright</td>
+      <td>[\nBetter Vote Erick Wright, Jennifer S. Marsd...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 17.0, 0.0, 0.0, 0.0, 0.0,...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Mike Rogers</td>
+      <td>[\nNSA Director Mike Rogers will begin his add...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[1.0, 0.0, 7.0, 0.0, 2.0, 1.0, 0.0, 2.0, 2.0, ...</td>
+      <td>[0.0, 0.0, 1.0, 5.0, 1.0, 1.0, 0.0, 0.0, 1.0, ...</td>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_test</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>candidate</th>
+      <th>tweets</th>
+      <th>replies</th>
+      <th>retweets</th>
+      <th>favorites</th>
+      <th>winner</th>
+      <th>race_index</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Don Young</td>
+      <td>[\nAdded a new video: "Satisfaction Lamajj ft ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15.0, 0.0, 0.0,...</td>
+      <td>[1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 28.0, 0.0, 0.0,...</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Steve Lindbeck</td>
+      <td>[\nSteve Lindbeck is running as a Democrat aga...</td>
+      <td>[0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, ...</td>
+      <td>[0.0, 15.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 4.0,...</td>
+      <td>[0.0, 28.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 2.0,...</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Jim C. McDermott</td>
+      <td>[]</td>
+      <td>[]</td>
+      <td>[]</td>
+      <td>[]</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Bernie Souphanavong</td>
+      <td>[\nBernie Souphanavong brings up drones, Dosto...</td>
+      <td>[0.0, 0.0, 0.0]</td>
+      <td>[0.0, 0.0, 6.0]</td>
+      <td>[0.0, 0.0, 4.0]</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Stephen Wright</td>
+      <td>[\nWho writes her material? I'd buy a CD for h...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 1.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 1.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 6.0, 1.0, 0.0, 3.0, 1.0, 1.0, ...</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## who has the most tweets of the 2016 candidates?</span>
+<span class="n">df_test</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_test</span><span class="o">.</span><span class="n">tweets</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[15]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>candidate                                             Paul Ryan
+tweets        [\nThe nightmare for Republicans is, if Trump ...
+replies       [153.0, 5.0, 11.0, 2.0, 9.0, 2.0, 2.0, 4.0, 62...
+retweets      [944.0, 31.0, 40.0, 40.0, 88.0, 58.0, 18.0, 50...
+favorites     [2766.0, 56.0, 16.0, 79.0, 93.0, 62.0, 23.0, 1...
+winner                                                        1
+race_index                                                  148
+Name: 501, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, I will do the same model building procedure as last time. There are three classes of features: metadata about the language within the tweets (i.e. average number of words per tweet), metadata about the tweets (i.e. average number of replies per tweet), and a tfidf vectorizer built using the words as tokens treating all of the tweets about a candidate concatenated together as a document (i.e. tfidf score of the word "congressman"). The model is an XGBoost classifier.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
 <span class="kn">from</span> <span class="nn">sklearn.feature_extraction.stop_words</span> <span class="k">import</span> <span class="n">ENGLISH_STOP_WORDS</span>
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">FeatureUnion</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
@@ -12580,7 +12710,7 @@ Name: 0, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## This is useful for selecting a subset of features in the middle of a Pipeline</span>
@@ -12702,18 +12832,9 @@ Name: 0, dtype: object</pre>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>I am putting the names of the candidates in as stop words since it doesn't makes sense to use the name of any of the candidates to predict a generic candidate's fortunes. This is probably dealt with by setting min_df on the TfidfVectorizer reasonably, but I'll do it anywsay just to be safe.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name_</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">race_metadata</span><span class="o">.</span><span class="n">Result</span>
@@ -12728,7 +12849,7 @@ Name: 0, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## I did grid search some of the below hyperparameters using grouped CV</span>
@@ -12764,10 +12885,11 @@ Name: 0, dtype: object</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_train</span><span class="p">[[</span><span class="s1">&#39;tweets&#39;</span><span class="p">,</span><span class="s1">&#39;replies&#39;</span><span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## make train matrix, fit model on train set</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_train</span><span class="p">[[</span><span class="s1">&#39;tweets&#39;</span><span class="p">,</span><span class="s1">&#39;replies&#39;</span><span class="p">,</span>
                                      <span class="s1">&#39;retweets&#39;</span><span class="p">,</span><span class="s1">&#39;favorites&#39;</span><span class="p">]])</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;winner&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 <span class="n">cv</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -12794,7 +12916,7 @@ Name: 0, dtype: object</pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Number of trees selected: 445
+<pre>Number of trees selected: 476
 </pre>
 </div>
 </div>
@@ -12803,265 +12925,9 @@ Name: 0, dtype: object</pre>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's do some model introspection by looking at the prediction on the train set along with the outcome, and the most influencial features.</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## predict train set</span>
-<span class="n">preds</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## make a plot</span>
-<span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">preds</span><span class="p">[(</span><span class="n">df_train</span><span class="o">.</span><span class="n">winner</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">],</span><span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span>
-         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;predictions for winners&#39;</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">preds</span><span class="p">[(</span><span class="n">df_train</span><span class="o">.</span><span class="n">winner</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">],</span><span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span>
-         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;predictions for non-winners&#39;</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Train Set Predictions&#39;</span><span class="p">);</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-Hj16ZJ8+fZpWuSRJkqQPmTNnzuuZ2bOhfg2GgIg4GngtM+dExMj1zXV0zUZMq73c8cB4gD333JPZ
-s2c3VIokSZKkekTEi43p15jLgYYDn4uIRVRen/5JKmcGukfE+hDRC1haDC+heC18Mb0blRe9fEhm
-TsnMIZk5pGfPBsOKJEmSpFbSYAjIzIszs1dm9gHGAP+VmScD04ETim7jgHuK4WnFOMX0/0rfSCZJ
-kiR1GC15T8AE4LyIWEDlmv+bi/abgV2K9vOAi1pWoiRJkqTW1NgbgwHIzAeBB4vhPwFD6+jzHnBi
-K9QmSZK0WaxZs4YlS5bw3nvvtXcpUqN06dKFXr16se222zZr/iaFAEmSpK3RkiVL2GGHHejTpw8+
-2VwdXWbyxhtvsGTJEvr27dusZbTkciBJkqStwnvvvccuu+xiANAWISLYZZddWnTmyhAgSZIEBgBt
-UVq6vxoCJEmStkJdu3YFYOnSpZxwwgn19p04cSLvvPNOzfiRRx7JypUr26y2k046iaqqKq699to2
-Wf7s2bM5++yz22TZW4voCE/vHDJkSPqyMEmS1F7mz59Pv379asavve+5Vl3+uZ/Zt1WWs27dOjp1
-6tSovl27dmX16tWN6tunTx9mz55Njx49WlJeo7zyyiscdNBBvPhio95pBcDatWvZZpuOdStrR6hp
-w/0WICLmZOaQhub1TIAkSVI7W7RoEZ/4xCcYN24cVVVVnHDCCTXfzPfp04fLL7+cQw45hLvuuosX
-XniBww8/nMGDBzNixAieeeYZABYuXMjBBx/MgQceyNe//vUPLbt///5AJURccMEFDBgwgKqqKq6/
-/nomTZrE0qVLGTVqFKNGjapZ5+uvvw7ANddcQ//+/enfvz8TJ06sWWa/fv34yle+wv7778/o0aN5
-9913AZg0aRL77bcfVVVVjBkzZqNtHT16NK+99hrV1dXMmDGDuXPnMmzYMKqqqjjuuON48803ARg5
-ciSXXHIJhx12GNddd92HljFgwABWrlxJZrLLLrtw6623AnDKKadw//338+CDD3L00UcDcOmll/Kl
-L32JkSNHstdeezFp0qQGt2FTn/Fpp53Geeedx6hRo5gwYQIPPfQQ1dXVVFdXM2jQIN56663m7wSb
-mSFAkiSpA3j22WcZP3488+bNY8cdd+TGG2+smdalSxdmzpzJmDFjGD9+PNdffz1z5szh6quv5mtf
-+xoA55xzDmeeeSaPP/44H/vYx+pcx5QpU1i4cCFPPPEE8+bN4+STT+bss89m9913Z/r06UyfPv1D
-/efMmcMtt9zCo48+yqxZs7jpppt44oknAHj++ec566yzePrpp+nevTs//elPAbjyyitrlj958uSN
-apg2bRp77703c+fOZcSIEZx66ql861vfYt68eQwYMIDLLruspu/KlSt56KGHOP/88z+0jOHDh/Pw
-ww/z9NNPs9deezFjxgwAZs2axbBhwzZa5zPPPMOvf/1rHnvsMS677DLWrFlT7zZs6jMGeO6557j/
-/vv59re/zdVXX80NN9zA3LlzmTFjBtttt12dn3tH1LHOq7Sn6d9s7wpa36iL27sCSZLUSL1792b4
-8OEAjB07lkmTJnHBBRcA8IUvfAGA1atX88gjj3DiiX95JdP7778PwMMPP1xzEHvKKacwYcKEjdZx
-//33c8YZZ9RcxrLzzjvXW9PMmTM57rjj2H777QE4/vjjmTFjBp/73Ofo27cv1dXVAAwePJhFixYB
-UFVVxcknn8yxxx7LscceW+/yV61axcqVKznssMMAGDdu3Ie2bf12b2jEiBH89re/5eMf/zhnnnkm
-U6ZM4eWXX2bnnXeuuReitqOOOorOnTvTuXNndt11V1599VWAOrehvs8Y4MQTT6y5JGv48OGcd955
-nHzyyRx//PH06tWr3u3tSDwTIEmS1AFs+LSX2uPrD8I/+OADunfvzty5c2t+5s+fv8llbCgzm/RU
-mfruHe3cuXPNcKdOnVi7di0Av/zlLznrrLOYM2cOgwcPrmlvjvXbvaFDDz2UGTNmMGPGDEaOHEnP
-nj25++67GTFiRJNqrau9oc+4dk0XXXQR3/ve93j33XcZNmxYzWVDWwJDgCRJUgfw0ksv8bvf/Q6A
-22+/nUMOOWSjPjvuuCN9+/blrrvuAioH6U8++SRQ+Vb6jjvuAOC2226rcx2jR49m8uTJNQfBK1as
-AGCHHXao83r2Qw89lJ///Oe88847vP322/zsZz/b5IE2VELK4sWLGTVqFFdddRUrV66s9+bkbt26
-sdNOO9VczvPDH/6w5qxAfXr37s3rr7/O888/z1577cUhhxzC1VdfXW9tjVXfZ7yhF154gQEDBjBh
-wgSGDBliCJAkSVLT9OvXj6lTp1JVVcWKFSs488wz6+x32223cfPNNzNw4ED2339/7rnnHgCuu+46
-brjhBg488EBWrVpV57ynn346e+65J1VVVQwcOJAf//jHQOUa+COOOKLmxuD1DjjgAE477TSGDh3K
-QQcdxOmnn86gQYM2uQ3r1q1j7NixDBgwgEGDBnHuuefSvXv3erd76tSpXHjhhVRVVTF37ly+8Y1v
-1Nt/vYMOOoh99608dWnEiBG8/PLLdQan5tjUZ7yhiRMn0r9/fwYOHMh2223HEUcc0Srr3xx8ROh6
-3hMgSVJp1fWoxc1p0aJFHH300Tz11FPtVoO2PD4iVJIkSVKjGQIkSZLaWZ8+fTwLoM3KECBJkiSV
-jCFAkiRJKhlDgCRJklQyhgBJkiSpZAwBkiRJW6GuXbsCsHTpUk444YR6+06cOJF33nmnZvzII49k
-5cqVbVbbSSedRFVVFddee22braOttPVns7ls094FSJIkdTit/f6gVnp3z7p16+jUqVOT5tl99925
-++676+0zceJExo4dy0c+8hEA7r333mbX2JBXXnmFRx55hBdffLHR86xdu5ZttukYh61t+dlA8/6N
-m8MzAZIkSe1s0aJFfOITn2DcuHFUVVVxwgkn1Hwz36dPHy6//HIOOeQQ7rrrLl544QUOP/xwBg8e
-zIgRI3jmmWcAWLhwIQcffDAHHnggX//61z+07P79+wOVA8wLLriAAQMGUFVVxfXXX8+kSZNYunQp
-o0aNqnljcJ8+fXj99dcBuOaaa+jfvz/9+/dn4sSJNcvs168fX/nKV9h///0ZPXo07777LgCTJk1i
-v/32o6qqijFjxmy0raNHj+a1116jurqaGTNmMHfuXIYNG0ZVVRXHHXccb775JgAjR47kkksu4bDD
-DuO666770DIuvfRSvvSlLzFy5Ej22msvJk2aVDOtqfXWdtVVV9Us69xzz+WTn/wkAA888ABjx479
-0GdT3zJHjhzJhAkTGDp0KPvuuy8zZsyo+fwvvPBCDjzwQKqqqvjud78LwIMPPsioUaP44he/yIAB
-A3j77bc56qijGDhwIP379+cnP/lJ/TtQMxgCJEmSOoBnn32W8ePHM2/ePHbccUduvPHGmmldunRh
-5syZjBkzhvHjx3P99dczZ84crr76ar72ta8BcM4553DmmWfy+OOP87GPfazOdUyZMoWFCxfyxBNP
-MG/ePE4++WTOPvtsdt99d6ZPn8706dM/1H/OnDnccsstPProo8yaNYubbrqJJ554AoDnn3+es846
-i6effpru3bvz05/+FIArr7yyZvmTJ0/eqIZp06ax9957M3fuXEaMGMGpp57Kt771LebNm8eAAQO4
-7LLLavquXLmShx56iPPPP3+j5TzzzDP8+te/5rHHHuOyyy5jzZo1zaq3tkMPPbTmgH327NmsXr2a
-NWvWMHPmTEaMGLFR//qWuXbtWh577DEmTpxYs00333wz3bp14/HHH+fxxx/npptuYuHChQA89thj
-XHHFFfzxj3/kV7/6FbvvvjtPPvkkTz31FIcffnid/54tYQiQJEnqAHr37s3w4cMBGDt2LDNnzqyZ
-9oUvfAGA1atX88gjj3DiiSdSXV3NV7/6VZYtWwbAww8/zEknnQTAKaecUuc67r//fs4444yaS2t2
-3nnnemuaOXMmxx13HNtvvz1du3bl+OOPrzlI7tu3L9XV1QAMHjyYRYsWAVBVVcXJJ5/Mj370owYv
-4Vm1ahUrV67ksMMOA2DcuHH89re/3Wi763LUUUfRuXNnevTowa677sqrr77arHprGzx4MHPmzOGt
-t96ic+fOHHzwwcyePZsZM2bUGQLqW+bxxx+/UftvfvMbbr31VqqrqznooIN44403eP755wEYOnQo
-ffv2BWDAgAHcf//9TJgwgRkzZtCtW7d6P8fmMARIkiR1ABGxyfHtt98egA8++IDu3bszd+7cmp/5
-8+dvchkbyswG+2zYf1M6d+5cM9ypUyfWrl0LwC9/+UvOOuss5syZw+DBg2vam2P9djd2/U2td/Hi
-xVRXV1NdXc3kyZPZdttt6dOnD7fccgt/+7d/y4gRI5g+fTovvPAC/fr1a9QyN5xWuz0zuf7662v+
-7RYuXMjo0aM32tZ9992XOXPmMGDAAC6++GIuv/zyTW5XcxkCJEmSOoCXXnqJ3/3udwDcfvvtHHLI
-IRv12XHHHenbty933XUXUDmofPLJJwEYPnw4d9xxBwC33XZbnesYPXo0kydPrjkoXbFiBQA77LAD
-b7311kb9Dz30UH7+85/zzjvv8Pbbb/Ozn/2szm/E1/vggw9YvHgxo0aN4qqrrmLlypWsXr16k/27
-devGTjvtVPNt/Q9/+MOaswLN0dR6e/fuXXNAfsYZZ9Qs4+qrr+bQQw9lxIgRTJ48merq6iaFp035
-7Gc/y3e+8x3WrFkDwHPPPcfbb7+9Ub+lS5fykY98hLFjx3LBBRfw+9//vsXr3lCDISAiukTEYxHx
-ZEQ8HRGXFe0/iIiFETG3+Kku2iMiJkXEgoiYFxEHtHrVkiRJW5l+/foxdepUqqqqWLFiBWeeeWad
-/W677TZuvvlmBg4cyP77788999wDwHXXXccNN9zAgQceyKpVq+qc9/TTT2fPPfekqqqKgQMH8uMf
-/xiA8ePHc8QRR9TcGLzeAQccwGmnncbQoUM56KCDOP300xk0aNAmt2HdunWMHTuWAQMGMGjQIM49
-91y6d+9e73ZPnTqVCy+8kKqqKubOncs3vvGNevvXp6n11mXEiBEsW7aMgw8+mI9+9KN06dKl3iDR
-FKeffjr77bcfBxxwAP379+erX/1qnWdK/vCHPzB06FCqq6u54oor+Kd/+qdWWX9tUd9pE6gc1APb
-Z+bqiNgWmAmcA5wB/CIz796g/5HA/waOBA4CrsvMg+pbx5AhQ3L27NnN34rW0NqPAusIWulxZJIk
-be3mz59f5+Uem8uiRYs4+uijeeqpp9qtBm156tpvI2JOZg5paN4GzwRkxfrzONsWP/Ulh2OAW4v5
-ZgHdI2K3htYjSZIkafNo1D0BEdEpIuYCrwH3ZeajxaQrikt+ro2I9XdG7AEsrjX7kqJNkiRJdejT
-p49nAbRZNSoEZOa6zKwGegFDI6I/cDHwCeBAYGdgQtG9rrsmNjpzEBHjI2J2RMxevnx5s4qXJEmS
-1HRNejpQZq4EHgQOz8xlxSU/7wO3AEOLbkuA3rVm6wUsrWNZUzJzSGYO6dmzZ7OKlyRJai0N3Scp
-dSQt3V8b83SgnhHRvRjeDvg08Mz66/yLG4ePBdafw5oGnFo8JWgYsCozl7WoSkmSpDbUpUsX3njj
-DYOAtgiZyRtvvEGXLl2avYz6X+NWsRswNSI6UQkNd2bmLyLivyKiJ5XLf+ZSeVoQwL1Ungy0AHgH
-+LtmVydJkrQZ9OrViyVLluAlytpSdOnShV69ejV7/gZDQGbOAzZ6wGpmfnIT/RM4q9kVSZIkbWbb
-brstffv2be8ypM3GNwZLkiRJJWMIkCRJkkrGECBJkiSVjCFAkiRJKhlDgCRJklQyhgBJkiSpZAwB
-kiRJUskYAiRJkqSSMQRIkiRJJWMIkCRJkkrGECBJkiSVjCFAkiRJKhlDgCRJklQyhgBJkiSpZAwB
-kiRJUskYAiRJkqSSMQRIkiRJJWMIkCRJkkrGECBJkiSVjCFAkiRJKhlDgCRJklQyhgBJkiSpZAwB
-kiRJUskYAiRJkqSSMQRIkiRJJdNgCIiILhHxWEQ8GRFPR8RlRXvfiHg0Ip6PiJ9ExF8X7Z2L8QXF
-9D5tuwmSJEmSmqIxZwLeBz6ZmQOBauDwiBgGfAu4NjP3Ad4Evlz0/zLwZmb+DXBt0U+SJElSB9Fg
-CMiK1cXotsVPAp8E7i7apwLHFsPHFOMU0z8VEdFqFUuSJElqkUbdExARnSJiLvAacB/wArAyM9cW
-XZYAexTDewCLAYrpq4BdWrNoSZIkSc3XqBCQmesysxroBQwF+tXVrfhd17f+uWFDRIyPiNkRMXv5
-8uWNrVeSJElSCzXp6UCZuRJ4EBgGdI+IbYpJvYClxfASoDdAMb0bsKKOZU3JzCGZOaRnz57Nq16S
-JElSkzXm6UA9I6J7Mbwd8GlgPjAdOKHoNg64pxieVoxTTP+vzNzoTIAkSZKk9rFNw13YDZgaEZ2o
-hIY7M/MXEfFH4I6I+FfgCeDmov/NwA8jYgGVMwBj2qBuSZIkSc3UYAjIzHnAoDra/0Tl/oAN298D
-TmyV6iRJkiS1Ot8YLEmSJJWMIUCSJEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJIxBEiS
-JEklYwiQJEmSSsYQIEmSJJWMIUCSJEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJIxBEiS
-JEklYwiQJEmSSsYQIEmSJJWMIUCSJEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJIxBEiS
-JEklYwiQJEmSSsYQIEmSJJVMgyEgInpHxPSImB8RT0fEOUX7pRHxckTMLX6OrDXPxRGxICKejYjP
-tuUGSJIkSWqabRrRZy1wfmb+PiJ2AOZExH3FtGsz8+ranSNiP2AMsD+wO3B/ROybmetas3BJkiRJ
-zdPgmYDMXJaZvy+G3wLmA3vUM8sxwB2Z+X5mLgQWAENbo1hJkiRJLdekewIiog8wCHi0aPr7iJgX
-Ed+PiJ2Ktj2AxbVmW0IdoSEixkfE7IiYvXz58iYXLkmSJKl5Gh0CIqIr8FPgHzLzz8B3gL2BamAZ
-8O31XeuYPTdqyJySmUMyc0jPnj2bXLgkSZKk5mlUCIiIbakEgNsy8/8BZOarmbkuMz8AbuIvl/ws
-AXrXmr0XsLT1SpYkSZLUEo15OlAANwPzM/OaWu271ep2HPBUMTwNGBMRnSOiL7AP8FjrlSxJkiSp
-JRrzdKDhwCnAHyJibtF2CXBSRFRTudRnEfBVgMx8OiLuBP5I5clCZ/lkIEmSJKnjaDAEZOZM6r7O
-/9565rkCuKIFdUmSJElqI74xWJIkSSoZQ4AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIk
-SSVjCJAkSZJKxhAgSZIklYwhQJIkSSoZQ4AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIk
-SSVjCJAkSZJKxhAgSZIklYwhQJIkSSoZQ4AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIk
-SSVjCJAkSZJKxhAgSZIklUyDISAiekfE9IiYHxFPR8Q5RfvOEXFfRDxf/N6paI+ImBQRCyJiXkQc
-0NYbIUmSJKnxGnMmYC1wfmb2A4YBZ0XEfsBFwAOZuQ/wQDEOcASwT/EzHvhOq1ctSZIkqdkaDAGZ
-uSwzf18MvwXMB/YAjgGmFt2mAscWw8cAt2bFLKB7ROzW6pVLkiRJapYm3RMQEX2AQcCjwEczcxlU
-ggKwa9FtD2BxrdmWFG2SJEmSOoBGh4CI6Ar8FPiHzPxzfV3raMs6ljc+ImZHxOzly5c3tgxJkiRJ
-LdSoEBAR21IJALdl5v8rml9df5lP8fu1on0J0LvW7L2ApRsuMzOnZOaQzBzSs2fP5tYvSZIkqYka
-83SgAG4G5mfmNbUmTQPGFcPjgHtqtZ9aPCVoGLBq/WVDkiRJktrfNo3oMxw4BfhDRMwt2i4BrgTu
-jIgvAy8BJxbT7gWOBBYA7wB/16oVS5IkSWqRBkNAZs6k7uv8AT5VR/8EzmphXZIkSZLaiG8MliRJ
-kkrGECBJkiSVjCFAkiRJKpnG3BgsSZIkbdK19z3X3iV0COd+Zt/2LqHRPBMgSZIklYwhQJIkSSoZ
-Q4AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIkSSVjCJAkSZJKxhAgSZIklYwhQJIkSSoZ
-Q4AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIkSSVjCJAkSZJKxhAgSZIklYwhQJIkSSoZ
-Q4AkSZJUMoYASZIkqWQMAZIkSVLJNBgCIuL7EfFaRDxVq+3SiHg5IuYWP0fWmnZxRCyIiGcj4rNt
-VbgkSZKk5mnMmYAfAIfX0X5tZlYXP/cCRMR+wBhg/2KeGyOiU2sVK0mSJKnlGgwBmflbYEUjl3cM
-cEdmvp+ZC4EFwNAW1CdJkiSplbXknoC/j4h5xeVCOxVtewCLa/VZUrRJkiRJ6iCaGwK+A+wNVAPL
-gG8X7VFH36xrARExPiJmR8Ts5cuXN7MMSZIkSU3VrBCQma9m5rrM/AC4ib9c8rME6F2ray9g6SaW
-MSUzh2TmkJ49ezanDEmSJElOHUhdAAAKDklEQVTN0KwQEBG71Ro9Dlj/5KBpwJiI6BwRfYF9gMda
-VqIkSZKk1rRNQx0i4nZgJNAjIpYA/wyMjIhqKpf6LAK+CpCZT0fEncAfgbXAWZm5rm1KlyRJktQc
-DYaAzDypjuab6+l/BXBFS4qSJEmS1HZ8Y7AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIk
-SSVjCJAkSZJKxhAgSZIklYwhQJIkSSoZQ4AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIk
-SSVjCJAkSZJKxhAgSZIklYwhQJIkSSoZQ4AkSZJUMoYASZIkqWQMAZIkSVLJGAIkSZKkkjEESJIk
-SSVjCJAkSZJKxhAgSZIklYwhQJIkSSoZQ4AkSZJUMg2GgIj4fkS8FhFP1WrbOSLui4jni987Fe0R
-EZMiYkFEzIuIA9qyeEmSJElN15gzAT8ADt+g7SLggczcB3igGAc4Atin+BkPfKd1ypQkSZLUWhoM
-AZn5W2DFBs3HAFOL4anAsbXab82KWUD3iNittYqVJEmS1HLNvSfgo5m5DKD4vWvRvgewuFa/JUWb
-JEmSpA6itW8Mjjrass6OEeMjYnZEzF6+fHkrlyFJkiRpU5obAl5df5lP8fu1on0J0LtWv17A0roW
-kJlTMnNIZg7p2bNnM8uQJEmS1FTNDQHTgHHF8DjgnlrtpxZPCRoGrFp/2ZAkSZKkjmGbhjpExO3A
-SKBHRCwB/hm4ErgzIr4MvAScWHS/FzgSWAC8A/xdG9QsSZIkqQUaDAGZedImJn2qjr4JnNXSoiRJ
-kiS1Hd8YLEmSJJWMIUCSJEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJIxBEiSJEklYwiQ
-JEmSSsYQIEmSJJWMIUCSJEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJIxBEiSJEklYwiQ
-JEmSSsYQIEmSJJWMIUCSJEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJIxBEiSJEklYwiQ
-JEmSSsYQIEmSJJXMNi2ZOSIWAW8B64C1mTkkInYGfgL0ARYBn8/MN1tWpppl+jfbu4LWNeri9q5A
-kiRpq9AaZwJGZWZ1Zg4pxi8CHsjMfYAHinFJkiRJHURbXA50DDC1GJ4KHNsG65AkSZLUTC0NAQn8
-JiLmRMT4ou2jmbkMoPi9awvXIUmSJKkVteieAGB4Zi6NiF2B+yLimcbOWISG8QB77rlnC8uQJEmS
-1FgtOhOQmUuL368BPwOGAq9GxG4Axe/XNjHvlMwckplDevbs2ZIyJEmSJDVBs0NARGwfETusHwZG
-A08B04BxRbdxwD0tLVKSJElS62nJ5UAfBX4WEeuX8+PM/FVEPA7cGRFfBl4CTmx5mZIkSZJaS7ND
-QGb+CRhYR/sbwKdaUpQkSZKktuMbgyVJkqSSMQRIkiRJJWMIkCRJkkrGECBJkiSVjCFAkiRJKhlD
-gCRJklQyLXlPgLR5Tf9me1fQukZd3N4VSJKkkvJMgCRJklQyngmQ2svWdmYDPLshSdIWwjMBkiRJ
-UskYAiRJkqSSMQRIkiRJJWMIkCRJkkrGG4MlSZKa6dr7nmvvEqRmMQRIkhrFg52Kcz+zb3uXIEkt
-5uVAkiRJUskYAiRJkqSS8XIgSZKawMuiKrwsStqyeSZAkiRJKhlDgCRJklQyXg4kSQ3w8g9J0tbG
-ECCp9Uz/ZntX0LpGXdzeFUgdluFY2rIZAgq/+9Mb7V1Ch3DwXru0dwnqQMr+38WstR7kSJK2Tt4T
-IEmSJJWMZwKkOpT9G3BJkrR1a7MQEBGHA9cBnYDvZeaVbbUuSZLU8Qx7aUp7l9DqZu05vr1LkFpF
-m4SAiOgE3AB8BlgCPB4R0zLzj22xPrUevwGX/mJrO4DZGg9e/DeSpOZpqzMBQ4EFmfkngIi4AzgG
-MARIUjvZ2g6YJUnN11Y3Bu8BLK41vqRokyRJktTO2upMQNTRlh/qEDEeWH/ec3VEPNtGtWjr0wN4
-vb2L0BbFfUbN0Q77zbc37+rUDA3+G/n3psTOa95srb3PfLwxndoqBCwBetca7wUsrd0hM6cAnptW
-k0XE7Mwc0t51aMvhPqPmcL9Rc7jfqKnaa59pq8uBHgf2iYi+EfHXwBhgWhutS5IkSVITtMmZgMxc
-GxF/D/yayiNCv5+ZT7fFuiRJkiQ1TZu9JyAz7wXubavlq9S8jExN5T6j5nC/UXO436ip2mWficxs
-uJckSZKkrUZb3RMgSZIkqYMyBKhDiojDI+LZiFgQERfVMf28iPhjRMyLiAciolGPw9LWraH9pla/
-EyIiI8IneKhR+01EfL74m/N0RPx4c9eojqUR/4/aMyKmR8QTxf+njmyPOtVxRMT3I+K1iHhqE9Mj
-IiYV+9S8iDigrWsyBKjDiYhOwA3AEcB+wEkRsd8G3Z4AhmRmFXA3cNXmrVIdTSP3GyJiB+Bs4NHN
-W6E6osbsNxGxD3AxMDwz9wf+YbMXqg6jkX9r/gm4MzMHUXlC4o2bt0p1QD8ADq9n+hHAPsXPeOA7
-bV2QIUAd0VBgQWb+KTP/G7gDOKZ2h8ycnpnvFKOzqLyLQuXW4H5T+BcqofG9zVmcOqzG7DdfAW7I
-zDcBMvO1zVyjOpbG7DMJ7FgMd2ODdyWpfDLzt8CKerocA9yaFbOA7hGxW1vWZAhQR7QHsLjW+JKi
-bVO+DPxnm1akLUGD+01EDAJ6Z+YvNmdh6tAa8/dmX2DfiHg4ImZFRH3f5mnr15h95lJgbEQsofKk
-xP+9eUrTFqypxz4t1maPCJVaIOpoq/MxVhExFhgCHNamFWlLUO9+ExF/BVwLnLa5CtIWoTF/b7ah
-cop+JJWzjjMion9mrmzj2tQxNWafOQn4QWZ+OyIOBn5Y7DMftH152kI1+tintXgmQB3REqB3rfFe
-1HEqNSI+Dfwj8LnMfH8z1aaOq6H9ZgegP/BgRCwChgHTvDm49Brz92YJcE9mrsnMhcCzVEKByqkx
-+8yXgTsBMvN3QBegx2apTluqRh37tCZDgDqix4F9IqJvRPw1lZuqptXuUFzW8V0qAcDrcwUN7DeZ
-uSoze2Rmn8zsQ+Veks9l5uz2KVcdRIN/b4CfA6MAIqIHlcuD/rRZq1RH0ph95iXgUwAR0Y9KCFi+
-WavUlmYacGrxlKBhwKrMXNaWK/RyIHU4mbk2Iv4e+DXQCfh+Zj4dEZcDszNzGvDvQFfgrogAeCkz
-P9duRavdNXK/kT6kkfvNr4HREfFHYB1wYWa+0X5Vqz01cp85H7gpIs6lcknHaenbWUstIm6ncklh
-j+JekX8GtgXIzMlU7h05ElgAvAP8XZvX5D4pSZIklYuXA0mSJEklYwiQJEmSSsYQIEmSJJWMIUCS
-JEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJL5/2HmAEu6CW6PAAAAAElFTkSuQmCC
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## print top 10 importances and their names</span>
@@ -13085,16 +12951,16 @@ JEkqGUOAJEmSVDKGAEmSJKlkDAGSJElSyRgCJEmSpJL5/2HmAEu6CW6PAAAAAElFTkSuQmCC
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>WORD_congressman 0.13242
-WORD_evaluation 0.100457
-WORD_members 0.0456621
-WORD_congress 0.04414
-WORD_old 0.04414
-WORD_113th 0.0410959
-WORD_article 0.0365297
-WORD_congresswoman 0.0258752
-WORD_sen 0.0235921
-WORD_ads 0.0228311
+<pre>WORD_congressman 0.136006
+WORD_evaluation 0.0844667
+WORD_113th 0.0622763
+WORD_members 0.0450966
+WORD_congress 0.0350752
+WORD_ad 0.027917
+WORD_ads 0.0257695
+WORD_rep 0.0250537
+WORD_state 0.0229062
+WORD_youtube 0.0221904
 </pre>
 </div>
 </div>
@@ -13107,18 +12973,27 @@ WORD_ads 0.0228311
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>So, the model seems to fit the train set pretty well and the top features (according to XGBoost's feature importance) are all from the Tfidf.</p>
-<p>Now, let's do that group by the race index max on prediction to get the predicted winner of each race for the train set. This way we can get the accuracy of predicting the winner of each race.</p>
+<p>Looking at this feature importances a second time, it looks like the words chosen as important are proxies for whether the candidate is the incumbent. This makes sense, from the little that I know about politics.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's look at the training accuracy:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## put the raw predictions in the dataframe so we can use df.groupy</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">preds</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1">## put the raw predictions in the dataframe so we can use df.groupy</span>
 <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;pred_raw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preds</span>
 </pre></div>
 
@@ -13129,7 +13004,125 @@ WORD_ads 0.0228311
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>candidate</th>
+      <th>tweets</th>
+      <th>replies</th>
+      <th>retweets</th>
+      <th>favorites</th>
+      <th>winner</th>
+      <th>race_index</th>
+      <th>pred_raw</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Bradley Byrne</td>
+      <td>[\nThings to do Tuesday:\n-VOTE; remind friend...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 3.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, ...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.979400</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Burton LeFlore</td>
+      <td>[\nWATCH: http://ln.is/youtu.be/jvTA8    ELECT...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 7.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, ...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0.055113</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Martha Roby</td>
+      <td>[\nGlad to see and hear Martha Roby at Rotary ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0,...</td>
+      <td>[0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, ...</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0.953310</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Erick Wright</td>
+      <td>[\nBetter Vote Erick Wright, Jennifer S. Marsd...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 17.0, 0.0, 0.0, 0.0, 0.0,...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0.043328</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Mike Rogers</td>
+      <td>[\nNSA Director Mike Rogers will begin his add...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[1.0, 0.0, 7.0, 0.0, 2.0, 1.0, 0.0, 2.0, 2.0, ...</td>
+      <td>[0.0, 0.0, 1.0, 5.0, 1.0, 1.0, 0.0, 0.0, 1.0, ...</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0.954916</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## get dictionaries mappying race index to index of predicted and true winners</span>
@@ -13144,7 +13137,7 @@ WORD_ads 0.0228311
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## get train accuracy on race</span>
@@ -13162,13 +13155,13 @@ WORD_ads 0.0228311
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[27]:</div>
+<div class="prompt output_prompt">Out[25]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.95114006514657978</pre>
+<pre>0.95216400911161736</pre>
 </div>
 
 </div>
@@ -13181,46 +13174,14 @@ WORD_ads 0.0228311
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now let's test the model on the holdout set to see how it performs. I will first make the test dataframe, then produce the features, make the predictions and then make another plot and compute the accuracy.</p>
+<p>Now let's test the model on the 2016 races to see how it performs. I will produce the features using the same function as earlier, make the predictions using the trained model and then make a plot and compute the accuracy.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## get test df</span>
-<span class="n">df_test</span> <span class="o">=</span> <span class="n">make_df</span><span class="p">(</span><span class="n">race_metadata_test</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Did not find Alaska 
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## get test matrix and predictions</span>
@@ -13235,7 +13196,7 @@ WORD_ads 0.0228311
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## make a plot</span>
@@ -13266,191 +13227,191 @@ WORD_ads 0.0228311
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,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
-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
-OB1IkiQV3p///Ge22247A4A2ChHBdtttV9HIlSFAkiQJDADaqFR6vhoCJEmSPoO22GILAJYtW8YR
-RxzRaNtJkybx/vvv170+4IADWLlyZZvVdtRRR1FTU8MVV1zRJv3PmTOHU045pU36/qyIzGzvGhg8
-eHD6ZWGSJKm9PPXUU/Tt27fu9RV/eLaq/Z/2jd2q0s9HH31Ep06dmtV2iy224N13321W27Vf3Nq9
-e/dKymuW1157jb322ouXXmrWd1oBsGbNGjp37li3snaEmtY9bwEiYm5mDm5qW0cCJEmS2tnixYv5
-yle+woQJE6ipqeGII46o+2S+d+/eXHTRReyzzz7ceuutvPDCC4wZM4ZBgwYxYsQInn76aQAWLVrE
-3nvvzZAhQ/jBD37wib779esHlELEmWeeSf/+/ampqeGqq65i8uTJLFu2jFGjRjFq1Ki6fb755psA
-/OQnP6Ffv37069ePSZMm1fXZt29fvv3tb7PHHnswevRoPvjgAwAmT57M7rvvTk1NDWPHjv3UsY4e
-PZo33niD2tpaZs6cyfz58xk2bBg1NTUcdthhvP322wCMHDmS8847j/32248rr7zyE33079+flStX
-kplst9123HDDDQAcffTR3HPPPdx3330cdNBBAPzwhz/kuOOOY+TIkey8885Mnjy5yWNY33t87LHH
-cvrppzNq1CjOPvts7r//fmpra6mtrWXgwIG88847rT8JNjBDgCRJUgfwzDPPMHHiRBYsWMBWW23F
-T3/607p1Xbt2ZdasWYwdO5aJEydy1VVXMXfuXC6//HK++93vAnDqqady0kkn8dhjj/HFL36xwX1M
-nTqVRYsWMW/ePBYsWMC4ceM45ZRT2GGHHZgxYwYzZsz4RPu5c+dy/fXX88gjjzB79myuueYa5s2b
-B8Bzzz3HySefzMKFC+nWrRu33347AJdcckld/1OmTPlUDdOnT2eXXXZh/vz5jBgxgmOOOYZLL72U
-BQsW0L9/fy688MK6titXruT+++/njDPO+EQfw4cP58EHH2ThwoXsvPPOzJw5E4DZs2czbNiwT+3z
-6aef5u677+bRRx/lwgsvZPXq1Y0ew/reY4Bnn32We+65hx//+MdcfvnlXH311cyfP5+ZM2ey6aab
-Nvi+d0Qda1ylPc34UXtX0D5GndveFUiSJKBXr14MHz4cgPHjxzN58mTOPPNMAL71rW8B8O677/LQ
-Qw9x5JFH1m334YcfAvDggw/WXcQeffTRnH322Z/axz333MOJJ55YN41l2223bbSmWbNmcdhhh7H5
-5psDcPjhhzNz5kwOPvhg+vTpQ21tLQCDBg1i8eLFANTU1DBu3DgOPfRQDj300Eb7X7VqFStXrmS/
-/fYDYMKECZ84trXHva4RI0bwwAMP8OUvf5mTTjqJqVOn8sorr7DtttvW3QtR34EHHkiXLl3o0qUL
-22+/Pa+//jpAg8fQ2HsMcOSRR9ZNyRo+fDinn34648aN4/DDD6dnz56NHm9H4kiAJElSB7Du017q
-v157Ef7xxx/TrVs35s+fX/fz1FNPrbePdWVmi54q09i9o126dKn7vVOnTqxZswaA3/72t5x88snM
-nTuXQYMG1S1vjbXHva59992XmTNnMnPmTEaOHEmPHj247bbbGDFiRItqbWh5U+9x/ZrOOeccfv7z
-n/PBBx8wbNiwumlDGwNDgCRJUgfw8ssv8/DDDwNw0003sc8++3yqzVZbbUWfPn249dZbgdJF+uOP
-Pw6UPpW++eabAbjxxhsb3Mfo0aOZMmVK3UXwihUrANhyyy0bnM++77778pvf/Ib333+f9957jzvu
-uGO9F9pQCilLlixh1KhRXHbZZaxcubLRm5O33nprttlmm7rpPL/85S/rRgUa06tXL958802ee+45
-dt55Z/bZZx8uv/zyRmtrrsbe43W98MIL9O/fn7PPPpvBgwcbAiRJktQyffv2Zdq0adTU1LBixQpO
-OumkBtvdeOONXHvttQwYMIA99tiDO++8E4Arr7ySq6++miFDhrBq1aoGtz3hhBPYaaedqKmpYcCA
-AfzqV78CSnPg999//7obg9fac889OfbYYxk6dCh77bUXJ5xwAgMHDlzvMXz00UeMHz+e/v37M3Dg
-QE477TS6devW6HFPmzaNs846i5qaGubPn8/555/faPu19tprL3bbrfTUpREjRvDKK680GJxaY33v
-8bomTZpEv379GDBgAJtuuin7779/Vfa/IfiI0LW8J0CSpMJq6FGLG9LixYs56KCDeOKJJ9qtBm18
-2vQRoRFxXUS8ERFPrLP8HyLimYhYGBGX1Vt+bkQ8X173zRYchyRJkqQNoDlPB/oF8H+AG9YuiIhR
-wCFATWZ+GBHbl5fvDowF9gB2AO6JiN0y86NqFy5JkvRZ0bt3b0cBtEE1ORKQmQ8AK9ZZfBJwSWZ+
-WG7zRnn5IcDNmflhZi4CngeGVrFeSZIkSRVq7Y3BuwEjIuKRiLg/IoaUl+8ILKnXbml5mSRJkqQO
-orVfFtYZ2AYYBgwBbomInYGGHjzb4J3HETERmAiw0047tbIMSZIkSS3V2pGApcC/Z8mjwMdA9/Ly
-XvXa9QSWNdRBZk7NzMGZObhHjx6tLEOSJElSS7U2BPwG+BpAROwGfB54E5gOjI2ILhHRB9gVeLQa
-hUqSJKn5tthiCwCWLVvGEUcc0WjbSZMm8f7779e9PuCAA1i5cmWb1XbUUUdRU1PDFVdc0Wb7aCtt
-/d5sKE1OB4qIm4CRQPeIWApcAFwHXFd+bOhfgAlZ+sKBhRFxC/AksAY42ScDSZKkjU61vz+oSt/L
-89FHH9GpU6cWbbPDDjtw2223Ndpm0qRJjB8/ns022wyAu+66q9U1NuW1117joYce4qWXXmr2NmvW
-rKFz59bOYq+utnxvoHV/x63RnKcDHZWZX8rMTTKzZ2Zem5l/yczxmdkvM/fMzP+q1/7izNwlM/8q
-M/+zbcuXJEna+C1evJivfOUrTJgwgZqaGo444oi6T+Z79+7NRRddxD777MOtt97KCy+8wJgxYxg0
-aBAjRozg6aefBmDRokXsvffeDBkyhB/84Aef6Ltfv35A6QLzzDPPpH///tTU1HDVVVcxefJkli1b
-xqhRo+q+Mbh37968+eabAPzkJz+hX79+9OvXj0mTJtX12bdvX7797W+zxx57MHr0aD744AMAJk+e
-zO67705NTQ1jx4791LGOHj2aN954g9raWmbOnMn8+fMZNmwYNTU1HHbYYbz99tsAjBw5kvPOO4/9
-9tuPK6+88hN9/PCHP+S4445j5MiR7LzzzkyePLluXUvrre+yyy6r6+u0007ja1/7GgD33nsv48eP
-/8R701ifI0eO5Oyzz2bo0KHstttuzJw5s+79P+ussxgyZAg1NTX867/+KwD33Xcfo0aN4m//9m/p
-378/7733HgceeCADBgygX79+/PrXv278BGqF1k4HkiRJUhU988wzTJw4kQULFrDVVlvx05/+tG5d
-165dmTVrFmPHjmXixIlcddVVzJ07l8svv5zvfve7AJx66qmcdNJJPPbYY3zxi19scB9Tp05l0aJF
-zJs3jwULFjBu3DhOOeUUdthhB2bMmMGMGTM+0X7u3Llcf/31PPLII8yePZtrrrmGefPmAfDcc89x
-8skns3DhQrp168btt98OwCWXXFLX/5QpUz5Vw/Tp09lll12YP38+I0aM4JhjjuHSSy9lwYIF9O/f
-nwsvvLCu7cqVK7n//vs544wzPtXP008/zd13382jjz7KhRdeyOrVq1tVb3377rtv3QX7nDlzePfd
-d1m9ejWzZs1ixIgRn2rfWJ9r1qzh0UcfZdKkSXXHdO2117L11lvz2GOP8dhjj3HNNdewaNEiAB59
-9FEuvvhinnzySX73u9+xww478Pjjj/PEE08wZsyYBv8+K2EIkCRJ6gB69erF8OHDARg/fjyzZs2q
-W/etb30LgHfffZeHHnqII488ktraWr7zne/w6quvAvDggw9y1FFHAXD00Uc3uI977rmHE088sW5q
-zbbbbttoTbNmzeKwww5j8803Z4sttuDwww+vu0ju06cPtbW1AAwaNIjFixcDUFNTw7hx4/i3f/u3
-JqfwrFq1ipUrV7LffvsBMGHCBB544IFPHXdDDjzwQLp06UL37t3Zfvvtef3111tVb32DBg1i7ty5
-vPPOO3Tp0oW9996bOXPmMHPmzAZDQGN9Hn744Z9a/vvf/54bbriB2tpa9tprL9566y2ee+45AIYO
-HUqfPn0A6N+/P/fccw9nn302M2fOZOutt270fWwNQ4AkSVIHEBHrfb355psD8PHHH9OtWzfmz59f
-9/PUU0+tt491ZWaTbdZtvz5dunSp+71Tp06sWbMGgN/+9recfPLJzJ07l0GDBtUtb421x93c/be0
-3iVLllBbW0ttbS1Tpkxhk002oXfv3lx//fV89atfZcSIEcyYMYMXXniBvn37NqvPddfVX56ZXHXV
-VXV/d4sWLWL06NGfOtbddtuNuXPn0r9/f84991wuuuii9R5XaxkCJEmSOoCXX36Zhx9+GICbbrqJ
-ffbZ51NtttpqK/r06cOtt94KlC4qH3/8cQCGDx/OzTffDMCNN97Y4D5Gjx7NlClT6i5KV6xYAcCW
-W27JO++886n2++67L7/5zW94//33ee+997jjjjsa/ER8rY8//pglS5YwatQoLrvsMlauXMm77767
-3vZbb70122yzTd2n9b/85S/rRgVao6X19urVq+6C/MQTT6zr4/LLL2ffffdlxIgRTJkyhdra2haF
-p/X55je/yc9+9jNWr14NwLPPPst77733qXbLli1js802Y/z48Zx55pn88Y9/rHjf6zIESJIkdQB9
-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
+dHRwOi8vbWF0cGxvdGxpYi5vcmcvpW3flQAAIABJREFUeJzt3XmYFfWd7/H3N2jAuKGCiQoGdPQG
+haaR1UEUzIS4TVxGJziieBODGnPNuF2XyaLO+Iw6JiJeI4MxDmZc4nKN3Ik3JjpEQUWBiETEBYUI
+4oIojKjxAn7vH6fotNB0H3qhkXq/nuc8fU7Vr371rUPRfT6nflUVmYkkSZKk8vhMexcgSZIkadMy
+BEiSJEklYwiQJEmSSsYQIEmSJJWMIUCSJEkqGUOAJEmSVDKGAEnSJhURb0TEQcXzyyLifzWzn5cj
+4sDWrU6SysEQIEnNFBEr6z0+jogP670+qQX9To+I0U20OTMiXizW9UZE/J+I2KaKvg+LiPlNtLkz
+Ij4q+n4nIn4dEfts7HZUIzN/mJnfaapdUdP31ll278x8oi3qkqQtnSFAkpopM7db+wBeBf663rTb
+2mq9EfFV4HvA3xTr3h+4r5VX849F33sC7wE3baCWrVp5vZKkTcAQIEltJCI6RMT3I+KViHg7Im6L
+iM7FvG2Lb7ffiYjlEfFkROwUET8CBgI/Lb6J/1EDXQ8EpmbmHwAyc1lm/iwzPyz63iYixkXEouIo
+wfUR0TEidqESFvaqd8Ril8a2ITNXAncCvYu+r4yI2yPiFxHxHjCqse0slvlmRLwaEUsj4oJ13qMr
+I+Kn9V4PL46ErCiW+buIOBv4G+D7Rc13F23rDyvaJiJuiIjXI2JxRPxLRGxdzDssIuZHxCVFDa/V
+P1ITEUdHxPMR8V7xnp1dxT+vJH2qGQIkqe1cAIwEDgK6AauAa4t5pwFbAXsAXYDvAP8vM88DZgCn
+FUcUzmug3+nA1yLiBxFxYER8dp351xbr6wP8N2Bf4KLMXAYcC7xS74jFssY2ICJ2AE4Enq43+W+A
+ScCOwL2NbWdE1ALjgK8X83oU29vQuv4C+A/gX4BdgP7A3MwcX6znH4uaT2hg8cuAmmKb+wPDgf9Z
+b/4XgQB2p/JeT4iI7Yp5PwNOycztgVpgamPviSRtCQwBktR2Tqfy4XtJZv6JygfVr0dEUPmg3BXY
+OzNXZ+aMzHy/mk4z8yFgFDAYeBB4OyKuiojPFMNzvgF8NzOXZ+YK4Mqi/cb4h4hYDrwAdKASWtZ6
+JDMfyMyPi6MPjW3n3wL3ZuYTmfkRcAkb/ttzMvB/MvPe4j1ZmpnPVFnvScAPM/PtzHwT+Keiv7U+
+AP45M1dl5n1AAn9RzFsN7B8R2xdHVZ5GkrZwjuWUpDZQfADuDjwQEVlv1meofMt9M/AF4J7iG+lb
+ge9n5ppq+s/MycDkiPgM8BXgbuA5YAqwNTC3UkKlHCofdDfGFZn5TxuYt6iu46a3c/f67TNzRUSs
+2EC/3YGXN7LOtTV8Afhjvcl/pHKUZa2lmflxvdcfAGuPBBwD/APw44h4GvifmTlzY+uQpE8TjwRI
+UhvIzAReAw7NzM71Hp2Kb6s/yswfZOaXgIOBE/jzt/W5oX4bWM/Hmfkg8CiVcfuvU/nAv3e9de6Y
+mWvH/lfdd2Orrbf+RrezqKf72vYRsSOVYUQNWQTs3dQ615tRqeENKkN+1tqzqKvpjakcpTgK+Dzw
+G+COapaTpE8zQ4AktZ0JwJUR0R0gInaNiL8unv9VROxXfJP/X1Q+uK89CvAmsNeGOo2I4yPihIjo
+HBV/CQwFpmfmKipj3K+LiC7F/O4R8ZV6fe9abzx8m24ncBdwXEQMjoiOVIbpfLyBfm4FjoqIY4uT
+jbtGRE29ujf4nlD54P7DiNglInal8s3+vzdVeHGC9qji3IdVVK6EVNXRGEn6NDMESFLbuRp4CPjP
+4ko6jwMHFPP2AO6n8qHzWeABKh+YoXJS7SkR8W5EXN1Av+8C36YydOa/qHzovywz7y3m/z2wBJgJ
+rAB+zZ/Hvz8DTAb+GJWrEu3clttZjK8/D7gHWEzlUqpvN9RJZr4MHE3lvIF3i/r3L2ZPBAYWNd/Z
+wOI/oDIcai4wG3isqKsa36AyfGgFcAowpsrlJOlTKypHUSVJkiSVhUcCJEmSpJIxBEiSJEklYwiQ
+JEmSSsYQIEmSJJWMIUCSJEkqmc3ijsFdunTJHj16tHcZkiRJ0qfarFmz3s7Mrk212yxCQI8ePZg5
+0zu0S5IkSS0REX+spp3DgSRJkqSSMQRIkiRJJWMIkCRJkkpmszgnQJIkqT2tWrWKxYsX86c//am9
+S5Gq0qlTJ7p168bWW2/drOUNAZIkqfQWL17M9ttvT48ePYiI9i5HalRmsmzZMhYvXkzPnj2b1YfD
+gSRJUun96U9/YpdddjEA6FMhIthll11adOTKECBJkgQGAH2qtHR/NQRIkiRtgbbbbjsAlixZwvHH
+H99o23HjxvHBBx/UvT7iiCNYvnx5m9V24oknUlNTw7XXXtsm/c+cOZOzzz67TfreUkRmtncNDBgw
+IL1ZmCRJai/z5s2jV69eda+v/e2Lrdr/OV/Zt1X6WbNmDR06dKiq7XbbbcfKlSurarv2xq1dunRp
+SXlVeeONNxg8eDB//GNV97QCYPXq1Wy11eZ1KuvmUNO6+y1ARMzKzAFNLeuRAEmSpHa2cOFCvvSl
+LzFmzBhqamo4/vjj676Z79GjB5dffjkHHXQQd999Ny+//DKHHXYY/fv3Z9iwYTz//PMALFiwgAMP
+PJCBAwfy/e9//xN99+7dG6iEiPPPP58+ffpQU1PD9ddfz/jx41myZAkjRoxgxIgRdet8++23Afjx
+j39M79696d27N+PGjavrs1evXnzrW99i//33Z+TIkXz44YcAjB8/nv3224+amhpGjRq13raOHDmS
+t956i9raWqZOncrs2bMZMmQINTU1HHvssbz77rsADB8+nEsuuYRDDjmE66677hN99OnTh+XLl5OZ
+7LLLLtx6660AnHzyyTz00EP87ne/46ijjgLg0ksv5Rvf+AbDhw9nr732Yvz48U1uw4be41NPPZVz
+zz2XESNGcOGFF/LII49QW1tLbW0t/fr147333mv+TrCJGQIkSZI2Ay+88AJjx45lzpw57LDDDvzk
+Jz+pm9epUyemTZvGqFGjGDt2LNdffz2zZs3immuu4dvf/jYA3/3udznzzDOZMWMGX/jCFxpcx8SJ
+E1mwYAFPP/00c+bM4aSTTuLss89m9913Z8qUKUyZMuUT7WfNmsUtt9zCk08+yfTp07npppt4+umn
+AXjppZc466yzmDt3Lp07d+bee+8F4Morr6zrf8KECevVMHnyZPbee29mz57NsGHDOOWUU7jqqquY
+M2cOffr04bLLLqtru3z5ch555BHOO++8T/QxdOhQHnvsMebOnctee+3F1KlTAZg+fTpDhgxZb53P
+P/88Dz74IE899RSXXXYZq1atanQbNvQeA7z44os89NBD/OhHP+Kaa67hhhtuYPbs2UydOpVtttmm
+wfd9c7R5HVdpT1P+ub0r2PRGXNzeFUiSpEL37t0ZOnQoAKNHj2b8+PGcf/75AHz9618HYOXKlTz+
++OOccMIJdct99NFHADz22GN1H2JPPvlkLrzwwvXW8dBDD3HGGWfUDWPZeeedG61p2rRpHHvssWy7
+7bYAHHfccUydOpWvfe1r9OzZk9raWgD69+/PwoULAaipqeGkk07imGOO4Zhjjmm0/xUrVrB8+XIO
+OeQQAMaMGfOJbVu73esaNmwYjz76KF/84hc588wzmThxIq+99ho777xz3bkQ9R155JF07NiRjh07
+suuuu/Lmm28CNLgNjb3HACeccELdkKyhQ4dy7rnnctJJJ3HcccfRrVu3Rrd3c+KRAEmSpM3Auld7
+qf967Yfwjz/+mM6dOzN79uy6x7x58zbYx7oyc6OuKtPYuaMdO3ase96hQwdWr14NwK9+9SvOOuss
+Zs2aRf/+/eumN8fa7V7XwQcfzNSpU5k6dSrDhw+na9eu3HPPPQwbNmyjam1oelPvcf2aLrroIn76
+05/y4YcfMmTIkLphQ58GhgBJkqTNwKuvvsoTTzwBwB133MFBBx20XpsddtiBnj17cvfddwOVD+nP
+PPMMUPlW+s477wTgtttua3AdI0eOZMKECXUfgt955x0Att9++wbHsx988MH88pe/5IMPPuD999/n
+vvvu2+AHbaiElEWLFjFixAiuvvpqli9f3ujJyTvuuCM77bRT3XCen//853VHBRrTvXt33n77bV56
+6SX22msvDjroIK655ppGa6tWY+/xul5++WX69OnDhRdeyIABAwwBkiRJ2ji9evVi0qRJ1NTU8M47
+73DmmWc22O62227j5ptvpm/fvuy///7cf//9AFx33XXccMMNDBw4kBUrVjS47Gmnncaee+5JTU0N
+ffv25fbbbwcqY+APP/zwuhOD1zrggAM49dRTGTRoEIMHD+a0006jX79+G9yGNWvWMHr0aPr06UO/
+fv0455xz6Ny5c6PbPWnSJC644AJqamqYPXs2P/jBDxptv9bgwYPZd9/KVZeGDRvGa6+91mBwao4N
+vcfrGjduHL1796Zv375ss802HH744a2y/k3BS4Su5TkBkiSVVkOXWtyUFi5cyFFHHcWzzz7bbjXo
+08dLhEqSJEmqWpMhICI6RcRTEfFMRMyNiMuK6f8WEQsiYnbxqC2mR0SMj4j5ETEnIg5o642QJEn6
+NOvRo4dHAbRJVXOJ0I+AQzNzZURsDUyLiP9bzLsgM+9Zp/3hwD7FYzBwY/FTkiRJ0magySMBWbH2
+tO6ti0djJxIcDdxaLDcd6BwRu7W8VEmSJEmtoapzAiKiQ0TMBt4CfpuZTxazriiG/FwbEWsvtLoH
+sKje4ouLaZIkSZI2A1WFgMxck5m1QDdgUET0Bi4GvgQMBHYG1t6WrqE7UKx35CAixkbEzIiYuXTp
+0mYVL0mSJGnjbdTVgTJzOfA74LDMfL0Y8vMRcAswqGi2GOheb7FuwJIG+pqYmQMyc0DXrl2bVbwk
+SZIatt122wGwZMkSjj/++Ebbjhs3jg8++KDu9RFHHMHy5cvbrLYTTzyRmpoarr322jZbR1tp6/dm
+U2nyxOCI6AqsyszlEbEN8FfAVRGxW2a+HpV7Tx8DrD2lfTLwnYi4k8oJwSsy8/U2ql+SJKn1tfb9
+g1rp3jxr1qyhQ4cOG7XM7rvvzj33rHsdl08aN24co0eP5nOf+xwADzzwQLNrbMobb7zB448/zh//
++Meql1m9ejVbbVXN9WzaXlu+N9C8f+PmqOZIwG7AlIiYA8ygck7AfwC3RcQfgD8AXYB/Kto/ALwC
+zAduAr7d6lVLkiRtQRYuXMiXvvQlxowZQ01NDccff3zdN/M9evTg8ssv56CDDuLuu+/m5Zdf5rDD
+DqN///4MGzaM559/HoAFCxZw4IEHMnDgQL7//e9/ou/evXsDlQ+Y559/Pn369KGmpobrr7+e8ePH
+s2TJEkaMGFF3x+AePXrw9ttvA/DjH/+Y3r1707t3b8aNG1fXZ69evfjWt77F/vvvz8iRI/nwww8B
+GD9+PPvttx81NTWMGjVqvW0dOXIkb731FrW1tUydOpXZs2czZMgQampqOPbYY3n33XcBGD58OJdc
+cgmHHHII11133Sf6uPTSS/nGN77B8OHD2WuvvRg/fnzdvI2tt76rr766rq9zzjmHQw89FICHH36Y
+0aNHf+K9aazP4cOHc+GFFzJo0CD23Xdfpk6dWvf+X3DBBQwcOJCamhr+9V//FYDf/e53jBgxgr/7
+u7+jT58+vP/++xx55JH07duX3r1784tf/KLxHagZqrk60JzM7JeZNZnZOzMvL6Yfmpl9immj115B
+qBgidFZm7l3Mb+dbAUuSJG3+XnjhBcaOHcucOXPYYYcd+MlPflI3r1OnTkybNo1Ro0YxduxYrr/+
+embNmsU111zDt79d+b71u9/9LmeeeSYzZszgC1/4QoPrmDhxIgsWLODpp59mzpw5nHTSSZx99tns
+vvvuTJkyhSlTpnyi/axZs7jlllt48sknmT59OjfddBNPP/00AC+99BJnnXUWc+fOpXPnztx7770A
+XHnllXX9T5gwYb0aJk+ezN57783s2bMZNmwYp5xyCldddRVz5syhT58+XHbZZXVtly9fziOPPMJ5
+5523Xj/PP/88Dz74IE899RSXXXYZq1atala99R188MF1H9hnzpzJypUrWbVqFdOmTWPYsGHrtW+s
+z9WrV/PUU08xbty4um26+eab2XHHHZkxYwYzZszgpptuYsGCBQA89dRTXHHFFTz33HP8+te/Zvfd
+d+eZZ57h2Wef5bDDDmvw37MlvGOwJEnSZqB79+4MHToUgNGjRzNt2rS6eV//+tcBWLlyJY8//jgn
+nHACtbW1nH766bz+emXU9WOPPcaJJ54IwMknn9zgOh566CHOOOOMuqE1O++8c6M1TZs2jWOPPZZt
+t92W7bbbjuOOO67uQ3LPnj2pra0FoH///ixcuBCAmpoaTjrpJP793/+9ySE8K1asYPny5RxyyCEA
+jBkzhkcffXS97W7IkUceSceOHenSpQu77rorb775ZrPqra9///7MmjWL9957j44dO3LggQcyc+ZM
+pk6d2mAIaKzP4447br3pv/nNb7j11lupra1l8ODBLFu2jJdeegmAQYMG0bNnTwD69OnDQw89xIUX
+XsjUqVPZcccdG30fm8MQIEmStBmonGbZ8Ottt90WgI8//pjOnTsze/bsuse8efM22Me6MrPJNuu2
+35COHTvWPe/QoQOrV68G4Fe/+hVnnXUWs2bNon///nXTm2Ptdle7/o2td9GiRdTW1lJbW8uECRPY
+euut6dGjB7fccgt/+Zd/ybBhw5gyZQovv/wyvXr1qqrPdefVn56ZXH/99XX/dgsWLGDkyJHrbeu+
+++7LrFmz6NOnDxdffDGXX375BreruQwBkiRJm4FXX32VJ554AoA77riDgw46aL02O+ywAz179uTu
+u+8GKh8qn3nmGQCGDh3KnXfeCcBtt93W4DpGjhzJhAkT6j6UvvPOOwBsv/32vPfee+u1P/jgg/nl
+L3/JBx98wPvvv899993X4Dfia3388ccsWrSIESNGcPXVV7N8+XJWrly5wfY77rgjO+20U9239T//
++c/rjgo0x8bW271797oP5GeccUZdH9dccw0HH3www4YNY8KECdTW1m5UeNqQr371q9x4442sWrUK
+gBdffJH3339/vXZLlizhc5/7HKNHj+b888/n97//fYvXvS5DgCRJ0magV69eTJo0iZqaGt555x3O
+PPPMBtvddttt3HzzzfTt25f999+f+++/H4DrrruOG264gYEDB7JixYoGlz3ttNPYc889qampoW/f
+vtx+++0AjB07lsMPP7zuxOC1DjjgAE499VQGDRrE4MGDOe200+jXr98Gt2HNmjWMHj2aPn360K9f
+P8455xw6d+7c6HZPmjSJCy64gJqaGmbPns0PfvCDRts3ZmPrbciwYcN4/fXXOfDAA/n85z9Pp06d
+Gg0SG+O0005jv/3244ADDqB3796cfvrpDR4p+cMf/sCgQYOora3liiuu4Hvf+16rrL++aOywyaYy
+YMCAnDmznc8fbu1LgX0atNLlyiRJ+rSbN29eg8M9NpWFCxdy1FFH8eyzzzbdWCo0tN9GxKzMHNDU
+sh4JkCRJkkrGECBJktTOevTo4VEAbVKGAEmSJKlkDAGSJEk0fjlMaXPT0v3VECBJkkqvU6dOLFu2
+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
+7/bTEtgAAAAASUVORK5CYII=
 "
 >
 </div>
@@ -13463,7 +13424,7 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## put the raw predictions in the test dataframe so we can use df.groupy</span>
@@ -13477,7 +13438,7 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## get dictionaries mappying race index to index of predicted and true winners, this time on test set</span>
@@ -13492,10 +13453,10 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## get test accuracy on race</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## get test accuracy on race level</span>
 <span class="n">acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">preds_test</span><span class="p">[</span><span class="n">race_ind</span><span class="p">]</span><span class="o">==</span><span class="n">true_test</span><span class="p">[</span><span class="n">race_ind</span><span class="p">]</span> <span class="k">for</span> <span class="n">race_ind</span> <span class="ow">in</span> <span class="n">df_test</span><span class="o">.</span><span class="n">race_index</span><span class="o">.</span><span class="n">unique</span><span class="p">()])</span>
 <span class="n">acc</span>
 </pre></div>
@@ -13510,13 +13471,13 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[33]:</div>
+<div class="prompt output_prompt">Out[30]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0.93181818181818177</pre>
+<pre>0.88135593220338981</pre>
 </div>
 
 </div>
@@ -13529,17 +13490,26 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As a final step, let's take a look at the race in the test set with the most candidates and see what the model did.</p>
+<p>88% accuracy is not that bad! Considering I used nothing but tweets and imbued no prior knowledge.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's take a quick look at where the model failed. First, here's the highest raw prediction (the probability that the candidate will win) for a non-winner:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_test</span><span class="p">[</span><span class="n">df_test</span><span class="o">.</span><span class="n">race_index</span><span class="o">==</span><span class="n">df_test</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;race_index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_test</span><span class="p">[</span><span class="o">~</span><span class="n">df_test</span><span class="o">.</span><span class="n">winner</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;pred_raw&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -13552,7 +13522,7 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[34]:</div>
+<div class="prompt output_prompt">Out[31]:</div>
 
 
 
@@ -13575,6 +13545,7 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>candidate</th>
       <th>tweets</th>
       <th>replies</th>
       <th>retweets</th>
@@ -13586,64 +13557,15 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
   </thead>
   <tbody>
     <tr>
-      <th>299</th>
-      <td>[\nOpponents have made this a money race, $2.7...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[0.0, 1.0, 0.0, 0.0, 17.0, 2.0, 1.0, 0.0, 0.0,...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>1</td>
-      <td>223</td>
-      <td>0.935458</td>
-    </tr>
-    <tr>
-      <th>300</th>
-      <td>[\nHughes, LoBiondo clash in their only debate...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, ...</td>
-      <td>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, ...</td>
+      <th>511</th>
+      <td>Sarah Lloyd</td>
+      <td>[\nours increase when more anxious as well. bu...</td>
+      <td>[2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 1.0, 1.0, 4.0, 0.0, 0.0, 5.0, 1.0, ...</td>
+      <td>[1.0, 0.0, 3.0, 0.0, 3.0, 0.0, 0.0, 5.0, 4.0, ...</td>
       <td>0</td>
-      <td>223</td>
-      <td>0.203180</td>
-    </tr>
-    <tr>
-      <th>301</th>
-      <td>[]</td>
-      <td>[]</td>
-      <td>[]</td>
-      <td>[]</td>
-      <td>0</td>
-      <td>223</td>
-      <td>0.049491</td>
-    </tr>
-    <tr>
-      <th>302</th>
-      <td>[]</td>
-      <td>[]</td>
-      <td>[]</td>
-      <td>[]</td>
-      <td>0</td>
-      <td>223</td>
-      <td>0.049491</td>
-    </tr>
-    <tr>
-      <th>303</th>
-      <td>[]</td>
-      <td>[]</td>
-      <td>[]</td>
-      <td>[]</td>
-      <td>0</td>
-      <td>223</td>
-      <td>0.049491</td>
-    </tr>
-    <tr>
-      <th>304</th>
-      <td>[\nGary Stein:  Anyone Who Thinks Amendment 2 ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, ...</td>
-      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, ...</td>
-      <td>0</td>
-      <td>223</td>
-      <td>0.055986</td>
+      <td>151</td>
+      <td>0.801264</td>
     </tr>
   </tbody>
 </table>
@@ -13656,11 +13578,209 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## take a look at 30 of the tweets for Sarah Lloyd</span>
+<span class="n">df_test</span><span class="p">[</span><span class="o">~</span><span class="n">df_test</span><span class="o">.</span><span class="n">winner</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;pred_raw&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">tweets</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[32]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([ &#39;\nours increase when more anxious as well. but also notice everyday stuff after hearing Sarah Lloyd talk.\n&#39;,
+       &#39;\n2/2 having heard Sarah Lloyd, wondering about under-developed sensory system and using sensory integration.\n&#39;,
+       &#39;\n@lloyd4wi Sarah Lloyd finds #frogandtoad in #littlefreelibrary.  #flipitdem.pic.twitter.com/Z6j2wtPXU9\n&#39;,
+       &#39;\n@lloyd4wi Sarah Lloyd meeting voters who want a change. #flipitdem\n@WisDems know what a difference she will makepic.twitter.com/f8Xt7qBYc5\n&#39;,
+       &#39;\nSarah Lloyd @lloyd4wi out and about in #fdl.  @WisDems working to #flipitdem\n@Khary4Congress\n@Ryan_Solen \n@NelsonforWI\n@MaryHoeftForWIpic.twitter.com/WW49weFkLX\n&#39;,
+       &#39;\nSarah Lloyd smart, articulate candidate http://fondul.ac/2ezRmr8\xa0 #wiunion #wiright #wipolitics\n&#39;,
+       &#39;\nWI-06 Sarah LLOYD\n4 CONGRESS@FlipItDem\n@lloyd4wi#BlueWI\nFLIP  HOUSE  BLUE &amp; \nMadame POTUSDem Majority\nDEFEAT Glenn Grothmanpic.twitter.com/9Dw5MUnuhk\n&#39;,
+       &#39;\nDonald Trump &amp; Glenn Grothman think Rapists have Rights! \nWisconsin, Vote for Sarah Lloyd\n@lloyd4wi @FlipItDem #BlueWave2016 #ImWithHerpic.twitter.com/xeQlZWBZm0\n&#39;,
+       &#34;\nIt&#39;s the final weekend. @WisDems time to get out\n@lloyd4wi Sarah Lloyd\n@Khary4Congress\n@NelsonforWI \nLet&#39;s #FlipItDem and make a differencepic.twitter.com/VDB2dO1M41\n&#34;,
+       &#39;\nDonald Trump &amp; Glenn Grothman want to Punish You! \nFight back Wisconsin, vote for Sarah Lloyd! @lloyd4wi @FlipItDem #ImWithHer #BlueWave2016pic.twitter.com/NYZPhQpOAe\n&#39;,
+       &#39;\nSettling down to hear Sarah Lloyd #sensoryintegration\n&#39;,
+       &#39;\nRetweeted Sarah Lloyd-Hughes (@gingernibbles):\n\nThe five types of difficult audience members… and how to handle... http://fb.me/4jM5VlkQx\xa0\n&#39;,
+       &#39;\nWI 06  SARAH LLOYD\n4CONGRESSMUST WIN\n@lloyd4wi@FlipItDem\nFLIPHOUSEBLUE\nMadame POTUSDem Majority\nDEFEAT Glenn Grothmanpic.twitter.com/5ve6EQYXtG\n&#39;,
+       &#39;\nEditorial: Sarah Lloyd is ready to represent Wisconsin http://host.madison.com/opinion/editorial/editorial-sarah-lloyd-is-ready-to-represent-wisconsin/article_c794e3bb-2a00-5ba1-b6da-79c51cee6b07.html?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=user-share\xa0… via @CapTimes #wiunion #wiright #DumpGrothman\n&#39;,
+       &#39;\nWisconsin we need Sarah Lloyd!  Vote  for her on Tuesday !\n&#39;,
+       &#34;\nDonald Trump &amp; Glenn Grothman don&#39;t want YOU to know this! \nVote for Sarah Lloyd\n@lloyd4wi @FlipItDem #ThursdayThoughts #BlueWave2016pic.twitter.com/KzlaT2diHw\n&#34;,
+       &#39;\nEditorial: Sarah Lloyd is ready to represent Wisconsin http://host.madison.com/opinion/editorial/editorial-sarah-lloyd-is-ready-to-represent-wisconsin/article_c794e3bb-2a00-5ba1-b6da-79c51cee6b07.html?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=user-share\xa0… via @CapTimes #wiunion #wipolitics #DumpGrothman\n&#39;,
+       &#39;\nCandidates4Prog: RT NewWisGov: Sarah Lloyd is ready to represent Wisconsin http://host.madison.com/opinion/editorial/editorial-sarah-lloyd-is-ready-to-represent-wisconsin/article_c794e3bb-2a00-5ba1-b6da-79c51cee6b07.html?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=user-share\xa0… #wipolitics #WI06 #WiBackHer\n&#39;,
+       &#39;\nSarah Lloyd = Wisconsins next progressive hero. And btw we need them! https://twitter.com/newwisgov/status/793995406627606528\xa0…\n&#39;,
+       &#39;\nSarah Lloyd is ready to represent Wisconsin http://host.madison.com/opinion/editorial/editorial-sarah-lloyd-is-ready-to-represent-wisconsin/article_c794e3bb-2a00-5ba1-b6da-79c51cee6b07.html?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=user-share\xa0… #wipolitics #WI06 #WiBackHer\n&#39;,
+       &#39;\nEditorial: Sarah Lloyd is ready to represent Wisconsin http://host.madison.com/opinion/editorial/editorial-sarah-lloyd-is-ready-to-represent-wisconsin/article_c794e3bb-2a00-5ba1-b6da-79c51cee6b07.html?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=user-share\xa0… via @CapTimes #wiunion #wipolitics #DumpGrothman\n&#39;,
+       &#39;\nRarely do we get superbly qualified candidates. Sarah Lloyd @lloyd4wi is good news. #flipit #voteblue #ourrevolution @Khary4Congress too!https://twitter.com/bluejean_nation/status/793844737471975424\xa0…\n&#39;,
+       &#34;\nDonald Trump &amp; Glenn Grothman don&#39;t want YOU to know this! \nVote for Sarah Lloyd\n@lloyd4wi @FlipItDem #BlueWave2016 #ImWithHerpic.twitter.com/MlwPwasjCD\n&#34;,
+       &#39;\nRemember you asked for this Sarah Lloyd you no one to blame but yourself. http://fb.me/4hrS7l8Ej\xa0\n&#39;,
+       &#39;\nJust had a great talk on the phone with congressional candidate for Wisconsin Sarah Lloyd\n&#39;,
+       &#39;\nAwesome interview with Sarah Lloyd @lloyd4wi http://www.radioplusinfo.com/episode/11-1-democratic-6th-district-congressional-candidate-sarah-lloyd/\xa0…. #ourrevolution #voteblue #flipit\n&#39;,
+       &#39;\nSarah Lloyd talking about the murder of her son to knife crime...\n#knifecrimedangers\n#besafe\n@WYP_LeedsINEpic.twitter.com/xTVgVG4Cgv\n&#39;,
+       &#39;\nSarah Lloyd for Congress. http://fb.me/8aUhm7vcL\xa0\n&#39;,
+       &#34;\nDonald Trump &amp; Glenn Grothman&#39;s New &amp; More Evil GOP! \nFight back Wisconsin, vote for Sarah Lloyd! \n@lloyd4wi #BlueWave2016 @FlipItDempic.twitter.com/6vmtd0FAg5\n&#34;,
+       &#39;\nEditorial: Sarah Lloyd is ready to represent Wisconsin - http://Madison.com\xa0 http://dlvr.it/MZblyh\xa0 #Madison #Wisconsin\n&#39;],
+      dtype=&#39;&lt;U319&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## the race Lloyd lost</span>
+<span class="n">df_test</span><span class="p">[</span><span class="n">df_test</span><span class="o">.</span><span class="n">race_index</span><span class="o">==</span><span class="mi">151</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[33]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>candidate</th>
+      <th>tweets</th>
+      <th>replies</th>
+      <th>retweets</th>
+      <th>favorites</th>
+      <th>winner</th>
+      <th>race_index</th>
+      <th>pred_raw</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>510</th>
+      <td>Glenn Grothman</td>
+      <td>[\nThey're ubiquitous up here.  My "brand Glen...</td>
+      <td>[1.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 5.0, 0.0, 0.0, 5.0, 0.0, 1.0, 0.0, ...</td>
+      <td>[1.0, 1.0, 5.0, 1.0, 0.0, 2.0, 0.0, 1.0, 0.0, ...</td>
+      <td>1</td>
+      <td>151</td>
+      <td>0.483090</td>
+    </tr>
+    <tr>
+      <th>511</th>
+      <td>Sarah Lloyd</td>
+      <td>[\nours increase when more anxious as well. bu...</td>
+      <td>[2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 1.0, 1.0, 4.0, 0.0, 0.0, 5.0, 1.0, ...</td>
+      <td>[1.0, 0.0, 3.0, 0.0, 3.0, 0.0, 0.0, 5.0, 4.0, ...</td>
+      <td>0</td>
+      <td>151</td>
+      <td>0.801264</td>
+    </tr>
+    <tr>
+      <th>512</th>
+      <td>Jeff Dahlke</td>
+      <td>[\nJeff Dahlke. I'm only voting him bc he boug...</td>
+      <td>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</td>
+      <td>[0.0, 0.0, 4.0, 0.0, 0.0, 0.0]</td>
+      <td>[1.0, 1.0, 13.0, 0.0, 0.0, 0.0]</td>
+      <td>0</td>
+      <td>151</td>
+      <td>0.048588</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">151</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">151</span><span class="p">]</span><span class="o">.</span><span class="n">Result</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Race                                             Wisconsin 6
+Result     [[&#34;Glenn Grothman&#34;, &#34;Republican&#34;, 57.2], [&#34;Sar...
+Chamber                                                House
+winner                                        Glenn Grothman
+Name: 151, dtype: object
+[[&#34;Glenn Grothman&#34;, &#34;Republican&#34;, 57.2], [&#34;Sarah Lloyd&#34;, &#34;Democratic&#34;, 37.3], [&#34;Jeff Dahlke&#34;, &#34;Independent&#34;, 5.5]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The model predicted the top candidate as the winner and the top candidate actually won!</p>
+<p>So this looks like a race where Democratic enthusiasm (or twitter activism) was high but the Republican won. It could also have a little to do with the fact that Sarah Lloyd is also the name of a British travel writer but not sure.</p>
 
 </div>
 </div>
@@ -13669,7 +13789,233 @@ JElSwRgCJEmSpIIxBEiSJEkF8/8AZsyhQRv71AQAAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Stay tuned: as a next step, I plan to collect the tweets for the month leading up to the 2016 congressional races and see how this model performs on tweets from 4 years later.</p>
+<p>Now let's take a look at the lowest raw prediction for a winner:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_test</span><span class="p">[</span><span class="n">df_test</span><span class="o">.</span><span class="n">winner</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;pred_raw&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[35]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>candidate</th>
+      <th>tweets</th>
+      <th>replies</th>
+      <th>retweets</th>
+      <th>favorites</th>
+      <th>winner</th>
+      <th>race_index</th>
+      <th>pred_raw</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>240</th>
+      <td>Jason T. Smith</td>
+      <td>[\nEver ask "Why ain't my SH*T selling?" Join ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0]</td>
+      <td>[0.0, 0.0, 1.0, 0.0]</td>
+      <td>[0.0, 0.0, 4.0, 0.0]</td>
+      <td>1</td>
+      <td>69</td>
+      <td>0.039982</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## this race</span>
+<span class="n">df_test</span><span class="p">[</span><span class="n">df_test</span><span class="o">.</span><span class="n">race_index</span><span class="o">==</span><span class="mi">69</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[36]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>candidate</th>
+      <th>tweets</th>
+      <th>replies</th>
+      <th>retweets</th>
+      <th>favorites</th>
+      <th>winner</th>
+      <th>race_index</th>
+      <th>pred_raw</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>240</th>
+      <td>Jason T. Smith</td>
+      <td>[\nEver ask "Why ain't my SH*T selling?" Join ...</td>
+      <td>[0.0, 0.0, 0.0, 0.0]</td>
+      <td>[0.0, 0.0, 1.0, 0.0]</td>
+      <td>[0.0, 0.0, 4.0, 0.0]</td>
+      <td>1</td>
+      <td>69</td>
+      <td>0.039982</td>
+    </tr>
+    <tr>
+      <th>241</th>
+      <td>Dave Cowell</td>
+      <td>[\nJust so happens the person who runs Armatur...</td>
+      <td>[0.0, 0.0, 1.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, ...</td>
+      <td>[0.0, 0.0, 0.0, 1.0, 0.0, 8.0, 0.0, 1.0, 0.0, ...</td>
+      <td>[1.0, 2.0, 1.0, 3.0, 0.0, 21.0, 2.0, 2.0, 1.0,...</td>
+      <td>0</td>
+      <td>69</td>
+      <td>0.051360</td>
+    </tr>
+    <tr>
+      <th>242</th>
+      <td>Jonathan Shell</td>
+      <td>[]</td>
+      <td>[]</td>
+      <td>[]</td>
+      <td>[]</td>
+      <td>0</td>
+      <td>69</td>
+      <td>0.040377</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">69</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">race_metadata_2016</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">69</span><span class="p">]</span><span class="o">.</span><span class="n">Result</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Race                                              Missouri 8
+Result     [[&#34;Jason T. Smith&#34;, &#34;Republican&#34;, 74.4], [&#34;Dav...
+Chamber                                                House
+winner                                        Jason T. Smith
+Name: 69, dtype: object
+[[&#34;Jason T. Smith&#34;, &#34;Republican&#34;, 74.4], [&#34;Dave Cowell&#34;, &#34;Democratic&#34;, 22.7], [&#34;Jonathan Shell&#34;, &#34;Libertarian&#34;, 2.9]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This one makes more sense to me - "Jason T. Smith" is what I have as the candidate's name (from Wikipedia). Since twitter search looks for an exact string match, it makes sense that the model would not have a good read on this candidate since it's unlikely for people to tweet a name with a middle initial.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Stay tuned: as a next step, I plan to collect the tweets for the month leading up to the 2018 congressional races and post my predictions on election day.</p>
 
 </div>
 </div>
