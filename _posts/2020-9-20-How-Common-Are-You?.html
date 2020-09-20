@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>How Common Are You?</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+
+<body>
+    <main>
+        <h1>How Common Are You</h1>
+        <div class="intro">
+            <b>What is this?</b><br>
+            It's a visualization of US census data!<br>
+            <b>Why should I care?</b><br>
+            It might be fun to play around with. Admittedly it will be more interesting if you live in the US. You could find out:<br>
+            <ul>
+                <li>How common you are. In other words, how many people share your characteristics</li>
+                <li>How common you would be if you were slightly different</li>
+                <li>How common various combinations of characteristics are</li>
+            </ul>
+            <b>How does it work?</b><br>
+            When you click on the characteristics in the form below, the visualization and statistical result will update automatically. The size of each circle is proportional to the size of one group. The data is from the 2017 census (2018 data out soon)<br>
+            <b>What was this inspired by?</b><br>
+            This was inspired by an episode of NPR's Planet Money called <a href="https://www.npr.org/2019/08/28/755191639/episode-936-the-modal-american">"The Modal American"</a>. In fact it uses almost the same data and methodology as they describe in their write up<br>
+            <b>Show me the gory data details!</b><br>
+            A writeup with all the gory details is coming. For now, <a href="https://www2.census.gov/programs-surveys/acs/data/pums/2017/1-Year/">here's a link</a> if you'd like to get the data yourself
+        </div>
+        <div>
+            <svg id="world" height="300" width="300">
+              <circle cx="150" cy="150" r="146" stroke="black" stroke-width="3" fill="black" opacity="0.2"/>
+            </svg>
+            <p class="results"></p>
+        </div>
+        <div class="form-check">
+            <div class="genz-cat">
+                <div class="genz">
+                    <input type="checkbox" class="form-check-input" name="include_genz" id="include_genz" checked/>
+                    <label class="form-check-label" for="include_genz">Include Generation Z</label>
+                </div>
+            </div>
+            <div class="cat">
+                <span class="header">Age</span>
+                <button class="clear" type="submit" for="age_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="age_cat" id="genz"/>
+                    <label class="form-check-label" for="genz">Generation Z (born after 1996)</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="age_cat" id="millennial" />
+                    <label class="form-check-label" for="millennial">Millenial (born 1981-1996)</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="age_cat" id="genx" />
+                    <label class="form-check-label" for="genx">Generation X (born 1965-1980)</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="age_cat" id="boomer" />
+                    <label class="form-check-label" for="boomer">Baby Boomer (born 1946-1964)</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="age_cat" id="silent" />
+                    <label class="form-check-label" for="silent">Silent Generation (born before 1946)</label>
+                </div>
+            </div>
+
+            <div class="cat">
+                <span class="header">Race</span>
+                <button class="clear" type="submit" for="race_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="race_cat" id="white_alone" />
+                    <label class="form-check-label" for="white_alone">White Alone</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="race_cat" id="aa_alone" />
+                    <label class="form-check-label" for="aa_alone">African American Alone</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="race_cat" id="other_alone" />
+                    <label class="form-check-label" for="other_alone">Other Race Alone</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="race_cat" id="multiple" />
+                    <label class="form-check-label" for="multiple">Multiracial</label>
+                </div>
+            </div>
+
+            <div class="cat">
+                <span class="header">Sex</span>
+                <button class="clear" type="submit" for="sex_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="sex_cat" id="female" />
+                    <label class="form-check-label" for="female">Female</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="sex_cat" id="male" />
+                    <label class="form-check-label" for="male">Male</label>
+                </div>
+            </div>
+
+            <div class="cat">
+                <span class="header">Marital Status</span>
+                <button class="clear" type="submit" for="mar_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="mar_cat" id="married" />
+                    <label class="form-check-label" for="married">Married</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="mar_cat" id="prev_married" />
+                    <label class="form-check-label" for="prev_married">Previously Married</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="mar_cat" id="never_married" />
+                    <label class="form-check-label" for="never_married">Never Married</label>
+                </div>
+            </div>
+
+            <div class="cat">
+                <span class="header">Education</span>
+                <button class="clear" type="submit" for="edu_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="edu_cat" id="no_deg" />
+                    <label class="form-check-label" for="no_deg">No Bachelor's Degree</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="edu_cat" id="deg" />
+                    <label class="form-check-label" for="deg">Bachelor's Degree</label>
+                </div>
+            </div>
+
+            <div class="cat">
+                <span class="header">Neighborhood Type</span>
+                <button class="clear" type="submit" for="nei_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="nei_cat" id="rural" />
+                    <label class="form-check-label" for="rural">Rural</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="nei_cat" id="suburban" />
+                    <label class="form-check-label" for="suburban">Suburban</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="nei_cat" id="urban" />
+                    <label class="form-check-label" for="urban">Urban</label>
+                </div>
+            </div>
+
+            <div class="cat">
+                <span class="header">Total Income From All Sources During Last 12 Months</span>
+                <button class="clear" type="submit" for="income_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="income_cat" id="no_or_low" />
+                    <label class="form-check-label" for="no_or_low">Less than $40,000</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="income_cat" id="middle" />
+                    <label class="form-check-label" for="middle">At least $40,000 and less than $160,000</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="income_cat" id="high" />
+                    <label class="form-check-label" for="high">At least $160,000</label>
+                </div>
+            </div>
+
+            <div class="cat">
+                <span class="header">Employment During Last 12 Months</span>
+                <button class="clear" type="submit" for="fempl_cat">Clear</button>
+                <br>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="fempl_cat" id="yes" />
+                    <label class="form-check-label" for="yes">Worked at least 40 weeks &amp; usually worked at least 35 hours per week</label>
+                </div>
+                <div class="mini-container">
+                    <input type="radio" class="form-check-input" name="fempl_cat" id="no" />
+                    <label class="form-check-label" for="no">Did not work at least 40 weeks or usually worked less than 35 hours per week</label>
+                </div>
+            </div>
+        </div>
+        <br>
+    </main>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148376161-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-148376161-1');
+    </script>
+
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/d3.js"></script>
+    <script src="/assets/js/kdtree.js"></script>
+    <script src="/assets/js/d.js"></script>
+    <script src="/assets/js/j.js"></script>
+</body>
+
+</html>
