@@ -1,6 +1,6 @@
 @media (min-width: 500px) {
     main {
-      max-width: 85%;
+      /* max-width: 85%; */
       margin: 20px auto 20px auto;
       background-color: #cffff6;
       min-height: 100vh;
