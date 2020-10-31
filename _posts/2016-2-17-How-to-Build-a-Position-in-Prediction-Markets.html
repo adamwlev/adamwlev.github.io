@@ -56,7 +56,7 @@ The Sharpe Ratio misses this fact. This is why, when measuring Variance of a pot
 <br />
 For the above Investments, the blue investment has a Semi-Variance of .55/2 = .275, while the black investment has a Semi-Variance of .16. The "Sharpe Ratio" with Semi-Variance instead of Variance is now higher for the black investment.<br />
 <br />
-<a href="https://www.codecogs.com/eqnedit.php?latex=Semivar(X)=\mathbb&amp;space;E[(X-\mathbb&amp;space;E[X])^2\times&amp;space;\mathbbm{1}_{X%3C\mathbb&amp;space;E[X]}]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Semivar(X)=\mathbb&amp;space;E[(X-\mathbb&amp;space;E[X])^2\times&amp;space;\mathbbm{1}_{X&lt;\mathbb&amp;space;E[X]}]" title="Semivar(X)=\mathbb E[(X-\mathbb E[X])^2\times \mathbbm{1}_{X&lt;\mathbb E[X]}]" /></a><br />
+<a href="https://www.codecogs.com/eqnedit.php?latex=Semivar(X)=&space;E[(X-&space;E[X])^2&space;\times&space;1_{X&space;<&space;E[X]&space;}]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?Semivar(X)=&space;E[(X-&space;E[X])^2&space;\times&space;1_{X&space;<&space;E[X]&space;}]" title="Semivar(X)= E[(X- E[X])^2 \times 1_{X < E[X] }]" /></a><br />
 <br />
 Calculating the Semi-variance is not the same as calculating variance. For one thing,<br />
 <br />
@@ -112,7 +112,7 @@ So the draws are draws from a Multinomial distribution but since there is a Diri
 <br />
 <a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{AN})(\frac{N+A}{1+A})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{AN})(\frac{N+A}{1+A})" title="\frac{\alpha _i}{A}(1-\frac{\alpha _i}{AN})(\frac{N+A}{1+A})" /></a>&nbsp;where<a href="https://www.codecogs.com/eqnedit.php?latex=A=\sum_i^k&amp;space;\alpha&amp;space;_i" target="_blank"><img src="https://latex.codecogs.com/gif.latex?A=\sum_i^k&amp;space;\alpha&amp;space;_i" title="A=\sum_i^k \alpha _i" /></a>.&nbsp;<a href="http://www2.math.su.se/matstat/reports/seriec/2014/rep6/report.pdf">(Source)</a><br />
 <br />
-When N=1, this variance take the simple form&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{A})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{A})" title="\frac{\alpha _i}{A}(1-\frac{\alpha _i}{A})" /></a>, which is independent of the confidence that you have in your assessment.<br />
+When N=1, this variance takes the simple form&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{A})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\frac{\alpha&amp;space;_i}{A}(1-\frac{\alpha&amp;space;_i}{A})" title="\frac{\alpha _i}{A}(1-\frac{\alpha _i}{A})" /></a>, which is independent of the confidence that you have in your assessment.<br />
 <br />
 In short, when there is one draw, the expectation and variance of the outcome are independent of your confidence in the assessment. Only when there is more than one draw from this distribution does the confidence of your assessment make the variance of the outcome random variable larger or smaller.<br />
 <br />
