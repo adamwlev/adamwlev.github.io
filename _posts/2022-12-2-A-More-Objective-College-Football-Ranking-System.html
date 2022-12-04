@@ -14595,9 +14595,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <li><em>zeta</em> - this the amount of points a team gets for actually winning the game and the amount a team loses when they lose the game</li>
 <li><em>hfa</em> - this is the amount the adjusted margin of victory get adjusted to account for home field advantage</li>
 </ul>
-<p>If team i plays team j and wins, the paper says that $A_{ji}$ = 1 asumming they've just played once. The paper also says that $A_{ij} = 0$ meaning that team j gets no points for this matchup no matter how close the game actually was. In my formulation, if team i plays team j and wins by a score of $p_{i}$ to $p_{j}$, then $A_{ij} = 1 + \zeta + \beta\cdot adjmargin$ and $A_{ji} = 1 - \zeta - \beta\cdot adjmargin$. I reversed the indexes since it was more aesthetic to me (it just switches the math to use $A^{T}$ where you'd use $A$ and visa-versa). To compute adjusted margin I take $p_{i}$ subtracted $p_{j}$ subtracted the $hfa$ parameter times an indicator if either team a or team b played at home. Let's call that $ham$ for home field adjust margin. To compute the adjusted margin in the end I do this $adjmargin = \log(|ham| + 1)\cdot sign(ham)$. The reason for the log is intuitive - the impressiveness of a win is no proportional to the marign of victory but closer to the log of it.</p>
-<p>The nice this about this rating/ranking system is that it has parameters that you can fit to data. In my mind ratings are as good as they can predict the future. So here I download a bunch of game reuslt data from the massey rating website and implement the rating system and then use them to predict a future week of games using the ratings for each team from the games up to that week (using logistic regression). I use logloss of the predictions to measure the success of the ratings - the better the ratings the lower the logloss of the regression is. I kept the seeds the same between runs so that each parameter combination had the same games to predict. Before setting up the final parameterized verison I implemented the original formulation from the paper and predicting the same games it had a logloss of 0.57412 at the best alpha level of 0.5 of the max. I iterated a bit on the ratings to come up with this formulation and below is the final tuning process where I run a grid search for the best combination of parameters and output the final ratings.</p>
-<p>Ultimately what it shows that even though the humans favor USC over Alabama, Tennessee and Ohio State, the cold hard numbers say that those teams' body of work is more impressive. Not saying that this is necessarily the way the CFP should be determined, but sometimes it's useful and neat to check our human biases with objective numbers.</p>
+<p>If team i plays team j and wins, the paper says that $A_{ji}$ = 1 asumming they've just played once. The paper also says that $A_{ij} = 0$ meaning that team j gets no points for this matchup no matter how close the game actually was. In my formulation, if team i plays team j and wins by a score of $p_{i}$ to $p_{j}$, then $A_{ij} = 1 + \zeta + \beta\cdot adjmargin$ and $A_{ji} = 1 - \zeta - \beta\cdot adjmargin$. I reversed the indexes since it makes more sense to me. To compute adjusted margin I take $p_{i}$ subtracted $p_{j}$ subtracted the $hfa$ parameter times an indicator if either team a or team b played at home. Let's call that $ham$ for home field adjust margin. To compute the adjusted margin in the end I do this $adjmargin = \log(|ham| + 1)\cdot sign(ham)$. The reason for the log is intuitive - the impressiveness of a win is no proportional to the marign of victory but closer to the log of it.</p>
+<p>The nice this about this rating/ranking system is that it has parameters that you can fit to data. In my mind ratings are as good as they can predict the future. So here I download a bunch of game reuslt data from the massey rating website and implement the rating system and then use them to predict a future week of games using the ratings for each team from the games up to that week (using logistic regression). I use logloss of the predictions to measure the success of the ratings - the better the ratings the lower the logloss of the regression is. I kept the seeds the same between runs so that each parameter combination had the same games to predict. Before setting up the final parameterized verison I implemented the original formulation from the paper and predicting the same games it had a logloss of . I iterated a bit on the ratings to come up with this formulation and below is the final tuning process where I run a grid search for the best combination of parameters and output the final ratings.</p>
+<p>Ultimately what it shows that even though the humans favor USC over Alabama, Tennessee and Ohio State, the cold hard numbers say that those teams' body of work is more impressive. Not saying that this is necessarily the way the CFB should be determined, but sometimes it's useful and neat to check our human biases with objective numbers.</p>
 
 </div>
 </div>
@@ -14802,24 +14802,24 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>2022</td>
       <td>13</td>
       <td>2022-11-26</td>
-      <td>125</td>
+      <td>14</td>
       <td>True</td>
-      <td>26</td>
-      <td>145</td>
+      <td>21</td>
+      <td>205</td>
       <td>False</td>
-      <td>13</td>
+      <td>17</td>
     </tr>
     <tr>
       <th>40877</th>
       <td>2022</td>
       <td>13</td>
       <td>2022-11-26</td>
-      <td>13</td>
-      <td>False</td>
-      <td>49</td>
-      <td>173</td>
+      <td>125</td>
       <td>True</td>
-      <td>14</td>
+      <td>26</td>
+      <td>145</td>
+      <td>False</td>
+      <td>13</td>
     </tr>
     <tr>
       <th>40878</th>
@@ -14958,24 +14958,24 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>2022</td>
       <td>13</td>
       <td>2022-11-26</td>
-      <td>174</td>
-      <td>False</td>
-      <td>20</td>
-      <td>176</td>
+      <td>160</td>
       <td>True</td>
-      <td>10</td>
+      <td>47</td>
+      <td>103</td>
+      <td>False</td>
+      <td>27</td>
     </tr>
     <tr>
       <th>40890</th>
       <td>2022</td>
       <td>13</td>
       <td>2022-11-26</td>
-      <td>241</td>
-      <td>True</td>
-      <td>34</td>
-      <td>159</td>
+      <td>13</td>
       <td>False</td>
-      <td>24</td>
+      <td>49</td>
+      <td>173</td>
+      <td>True</td>
+      <td>14</td>
     </tr>
   </tbody>
 </table>
@@ -15030,13 +15030,15 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     <span class="n">adj_margin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">margin</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">margin</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ties</span><span class="o">.</span><span class="n">team_a</span><span class="p">,</span> <span class="n">ties</span><span class="o">.</span><span class="n">team_b</span><span class="p">),</span> <span class="mf">.5</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">adj_margin</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="p">(</span><span class="n">ties</span><span class="o">.</span><span class="n">team_b</span><span class="p">,</span> <span class="n">ties</span><span class="o">.</span><span class="n">team_a</span><span class="p">),</span> <span class="mf">.5</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">adj_margin</span><span class="p">)</span>
+    <span class="n">game_counts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">sub</span><span class="o">.</span><span class="n">team_a</span><span class="p">,</span> <span class="n">sub</span><span class="o">.</span><span class="n">team_b</span><span class="p">])</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="o">/</span><span class="n">game_counts</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="c1">#normalize by num. of games</span>
     <span class="n">max_alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">real</span>
     <span class="n">alpha_</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">max_alpha</span>
     <span class="n">ratings_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_teams</span><span class="p">)</span> <span class="o">-</span> <span class="n">alpha_</span> <span class="o">*</span> <span class="n">A</span><span class="p">)</span> <span class="o">@</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">ratings_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_teams</span><span class="p">)</span> <span class="o">-</span> <span class="n">alpha_</span> <span class="o">*</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">@</span> <span class="n">A</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ratings_w</span> <span class="o">-</span> <span class="n">ratings_l</span>
 
-<span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">zeta</span><span class="p">,</span> <span class="n">hfa</span><span class="p">,</span> <span class="n">folds</span><span class="o">=</span><span class="mi">25</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">zeta</span><span class="p">,</span> <span class="n">hfa</span><span class="p">,</span> <span class="n">folds</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
     <span class="n">all_years</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1995</span><span class="p">,</span> <span class="mi">2023</span><span class="p">))</span>
     <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">fold</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">folds</span><span class="p">):</span>
@@ -15101,10 +15103,10 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.2</span><span class="p">,</span> <span class="mf">.8</span><span class="p">,</span> <span class="mf">.1</span><span class="p">)</span>
-<span class="n">betas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.0</span><span class="p">,</span> <span class="mf">.7</span><span class="p">,</span> <span class="mf">.2</span><span class="p">)</span>
-<span class="n">zetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.05</span><span class="p">,</span> <span class="mf">.30</span><span class="p">,</span> <span class="mf">.05</span><span class="p">)</span>
-<span class="n">hcas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.75</span><span class="p">,</span> <span class="mf">.97</span><span class="p">,</span> <span class="mf">.03</span><span class="p">)</span>
+<span class="n">betas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mf">.1</span><span class="p">)</span>
+<span class="n">zetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.05</span><span class="p">,</span> <span class="mf">.2</span><span class="p">,</span> <span class="mf">.05</span><span class="p">)</span>
+<span class="n">hcas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
 
 <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">combos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">alphas</span><span class="p">,</span> <span class="n">betas</span><span class="p">,</span> <span class="n">zetas</span><span class="p">,</span> <span class="n">hcas</span><span class="p">))</span>
@@ -15138,37 +15140,36 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>455 combos
+<pre>416 combos
 0
-found new best 0.2 0.0 0.1 0.0 0.578107805717765
-found new best 0.2 0.0 0.15000000000000002 0.0 0.5780978690679305
-found new best 0.2 0.0 0.2 0.0 0.578083253991364
-found new best 0.2 0.0 0.25 0.0 0.5780639824480069
-found new best 0.2 0.2 0.05 0.0 0.562321800896052
+found new best 0.75 0.0 0.1 0.0 0.6480628244501047
+found new best 0.75 0.0 0.15000000000000002 0.0 0.624640445530048
+found new best 0.75 0.0 0.2 0.0 0.6070883832458315
+found new best 0.75 0.1 0.05 0.0 0.567147865349118
+found new best 0.75 0.1 0.1 0.0 0.5636435437019677
+found new best 0.75 0.1 0.15000000000000002 0.0 0.5614045930804463
+found new best 0.75 0.1 0.2 0.0 0.5599827410962219
+found new best 0.75 0.2 0.05 0.0 0.5512674855040569
 25
-found new best 0.2 0.4 0.05 0.0 0.5595307882230076
 50
+found new best 0.78 0.2 0.05 0.0 0.550735725869885
 75
-found new best 0.30000000000000004 0.4 0.05 0.0 0.5581256423841815
 100
+found new best 0.81 0.2 0.05 0.0 0.5503019307166305
 125
 150
+found new best 0.8400000000000001 0.2 0.05 0.0 0.5499931069504221
 175
 200
-found new best 0.5000000000000001 0.2 0.05 0.0 0.5568202599135457
+found new best 0.8700000000000001 0.2 0.05 0.0 0.5498550794207714
 225
 250
-found new best 0.6000000000000001 0.2 0.05 0.0 0.5554885635173844
 275
 300
 325
-found new best 0.7000000000000002 0.2 0.05 0.0 0.5546052423607178
 350
 375
-found new best 0.8000000000000003 0.2 0.05 0.0 0.554604964094391
 400
-425
-450
 </pre>
 </div>
 </div>
@@ -15222,7 +15223,7 @@ found new best 0.8000000000000003 0.2 0.05 0.0 0.554604964094391
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>(0.8000000000000003, 0.2, 0.05, 0.0)</pre>
+<pre>(0.8700000000000001, 0.2, 0.05, 0.0)</pre>
 </div>
 
 </div>
@@ -15393,2142 +15394,2142 @@ found new best 0.8000000000000003 0.2 0.05 0.0 0.554604964094391
       <th>0</th>
       <td>1</td>
       <td>Georgia</td>
-      <td>138.809684</td>
+      <td>19.951193</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>2</td>
-      <td>Michigan</td>
-      <td>113.637194</td>
-      <td>2.0</td>
+      <td>TCU</td>
+      <td>16.667676</td>
+      <td>3.0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>3</td>
-      <td>TCU</td>
-      <td>113.607806</td>
-      <td>3.0</td>
+      <td>Alabama</td>
+      <td>15.589647</td>
+      <td>6.0</td>
     </tr>
     <tr>
       <th>3</th>
       <td>4</td>
-      <td>Alabama</td>
-      <td>107.510211</td>
-      <td>6.0</td>
+      <td>Michigan</td>
+      <td>15.536973</td>
+      <td>2.0</td>
     </tr>
     <tr>
       <th>4</th>
       <td>5</td>
-      <td>Ohio St</td>
-      <td>106.522445</td>
-      <td>5.0</td>
+      <td>Tennessee</td>
+      <td>15.206362</td>
+      <td>7.0</td>
     </tr>
     <tr>
       <th>5</th>
       <td>6</td>
-      <td>Tennessee</td>
-      <td>103.827179</td>
-      <td>7.0</td>
+      <td>Ohio St</td>
+      <td>14.788169</td>
+      <td>5.0</td>
     </tr>
     <tr>
       <th>6</th>
       <td>7</td>
-      <td>USC</td>
-      <td>93.859809</td>
-      <td>4.0</td>
+      <td>Texas</td>
+      <td>13.739468</td>
+      <td>20.0</td>
     </tr>
     <tr>
       <th>7</th>
       <td>8</td>
-      <td>Texas</td>
-      <td>91.264989</td>
-      <td>20.0</td>
+      <td>Kansas St</td>
+      <td>13.520607</td>
+      <td>10.0</td>
     </tr>
     <tr>
       <th>8</th>
       <td>9</td>
-      <td>Kansas St</td>
-      <td>89.404098</td>
-      <td>10.0</td>
+      <td>USC</td>
+      <td>13.283809</td>
+      <td>4.0</td>
     </tr>
     <tr>
       <th>9</th>
       <td>10</td>
       <td>Clemson</td>
-      <td>89.117240</td>
+      <td>13.227090</td>
       <td>9.0</td>
     </tr>
     <tr>
       <th>10</th>
       <td>11</td>
       <td>Penn St</td>
-      <td>86.900241</td>
+      <td>12.205245</td>
       <td>8.0</td>
     </tr>
     <tr>
       <th>11</th>
       <td>12</td>
       <td>LSU</td>
-      <td>80.675618</td>
+      <td>12.076505</td>
       <td>14.0</td>
     </tr>
     <tr>
       <th>12</th>
       <td>13</td>
       <td>Florida St</td>
-      <td>76.825012</td>
+      <td>11.492409</td>
       <td>13.0</td>
     </tr>
     <tr>
       <th>13</th>
       <td>14</td>
       <td>Utah</td>
-      <td>75.025872</td>
+      <td>10.940231</td>
       <td>11.0</td>
     </tr>
     <tr>
       <th>14</th>
       <td>15</td>
-      <td>Tulane</td>
-      <td>73.313785</td>
-      <td>18.0</td>
+      <td>Oregon</td>
+      <td>10.656330</td>
+      <td>16.0</td>
     </tr>
     <tr>
       <th>15</th>
       <td>16</td>
-      <td>Oregon</td>
-      <td>73.037963</td>
-      <td>16.0</td>
+      <td>Tulane</td>
+      <td>10.634370</td>
+      <td>18.0</td>
     </tr>
     <tr>
       <th>16</th>
       <td>17</td>
       <td>Oregon St</td>
-      <td>69.459298</td>
+      <td>10.149833</td>
       <td>15.0</td>
     </tr>
     <tr>
       <th>17</th>
       <td>18</td>
-      <td>Washington</td>
-      <td>66.873112</td>
-      <td>12.0</td>
+      <td>Notre Dame</td>
+      <td>9.948450</td>
+      <td>21.0</td>
     </tr>
     <tr>
       <th>18</th>
       <td>19</td>
-      <td>Notre Dame</td>
-      <td>65.322193</td>
-      <td>21.0</td>
+      <td>Mississippi St</td>
+      <td>9.910323</td>
+      <td>24.0</td>
     </tr>
     <tr>
       <th>19</th>
       <td>20</td>
-      <td>Mississippi St</td>
-      <td>64.992051</td>
-      <td>24.0</td>
+      <td>Mississippi</td>
+      <td>9.817282</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>20</th>
       <td>21</td>
-      <td>UCLA</td>
-      <td>63.807572</td>
-      <td>17.0</td>
+      <td>Washington</td>
+      <td>9.739654</td>
+      <td>12.0</td>
     </tr>
     <tr>
       <th>21</th>
       <td>22</td>
-      <td>Mississippi</td>
-      <td>63.638284</td>
-      <td>NaN</td>
+      <td>UCLA</td>
+      <td>9.434639</td>
+      <td>17.0</td>
     </tr>
     <tr>
       <th>22</th>
       <td>23</td>
-      <td>UCF</td>
-      <td>58.462275</td>
-      <td>22.0</td>
+      <td>Louisville</td>
+      <td>8.798316</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>23</th>
       <td>24</td>
-      <td>Illinois</td>
-      <td>55.924816</td>
-      <td>NaN</td>
+      <td>South Carolina</td>
+      <td>8.650026</td>
+      <td>19.0</td>
     </tr>
     <tr>
       <th>24</th>
       <td>25</td>
-      <td>South Carolina</td>
-      <td>54.847242</td>
-      <td>19.0</td>
+      <td>UCF</td>
+      <td>8.552051</td>
+      <td>22.0</td>
     </tr>
     <tr>
       <th>25</th>
       <td>26</td>
-      <td>Troy</td>
-      <td>54.408236</td>
+      <td>Illinois</td>
+      <td>8.468478</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>26</th>
       <td>27</td>
-      <td>Louisville</td>
-      <td>53.936518</td>
+      <td>Kentucky</td>
+      <td>8.417337</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>27</th>
       <td>28</td>
-      <td>UT San Antonio</td>
-      <td>53.382671</td>
+      <td>Arkansas</td>
+      <td>8.087891</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>28</th>
       <td>29</td>
-      <td>South Alabama</td>
-      <td>52.847876</td>
+      <td>CS Sacramento</td>
+      <td>7.898523</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>29</th>
       <td>30</td>
-      <td>Kentucky</td>
-      <td>52.602942</td>
+      <td>Troy</td>
+      <td>7.660884</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>30</th>
       <td>31</td>
-      <td>CS Sacramento</td>
-      <td>51.638861</td>
-      <td>NaN</td>
+      <td>North Carolina</td>
+      <td>7.653496</td>
+      <td>23.0</td>
     </tr>
     <tr>
       <th>31</th>
       <td>32</td>
-      <td>Arkansas</td>
-      <td>50.463781</td>
+      <td>Pittsburgh</td>
+      <td>7.526987</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>32</th>
       <td>33</td>
-      <td>Cincinnati</td>
-      <td>49.705124</td>
+      <td>UT San Antonio</td>
+      <td>7.488730</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>33</th>
       <td>34</td>
-      <td>North Carolina</td>
-      <td>47.177653</td>
-      <td>23.0</td>
+      <td>Cincinnati</td>
+      <td>7.451187</td>
+      <td>NaN</td>
     </tr>
     <tr>
       <th>34</th>
       <td>35</td>
-      <td>Jackson St</td>
-      <td>46.559685</td>
+      <td>Texas Tech</td>
+      <td>7.417065</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>35</th>
       <td>36</td>
-      <td>Pittsburgh</td>
-      <td>45.531045</td>
+      <td>South Alabama</td>
+      <td>7.400338</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>36</th>
       <td>37</td>
-      <td>Wake Forest</td>
-      <td>44.238349</td>
+      <td>Baylor</td>
+      <td>7.301112</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>37</th>
       <td>38</td>
-      <td>Texas Tech</td>
-      <td>44.130905</td>
+      <td>Oklahoma</td>
+      <td>7.243573</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>38</th>
       <td>39</td>
-      <td>Oklahoma</td>
-      <td>43.820932</td>
+      <td>Oklahoma St</td>
+      <td>7.147379</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>39</th>
       <td>40</td>
-      <td>Baylor</td>
-      <td>43.341671</td>
+      <td>Holy Cross</td>
+      <td>7.062713</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>40</th>
       <td>41</td>
-      <td>William &amp; Mary</td>
-      <td>43.287496</td>
+      <td>Wake Forest</td>
+      <td>7.056135</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>41</th>
       <td>42</td>
-      <td>Holy Cross</td>
-      <td>42.964116</td>
+      <td>S Dakota St</td>
+      <td>7.042007</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>42</th>
       <td>43</td>
-      <td>Oklahoma St</td>
-      <td>42.334699</td>
+      <td>Florida</td>
+      <td>6.903087</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>43</th>
       <td>44</td>
-      <td>S Dakota St</td>
-      <td>42.268483</td>
+      <td>William &amp; Mary</td>
+      <td>6.856718</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>44</th>
       <td>45</td>
       <td>NC State</td>
-      <td>42.085137</td>
+      <td>6.843997</td>
       <td>25.0</td>
     </tr>
     <tr>
       <th>45</th>
       <td>46</td>
-      <td>Boise St</td>
-      <td>41.925331</td>
+      <td>Jackson St</td>
+      <td>6.822085</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>46</th>
       <td>47</td>
-      <td>Washington St</td>
-      <td>41.295968</td>
+      <td>Delta St</td>
+      <td>6.713427</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>47</th>
       <td>48</td>
-      <td>Florida</td>
-      <td>40.887908</td>
+      <td>James Madison</td>
+      <td>6.691507</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>48</th>
       <td>49</td>
-      <td>Weber St</td>
-      <td>39.548046</td>
+      <td>Coastal Car</td>
+      <td>6.537978</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>49</th>
       <td>50</td>
-      <td>Purdue</td>
-      <td>38.928892</td>
+      <td>Washington St</td>
+      <td>6.454943</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>50</th>
       <td>51</td>
-      <td>Minnesota</td>
-      <td>38.766646</td>
+      <td>Missouri S&amp;T</td>
+      <td>6.192580</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>51</th>
       <td>52</td>
-      <td>Maryland</td>
-      <td>38.551116</td>
+      <td>Missouri</td>
+      <td>6.116855</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>52</th>
       <td>53</td>
-      <td>Marshall</td>
-      <td>38.286340</td>
+      <td>Iowa</td>
+      <td>6.099140</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>53</th>
       <td>54</td>
-      <td>Iowa</td>
-      <td>38.124089</td>
+      <td>Purdue</td>
+      <td>6.097954</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>54</th>
       <td>55</td>
-      <td>James Madison</td>
-      <td>37.931669</td>
+      <td>Kansas</td>
+      <td>6.081273</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>55</th>
       <td>56</td>
       <td>Duke</td>
-      <td>36.828656</td>
+      <td>6.069801</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>56</th>
       <td>57</td>
-      <td>Air Force</td>
-      <td>36.750512</td>
+      <td>Maryland</td>
+      <td>6.054920</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>57</th>
       <td>58</td>
-      <td>Coastal Car</td>
-      <td>36.570900</td>
+      <td>Syracuse</td>
+      <td>5.921051</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>58</th>
       <td>59</td>
-      <td>Samford</td>
-      <td>36.557967</td>
+      <td>N Dakota St</td>
+      <td>5.852531</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>59</th>
       <td>60</td>
-      <td>Incarnate Word</td>
-      <td>35.861998</td>
+      <td>Boise St</td>
+      <td>5.847480</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>60</th>
       <td>61</td>
-      <td>SMU</td>
-      <td>35.788985</td>
+      <td>Minnesota</td>
+      <td>5.844059</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>61</th>
       <td>62</td>
-      <td>Syracuse</td>
-      <td>35.721531</td>
+      <td>Marshall</td>
+      <td>5.834362</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>62</th>
       <td>63</td>
-      <td>Missouri</td>
-      <td>35.254469</td>
+      <td>Princeton</td>
+      <td>5.738110</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>63</th>
       <td>64</td>
-      <td>N Dakota St</td>
-      <td>35.101634</td>
+      <td>SMU</td>
+      <td>5.591731</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>64</th>
       <td>65</td>
-      <td>Montana St</td>
-      <td>33.684317</td>
+      <td>Samford</td>
+      <td>5.564950</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>65</th>
       <td>66</td>
-      <td>Kansas</td>
-      <td>33.642092</td>
+      <td>Yale</td>
+      <td>5.501422</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>66</th>
       <td>67</td>
-      <td>Ohio</td>
-      <td>33.244128</td>
+      <td>Air Force</td>
+      <td>5.314200</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>67</th>
       <td>68</td>
-      <td>Furman</td>
-      <td>32.313508</td>
+      <td>Weber St</td>
+      <td>5.170600</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>68</th>
       <td>69</td>
-      <td>Richmond</td>
-      <td>30.731251</td>
+      <td>Montana St</td>
+      <td>5.065328</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>69</th>
       <td>70</td>
-      <td>Fresno St</td>
-      <td>30.075902</td>
+      <td>Iowa St</td>
+      <td>5.039742</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>70</th>
       <td>71</td>
-      <td>Delaware</td>
-      <td>29.973497</td>
+      <td>Ohio</td>
+      <td>4.949886</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>71</th>
       <td>72</td>
-      <td>East Carolina</td>
-      <td>29.110990</td>
+      <td>Incarnate Word</td>
+      <td>4.920613</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>72</th>
       <td>73</td>
-      <td>Princeton</td>
-      <td>28.621477</td>
+      <td>Auburn</td>
+      <td>4.857711</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>73</th>
       <td>74</td>
-      <td>WKU</td>
-      <td>27.831462</td>
+      <td>East Carolina</td>
+      <td>4.802734</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>74</th>
       <td>75</td>
-      <td>Houston</td>
-      <td>26.933214</td>
+      <td>Texas A&amp;M</td>
+      <td>4.664974</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>75</th>
       <td>76</td>
-      <td>Memphis</td>
-      <td>26.806902</td>
+      <td>Houston</td>
+      <td>4.648101</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>76</th>
       <td>77</td>
-      <td>Auburn</td>
-      <td>26.589934</td>
+      <td>Memphis</td>
+      <td>4.403205</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>77</th>
       <td>78</td>
-      <td>Iowa St</td>
-      <td>25.971068</td>
+      <td>Wisconsin</td>
+      <td>4.317273</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>78</th>
       <td>79</td>
-      <td>Yale</td>
-      <td>25.631989</td>
+      <td>Fresno St</td>
+      <td>4.238352</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>79</th>
       <td>80</td>
       <td>BYU</td>
-      <td>25.369941</td>
+      <td>4.202426</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>80</th>
       <td>81</td>
-      <td>Wisconsin</td>
-      <td>24.159989</td>
+      <td>Furman</td>
+      <td>4.043615</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>81</th>
       <td>82</td>
-      <td>Texas A&amp;M</td>
-      <td>23.811877</td>
+      <td>Richmond</td>
+      <td>3.919282</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>82</th>
       <td>83</td>
-      <td>Montana</td>
-      <td>23.659975</td>
+      <td>Delaware</td>
+      <td>3.890215</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>83</th>
       <td>84</td>
-      <td>Elon</td>
-      <td>23.207425</td>
+      <td>Penn</td>
+      <td>3.760171</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>84</th>
       <td>85</td>
       <td>Jacksonville St</td>
-      <td>22.699010</td>
+      <td>3.533387</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>85</th>
       <td>86</td>
-      <td>Liberty</td>
-      <td>21.873896</td>
+      <td>West Virginia</td>
+      <td>3.467647</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>86</th>
       <td>87</td>
-      <td>Penn</td>
-      <td>19.096865</td>
+      <td>Liberty</td>
+      <td>3.319831</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>87</th>
       <td>88</td>
-      <td>St Thomas MN</td>
-      <td>18.169013</td>
+      <td>WKU</td>
+      <td>3.315355</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>88</th>
       <td>89</td>
-      <td>Louisiana</td>
-      <td>17.432016</td>
+      <td>Harvard</td>
+      <td>3.220894</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>89</th>
       <td>90</td>
-      <td>North Texas</td>
-      <td>15.990051</td>
+      <td>Elon</td>
+      <td>3.177852</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>90</th>
       <td>91</td>
-      <td>Mercer</td>
-      <td>15.965665</td>
+      <td>Montana</td>
+      <td>2.957866</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>91</th>
       <td>92</td>
-      <td>UC Davis</td>
-      <td>15.712041</td>
+      <td>Michigan St</td>
+      <td>2.935823</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>92</th>
       <td>93</td>
-      <td>Harvard</td>
-      <td>15.597814</td>
+      <td>Louisiana</td>
+      <td>2.924911</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>93</th>
       <td>94</td>
-      <td>Fordham</td>
-      <td>15.091213</td>
+      <td>UC Davis</td>
+      <td>2.829245</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>94</th>
       <td>95</td>
-      <td>SE Missouri St</td>
-      <td>15.023501</td>
+      <td>San Jose St</td>
+      <td>2.788468</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>95</th>
       <td>96</td>
-      <td>NC Central</td>
-      <td>14.940166</td>
+      <td>Albany GA</td>
+      <td>2.784256</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>96</th>
       <td>97</td>
-      <td>Appalachian St</td>
-      <td>14.654720</td>
+      <td>Vanderbilt</td>
+      <td>2.726908</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>97</th>
       <td>98</td>
-      <td>New Hampshire</td>
-      <td>14.190040</td>
+      <td>St Thomas FL</td>
+      <td>2.552671</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>98</th>
       <td>99</td>
-      <td>UAB</td>
-      <td>13.992464</td>
+      <td>North Texas</td>
+      <td>2.534444</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>99</th>
       <td>100</td>
-      <td>San Jose St</td>
-      <td>13.514407</td>
+      <td>Appalachian St</td>
+      <td>2.509055</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>100</th>
       <td>101</td>
-      <td>Michigan St</td>
-      <td>13.197404</td>
+      <td>Mercer</td>
+      <td>2.504366</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>101</th>
       <td>102</td>
-      <td>West Virginia</td>
-      <td>13.042666</td>
+      <td>UAB</td>
+      <td>2.482240</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>102</th>
       <td>103</td>
-      <td>Vanderbilt</td>
-      <td>11.456323</td>
+      <td>Arizona</td>
+      <td>2.476542</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>103</th>
       <td>104</td>
-      <td>Idaho</td>
-      <td>10.766332</td>
+      <td>Navy</td>
+      <td>2.434591</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>104</th>
       <td>105</td>
-      <td>Rhode Island</td>
-      <td>10.407914</td>
+      <td>Army</td>
+      <td>2.130146</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>105</th>
       <td>106</td>
-      <td>Chattanooga</td>
-      <td>9.858975</td>
+      <td>IN Wesleyan</td>
+      <td>2.097075</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>106</th>
       <td>107</td>
-      <td>Florida A&amp;M</td>
-      <td>9.199006</td>
+      <td>Miles</td>
+      <td>2.093753</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>107</th>
       <td>108</td>
-      <td>Toledo</td>
-      <td>9.014692</td>
+      <td>Rhode Island</td>
+      <td>1.980268</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>108</th>
       <td>109</td>
-      <td>Arizona</td>
-      <td>8.641979</td>
+      <td>Lane</td>
+      <td>1.898907</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>109</th>
       <td>110</td>
-      <td>SE Louisiana</td>
-      <td>8.048671</td>
+      <td>California</td>
+      <td>1.664304</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>110</th>
       <td>111</td>
-      <td>St Francis PA</td>
-      <td>7.733006</td>
+      <td>Bloomsburg</td>
+      <td>1.638954</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>111</th>
       <td>112</td>
-      <td>Army</td>
-      <td>7.074445</td>
+      <td>SE Missouri St</td>
+      <td>1.607124</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>112</th>
       <td>113</td>
-      <td>Northern Iowa</td>
-      <td>6.708627</td>
+      <td>W Oregon</td>
+      <td>1.602201</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>113</th>
       <td>114</td>
-      <td>Navy</td>
-      <td>5.523835</td>
+      <td>New Hampshire</td>
+      <td>1.576071</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>114</th>
       <td>115</td>
-      <td>Gardner Webb</td>
-      <td>5.452291</td>
+      <td>Northern Iowa</td>
+      <td>1.541436</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>115</th>
       <td>116</td>
-      <td>San Diego St</td>
-      <td>3.974940</td>
+      <td>Chattanooga</td>
+      <td>1.418259</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>116</th>
       <td>117</td>
-      <td>Southern Miss</td>
-      <td>3.308457</td>
+      <td>Idaho</td>
+      <td>1.414201</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>117</th>
       <td>118</td>
-      <td>Columbia</td>
-      <td>3.178942</td>
+      <td>Toledo</td>
+      <td>1.403216</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>118</th>
       <td>119</td>
-      <td>California</td>
-      <td>2.233607</td>
+      <td>Fordham</td>
+      <td>1.336145</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>119</th>
       <td>120</td>
-      <td>Buffalo</td>
-      <td>1.767506</td>
+      <td>Virginia</td>
+      <td>1.284026</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>120</th>
       <td>121</td>
-      <td>S Illinois</td>
-      <td>1.683300</td>
+      <td>Buffalo</td>
+      <td>1.269730</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>121</th>
       <td>122</td>
-      <td>Delta St</td>
-      <td>1.395171</td>
+      <td>Michigan Tech</td>
+      <td>1.224092</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>122</th>
       <td>123</td>
-      <td>Ga Southern</td>
-      <td>1.343831</td>
+      <td>San Diego St</td>
+      <td>1.049207</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>123</th>
       <td>124</td>
-      <td>Austin Peay</td>
-      <td>0.994051</td>
+      <td>W New Mexico</td>
+      <td>1.036203</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>124</th>
       <td>125</td>
-      <td>Missouri S&amp;T</td>
-      <td>0.315608</td>
+      <td>SW Baptist</td>
+      <td>0.992975</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>125</th>
       <td>126</td>
-      <td>FL Atlantic</td>
-      <td>0.066276</td>
+      <td>Georgia Tech</td>
+      <td>0.987648</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>126</th>
       <td>127</td>
-      <td>North Dakota</td>
-      <td>0.038682</td>
+      <td>Southern Miss</td>
+      <td>0.961807</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>127</th>
       <td>128</td>
-      <td>Abilene Chr</td>
-      <td>-0.020342</td>
+      <td>NC Central</td>
+      <td>0.952596</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>128</th>
       <td>129</td>
-      <td>E Michigan</td>
-      <td>-0.165338</td>
+      <td>Ga Southern</td>
+      <td>0.895373</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>129</th>
       <td>130</td>
-      <td>Southern Univ</td>
-      <td>-0.586317</td>
+      <td>St Thomas MN</td>
+      <td>0.828540</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>130</th>
       <td>131</td>
-      <td>Wyoming</td>
-      <td>-0.590796</td>
+      <td>Limestone</td>
+      <td>0.784220</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>131</th>
       <td>132</td>
-      <td>Youngstown St</td>
-      <td>-0.645751</td>
+      <td>Barton</td>
+      <td>0.745723</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>132</th>
       <td>133</td>
-      <td>MTSU</td>
-      <td>-1.512463</td>
+      <td>Indiana</td>
+      <td>0.744868</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>133</th>
       <td>134</td>
-      <td>Georgia Tech</td>
-      <td>-1.561722</td>
+      <td>North Greenville</td>
+      <td>0.637388</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>134</th>
       <td>135</td>
-      <td>Indiana</td>
-      <td>-3.229950</td>
+      <td>FL Atlantic</td>
+      <td>0.605553</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>135</th>
       <td>136</td>
-      <td>St Thomas FL</td>
-      <td>-3.314928</td>
+      <td>Assumption</td>
+      <td>0.505991</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>136</th>
       <td>137</td>
-      <td>Merrimack</td>
-      <td>-3.393667</td>
+      <td>W Salem St</td>
+      <td>0.493514</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>137</th>
       <td>138</td>
-      <td>Butler</td>
-      <td>-3.512723</td>
+      <td>S Illinois</td>
+      <td>0.489719</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>138</th>
       <td>139</td>
-      <td>Albany GA</td>
-      <td>-3.582298</td>
+      <td>Nebraska</td>
+      <td>0.450837</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>139</th>
       <td>140</td>
-      <td>Michigan Tech</td>
-      <td>-3.822506</td>
+      <td>Florida A&amp;M</td>
+      <td>0.399019</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>140</th>
       <td>141</td>
-      <td>Davidson</td>
-      <td>-4.084401</td>
+      <td>Miami FL</td>
+      <td>0.353584</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>141</th>
       <td>142</td>
-      <td>W Oregon</td>
-      <td>-4.201040</td>
+      <td>Wyoming</td>
+      <td>0.328557</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>142</th>
       <td>143</td>
-      <td>IN Wesleyan</td>
-      <td>-4.497384</td>
+      <td>SE Louisiana</td>
+      <td>0.269483</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>143</th>
       <td>144</td>
-      <td>Faulkner</td>
-      <td>-4.644590</td>
+      <td>MTSU</td>
+      <td>0.268041</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>144</th>
       <td>145</td>
-      <td>Bloomsburg</td>
-      <td>-4.916269</td>
+      <td>Tulsa</td>
+      <td>0.208043</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>145</th>
       <td>146</td>
-      <td>Miles</td>
-      <td>-5.156936</td>
+      <td>Concordia MI</td>
+      <td>0.179353</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>146</th>
       <td>147</td>
-      <td>Tulsa</td>
-      <td>-5.222226</td>
+      <td>Youngstown St</td>
+      <td>0.141287</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>147</th>
       <td>148</td>
-      <td>North Greenville</td>
-      <td>-5.329954</td>
+      <td>Gardner Webb</td>
+      <td>0.135672</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>148</th>
       <td>149</td>
-      <td>Nebraska</td>
-      <td>-5.406857</td>
+      <td>Faulkner</td>
+      <td>0.117002</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>149</th>
       <td>150</td>
-      <td>Barton</td>
-      <td>-5.547850</td>
+      <td>E Michigan</td>
+      <td>0.101655</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>150</th>
       <td>151</td>
-      <td>TN Martin</td>
-      <td>-5.561203</td>
+      <td>Mississippi Col</td>
+      <td>0.099512</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>151</th>
       <td>152</td>
-      <td>Miami FL</td>
-      <td>-5.576797</td>
+      <td>Edward Waters</td>
+      <td>0.084357</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>152</th>
       <td>153</td>
-      <td>W Salem St</td>
-      <td>-5.621037</td>
+      <td>Austin Peay</td>
+      <td>0.035151</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>153</th>
       <td>154</td>
-      <td>Concordia MI</td>
-      <td>-5.688019</td>
+      <td>Columbia</td>
+      <td>0.034064</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>154</th>
       <td>155</td>
-      <td>E Kentucky</td>
-      <td>-5.688611</td>
+      <td>North Dakota</td>
+      <td>0.008890</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>155</th>
       <td>156</td>
-      <td>Taylor IN</td>
-      <td>-5.984647</td>
+      <td>McKendree</td>
+      <td>-0.031140</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>156</th>
       <td>157</td>
-      <td>SW Baptist</td>
-      <td>-6.112925</td>
+      <td>Thomas More</td>
+      <td>-0.110327</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>157</th>
       <td>158</td>
-      <td>Assumption</td>
-      <td>-6.172287</td>
+      <td>Georgia St</td>
+      <td>-0.150441</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>158</th>
       <td>159</td>
-      <td>McKendree</td>
-      <td>-6.394666</td>
+      <td>St Francis PA</td>
+      <td>-0.152542</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>159</th>
       <td>160</td>
-      <td>W New Mexico</td>
-      <td>-6.495174</td>
+      <td>Taylor IN</td>
+      <td>-0.181927</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>160</th>
       <td>161</td>
-      <td>Keiser</td>
-      <td>-6.672905</td>
+      <td>Morehouse</td>
+      <td>-0.189213</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>161</th>
       <td>162</td>
-      <td>NC A&amp;T</td>
-      <td>-6.890298</td>
+      <td>Stanford</td>
+      <td>-0.269110</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>162</th>
       <td>163</td>
-      <td>Kentucky St</td>
-      <td>-6.895102</td>
+      <td>E New Mexico</td>
+      <td>-0.289517</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>163</th>
       <td>164</td>
-      <td>Georgia St</td>
-      <td>-6.908151</td>
+      <td>Keiser</td>
+      <td>-0.290639</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>164</th>
       <td>165</td>
-      <td>Wm Jewell</td>
-      <td>-6.942666</td>
+      <td>Abilene Chr</td>
+      <td>-0.419643</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>165</th>
       <td>166</td>
-      <td>St Andrew's</td>
-      <td>-6.956634</td>
+      <td>Utah St</td>
+      <td>-0.436331</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>166</th>
       <td>167</td>
-      <td>Utah St</td>
-      <td>-6.970824</td>
+      <td>Kent</td>
+      <td>-0.462956</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>167</th>
       <td>168</td>
-      <td>Dayton</td>
-      <td>-7.092583</td>
+      <td>Kentucky St</td>
+      <td>-0.500371</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>168</th>
       <td>169</td>
-      <td>Edward Waters</td>
-      <td>-7.097072</td>
+      <td>Mars Hill</td>
+      <td>-0.511493</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>169</th>
       <td>170</td>
-      <td>Louisiana Chr</td>
-      <td>-7.202129</td>
+      <td>Arizona St</td>
+      <td>-0.515764</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>170</th>
       <td>171</td>
-      <td>Limestone</td>
-      <td>-7.303675</td>
+      <td>Wm Jewell</td>
+      <td>-0.542231</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>171</th>
       <td>172</td>
-      <td>FL Memorial</td>
-      <td>-7.412988</td>
+      <td>St Andrew's</td>
+      <td>-0.545712</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>172</th>
       <td>173</td>
-      <td>La Verne</td>
-      <td>-7.419041</td>
+      <td>Tuskegee</td>
+      <td>-0.581151</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>173</th>
       <td>174</td>
-      <td>E New Mexico</td>
-      <td>-7.546949</td>
+      <td>Chadron St</td>
+      <td>-0.672004</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>174</th>
       <td>175</td>
-      <td>Morehouse</td>
-      <td>-8.229435</td>
+      <td>S Connecticut</td>
+      <td>-0.856804</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>175</th>
       <td>176</td>
-      <td>Kent</td>
-      <td>-8.542074</td>
+      <td>FL Memorial</td>
+      <td>-0.985127</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>176</th>
       <td>177</td>
-      <td>Lane</td>
-      <td>-8.838439</td>
+      <td>Sam Houston St</td>
+      <td>-0.991370</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>177</th>
       <td>178</td>
-      <td>Mars Hill</td>
-      <td>-8.971024</td>
+      <td>Lincoln PA</td>
+      <td>-0.995064</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>178</th>
       <td>179</td>
-      <td>Mississippi Col</td>
-      <td>-9.033903</td>
+      <td>Southern Univ</td>
+      <td>-1.012459</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>179</th>
       <td>180</td>
-      <td>Thomas More</td>
-      <td>-9.071451</td>
+      <td>La Verne</td>
+      <td>-1.074068</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>180</th>
       <td>181</td>
-      <td>Chadron St</td>
-      <td>-9.294324</td>
+      <td>TN Martin</td>
+      <td>-1.095462</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>181</th>
       <td>182</td>
-      <td>Virginia</td>
-      <td>-9.388882</td>
+      <td>Louisiana Chr</td>
+      <td>-1.103126</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>182</th>
       <td>183</td>
-      <td>Post</td>
-      <td>-9.466017</td>
+      <td>Connecticut</td>
+      <td>-1.137986</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>183</th>
       <td>184</td>
-      <td>Lincoln PA</td>
-      <td>-9.629228</td>
+      <td>Bowling Green</td>
+      <td>-1.143575</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>184</th>
       <td>185</td>
-      <td>S Connecticut</td>
-      <td>-9.894270</td>
+      <td>UVA-Wise</td>
+      <td>-1.219923</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>185</th>
       <td>186</td>
-      <td>Kentucky Chr</td>
-      <td>-10.283613</td>
+      <td>Warner</td>
+      <td>-1.637233</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>186</th>
       <td>187</td>
-      <td>Tuskegee</td>
-      <td>-10.292289</td>
+      <td>Illinois St</td>
+      <td>-1.657703</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>187</th>
       <td>188</td>
-      <td>Campbell</td>
-      <td>-10.553141</td>
+      <td>Missouri St</td>
+      <td>-1.710604</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>188</th>
       <td>189</td>
-      <td>Warner</td>
-      <td>-10.573250</td>
+      <td>Virginia Tech</td>
+      <td>-1.737634</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>189</th>
       <td>190</td>
-      <td>Connecticut</td>
-      <td>-11.277726</td>
+      <td>UNLV</td>
+      <td>-1.791550</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>190</th>
       <td>191</td>
-      <td>Bowling Green</td>
-      <td>-11.364791</td>
+      <td>Kentucky Chr</td>
+      <td>-1.802591</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>191</th>
       <td>192</td>
-      <td>Illinois St</td>
-      <td>-11.483095</td>
+      <td>E Kentucky</td>
+      <td>-1.826442</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>192</th>
       <td>193</td>
-      <td>Prairie View</td>
-      <td>-11.746950</td>
+      <td>NC A&amp;T</td>
+      <td>-1.831648</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>193</th>
       <td>194</td>
-      <td>UVA-Wise</td>
-      <td>-11.821075</td>
+      <td>Rutgers</td>
+      <td>-1.859322</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>194</th>
       <td>195</td>
-      <td>Villanova</td>
-      <td>-12.073455</td>
+      <td>Rice</td>
+      <td>-1.972408</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>195</th>
       <td>196</td>
       <td>Cent Arkansas</td>
-      <td>-12.097281</td>
+      <td>-1.995411</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>196</th>
       <td>197</td>
-      <td>San Diego</td>
-      <td>-12.168605</td>
+      <td>Villanova</td>
+      <td>-2.038528</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>197</th>
       <td>198</td>
-      <td>Alabama St</td>
-      <td>-12.496812</td>
+      <td>Campbell</td>
+      <td>-2.060742</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>198</th>
       <td>199</td>
-      <td>Sam Houston St</td>
-      <td>-12.833972</td>
+      <td>Post</td>
+      <td>-2.313419</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>199</th>
       <td>200</td>
-      <td>Stanford</td>
-      <td>-12.972196</td>
+      <td>Merrimack</td>
+      <td>-2.330931</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>200</th>
       <td>201</td>
-      <td>Dartmouth</td>
-      <td>-13.215462</td>
+      <td>W Michigan</td>
+      <td>-2.378867</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>201</th>
       <td>202</td>
-      <td>Lindenwood</td>
-      <td>-13.429163</td>
+      <td>W Carolina</td>
+      <td>-2.471476</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>202</th>
       <td>203</td>
-      <td>Arizona St</td>
-      <td>-13.629641</td>
+      <td>Miami OH</td>
+      <td>-2.496056</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>203</th>
       <td>204</td>
-      <td>Missouri St</td>
-      <td>-13.795138</td>
+      <td>Dartmouth</td>
+      <td>-2.632242</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>204</th>
       <td>205</td>
       <td>Southern Utah</td>
-      <td>-13.980768</td>
+      <td>-2.709928</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>205</th>
       <td>206</td>
-      <td>Cornell</td>
-      <td>-14.215439</td>
+      <td>UTEP</td>
+      <td>-2.720737</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>206</th>
       <td>207</td>
-      <td>W Carolina</td>
-      <td>-14.952860</td>
+      <td>Ball St</td>
+      <td>-2.752110</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>207</th>
       <td>208</td>
-      <td>Tarleton St</td>
-      <td>-16.328016</td>
+      <td>Towson</td>
+      <td>-2.758605</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>208</th>
       <td>209</td>
-      <td>SF Austin</td>
-      <td>-17.675935</td>
+      <td>Boston College</td>
+      <td>-2.902685</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>209</th>
       <td>210</td>
-      <td>UNLV</td>
-      <td>-17.934879</td>
+      <td>New Mexico St</td>
+      <td>-3.006257</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>210</th>
       <td>211</td>
-      <td>Monmouth NJ</td>
-      <td>-18.512645</td>
+      <td>SF Austin</td>
+      <td>-3.013434</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>211</th>
       <td>212</td>
-      <td>Towson</td>
-      <td>-19.234019</td>
+      <td>Monmouth NJ</td>
+      <td>-3.159396</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>212</th>
       <td>213</td>
-      <td>TX Southern</td>
-      <td>-19.444988</td>
+      <td>Cornell</td>
+      <td>-3.194413</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>213</th>
       <td>214</td>
-      <td>Miami OH</td>
-      <td>-20.816658</td>
+      <td>ULM</td>
+      <td>-3.274284</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>214</th>
       <td>215</td>
-      <td>Rice</td>
-      <td>-21.241763</td>
+      <td>C Michigan</td>
+      <td>-3.366400</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>215</th>
       <td>216</td>
-      <td>W Michigan</td>
-      <td>-22.045918</td>
+      <td>Texas St</td>
+      <td>-3.519217</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>216</th>
       <td>217</td>
-      <td>Howard</td>
-      <td>-22.108178</td>
+      <td>Prairie View</td>
+      <td>-3.611589</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>217</th>
       <td>218</td>
-      <td>North American</td>
-      <td>-22.169600</td>
+      <td>Old Dominion</td>
+      <td>-3.651485</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>218</th>
       <td>219</td>
-      <td>Rutgers</td>
-      <td>-22.365341</td>
+      <td>South Dakota</td>
+      <td>-3.678128</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>219</th>
       <td>220</td>
-      <td>Alcorn St</td>
-      <td>-22.958220</td>
+      <td>Lindenwood</td>
+      <td>-3.806438</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>220</th>
       <td>221</td>
-      <td>Ball St</td>
-      <td>-23.295897</td>
+      <td>Kennesaw</td>
+      <td>-3.843476</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>221</th>
       <td>222</td>
-      <td>Valparaiso</td>
-      <td>-23.555766</td>
+      <td>Alabama St</td>
+      <td>-3.914791</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>222</th>
       <td>223</td>
-      <td>Brown</td>
-      <td>-23.638301</td>
+      <td>TX Southern</td>
+      <td>-3.917119</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>223</th>
       <td>224</td>
-      <td>Kennesaw</td>
-      <td>-23.806067</td>
+      <td>Northwestern</td>
+      <td>-3.965733</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>224</th>
       <td>225</td>
-      <td>Virginia Tech</td>
-      <td>-24.638807</td>
+      <td>Temple</td>
+      <td>-3.966318</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>225</th>
       <td>226</td>
-      <td>Stetson</td>
-      <td>-24.905473</td>
+      <td>North American</td>
+      <td>-3.978959</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>226</th>
       <td>227</td>
-      <td>UTEP</td>
-      <td>-25.448926</td>
+      <td>E Washington</td>
+      <td>-3.998206</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>227</th>
       <td>228</td>
-      <td>TX A&amp;M Commerce</td>
-      <td>-25.452151</td>
+      <td>Davidson</td>
+      <td>-4.053414</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>228</th>
       <td>229</td>
-      <td>Utah Tech</td>
-      <td>-25.967563</td>
+      <td>San Diego</td>
+      <td>-4.152413</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>229</th>
       <td>230</td>
-      <td>South Dakota</td>
-      <td>-27.602323</td>
+      <td>Butler</td>
+      <td>-4.186960</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>230</th>
       <td>231</td>
-      <td>Bryant</td>
-      <td>-28.603958</td>
+      <td>Dayton</td>
+      <td>-4.189590</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>231</th>
       <td>232</td>
-      <td>ULM</td>
-      <td>-28.784072</td>
+      <td>Portland St</td>
+      <td>-4.217445</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>232</th>
       <td>233</td>
-      <td>C Michigan</td>
-      <td>-29.163298</td>
+      <td>Louisiana Tech</td>
+      <td>-4.341291</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>233</th>
       <td>234</td>
-      <td>ETSU</td>
-      <td>-29.928912</td>
+      <td>Colorado St</td>
+      <td>-4.397055</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>234</th>
       <td>235</td>
-      <td>Texas St</td>
-      <td>-30.065020</td>
+      <td>Arkansas St</td>
+      <td>-4.446804</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>235</th>
       <td>236</td>
-      <td>Portland St</td>
-      <td>-30.074913</td>
+      <td>Utah Tech</td>
+      <td>-4.654362</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>236</th>
       <td>237</td>
-      <td>Boston College</td>
-      <td>-30.217567</td>
+      <td>Northern Arizona</td>
+      <td>-4.710085</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>237</th>
       <td>238</td>
-      <td>New Mexico St</td>
-      <td>-30.441129</td>
+      <td>Tarleton St</td>
+      <td>-4.715637</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>238</th>
       <td>239</td>
-      <td>Drake</td>
-      <td>-30.725739</td>
+      <td>Alcorn St</td>
+      <td>-4.754446</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>239</th>
       <td>240</td>
-      <td>Stonehill</td>
-      <td>-30.901754</td>
+      <td>Colorado</td>
+      <td>-4.823167</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>240</th>
       <td>241</td>
-      <td>E Washington</td>
-      <td>-30.954732</td>
+      <td>Brown</td>
+      <td>-4.959002</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>241</th>
       <td>242</td>
-      <td>Lafayette</td>
-      <td>-32.525842</td>
+      <td>Howard</td>
+      <td>-5.129221</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>242</th>
       <td>243</td>
-      <td>Tennessee St</td>
-      <td>-32.753987</td>
+      <td>ETSU</td>
+      <td>-5.154704</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>243</th>
       <td>244</td>
-      <td>Old Dominion</td>
-      <td>-32.789577</td>
+      <td>Akron</td>
+      <td>-5.163017</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>244</th>
       <td>245</td>
-      <td>Citadel</td>
-      <td>-33.952774</td>
+      <td>SUNY Albany</td>
+      <td>-5.475824</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>245</th>
       <td>246</td>
-      <td>Northern Arizona</td>
-      <td>-34.292604</td>
+      <td>Citadel</td>
+      <td>-5.484321</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>246</th>
       <td>247</td>
-      <td>Tennessee Tech</td>
-      <td>-34.600876</td>
+      <td>South Florida</td>
+      <td>-5.501069</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>247</th>
       <td>248</td>
-      <td>SUNY Albany</td>
-      <td>-34.663276</td>
+      <td>Wofford</td>
+      <td>-5.770905</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>248</th>
       <td>249</td>
-      <td>Temple</td>
-      <td>-35.797047</td>
+      <td>Bryant</td>
+      <td>-5.785882</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>249</th>
       <td>250</td>
-      <td>Sacred Heart</td>
-      <td>-36.137327</td>
+      <td>N Illinois</td>
+      <td>-5.867416</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>250</th>
       <td>251</td>
-      <td>Arkansas St</td>
-      <td>-37.427941</td>
+      <td>Lafayette</td>
+      <td>-5.926783</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>251</th>
       <td>252</td>
-      <td>Alabama A&amp;M</td>
-      <td>-37.563269</td>
+      <td>TX A&amp;M Commerce</td>
+      <td>-5.962650</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>252</th>
       <td>253</td>
-      <td>Duquesne</td>
-      <td>-37.633399</td>
+      <td>Nevada</td>
+      <td>-6.085639</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>253</th>
       <td>254</td>
-      <td>Wofford</td>
-      <td>-37.636114</td>
+      <td>Tennessee Tech</td>
+      <td>-6.266275</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>254</th>
       <td>255</td>
-      <td>Colorado St</td>
-      <td>-37.732911</td>
+      <td>Charlotte</td>
+      <td>-6.517040</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>255</th>
       <td>256</td>
-      <td>Delaware St</td>
-      <td>-37.752684</td>
+      <td>Indiana St</td>
+      <td>-6.598354</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>256</th>
       <td>257</td>
-      <td>Northwestern</td>
-      <td>-38.297121</td>
+      <td>Lincoln CA</td>
+      <td>-6.729517</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>257</th>
       <td>258</td>
-      <td>Hampton</td>
-      <td>-39.246640</td>
+      <td>Hawaii</td>
+      <td>-6.976316</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>258</th>
       <td>259</td>
-      <td>Louisiana Tech</td>
-      <td>-39.354191</td>
+      <td>Tennessee St</td>
+      <td>-6.996346</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>259</th>
       <td>260</td>
-      <td>Lincoln CA</td>
-      <td>-40.304712</td>
+      <td>Hampton</td>
+      <td>-7.047185</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>260</th>
       <td>261</td>
-      <td>Morgan St</td>
-      <td>-41.729753</td>
+      <td>Alabama A&amp;M</td>
+      <td>-7.104948</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>261</th>
       <td>262</td>
-      <td>Marist</td>
-      <td>-42.069317</td>
+      <td>New Mexico</td>
+      <td>-7.113931</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>262</th>
       <td>263</td>
-      <td>McNeese St</td>
-      <td>-42.223724</td>
+      <td>Charleston So</td>
+      <td>-7.231389</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>263</th>
       <td>264</td>
-      <td>Colgate</td>
-      <td>-43.613867</td>
+      <td>Florida Intl</td>
+      <td>-7.372671</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>264</th>
       <td>265</td>
-      <td>MS Valley St</td>
-      <td>-45.228879</td>
+      <td>Colgate</td>
+      <td>-7.640828</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>265</th>
       <td>266</td>
-      <td>Indiana St</td>
-      <td>-45.547580</td>
+      <td>Stonehill</td>
+      <td>-7.681304</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>266</th>
       <td>267</td>
-      <td>S Carolina St</td>
-      <td>-45.907495</td>
+      <td>Duquesne</td>
+      <td>-7.757698</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>267</th>
       <td>268</td>
-      <td>Grambling</td>
-      <td>-46.032330</td>
+      <td>Sacred Heart</td>
+      <td>-7.799025</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>268</th>
       <td>269</td>
-      <td>N Illinois</td>
-      <td>-46.492263</td>
+      <td>Morgan St</td>
+      <td>-7.862250</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>269</th>
       <td>270</td>
-      <td>Akron</td>
-      <td>-46.598033</td>
+      <td>Cal Poly</td>
+      <td>-7.965747</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>270</th>
       <td>271</td>
-      <td>Charleston So</td>
-      <td>-46.701471</td>
+      <td>Northwestern LA</td>
+      <td>-8.044503</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>271</th>
       <td>272</td>
-      <td>Northwestern LA</td>
-      <td>-47.657769</td>
+      <td>Maine</td>
+      <td>-8.154745</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>272</th>
       <td>273</td>
-      <td>Colorado</td>
-      <td>-48.295715</td>
+      <td>McNeese St</td>
+      <td>-8.250213</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>273</th>
       <td>274</td>
-      <td>Morehead St</td>
-      <td>-48.837495</td>
+      <td>N Colorado</td>
+      <td>-8.390109</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>274</th>
       <td>275</td>
-      <td>Lehigh</td>
-      <td>-49.633109</td>
+      <td>Valparaiso</td>
+      <td>-8.496765</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>275</th>
       <td>276</td>
-      <td>South Florida</td>
-      <td>-49.983527</td>
+      <td>Grambling</td>
+      <td>-8.606401</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>276</th>
       <td>277</td>
-      <td>Georgetown</td>
-      <td>-50.355140</td>
+      <td>Stetson</td>
+      <td>-8.637578</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>277</th>
       <td>278</td>
-      <td>LIU Post</td>
-      <td>-51.388211</td>
+      <td>Delaware St</td>
+      <td>-8.668998</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>278</th>
       <td>279</td>
-      <td>Nevada</td>
-      <td>-51.594109</td>
+      <td>S Carolina St</td>
+      <td>-8.783732</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>279</th>
       <td>280</td>
-      <td>Ark Pine Bluff</td>
-      <td>-51.907143</td>
+      <td>Lehigh</td>
+      <td>-9.206290</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>280</th>
       <td>281</td>
-      <td>Cal Poly</td>
-      <td>-53.059400</td>
+      <td>Nicholls St</td>
+      <td>-9.247364</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>281</th>
       <td>282</td>
-      <td>Maine</td>
-      <td>-53.934886</td>
+      <td>LIU Post</td>
+      <td>-9.332291</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>282</th>
       <td>283</td>
-      <td>Hawaii</td>
-      <td>-54.085693</td>
+      <td>Drake</td>
+      <td>-9.399163</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>283</th>
       <td>284</td>
-      <td>N Colorado</td>
-      <td>-54.123651</td>
+      <td>Idaho St</td>
+      <td>-9.560482</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>284</th>
       <td>285</td>
-      <td>Bucknell</td>
-      <td>-55.224384</td>
+      <td>VMI</td>
+      <td>-9.702658</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>285</th>
       <td>286</td>
-      <td>Charlotte</td>
-      <td>-55.610047</td>
+      <td>Bucknell</td>
+      <td>-9.769923</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>286</th>
       <td>287</td>
-      <td>E Illinois</td>
-      <td>-55.822437</td>
+      <td>Georgetown</td>
+      <td>-9.800058</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>287</th>
       <td>288</td>
-      <td>Nicholls St</td>
-      <td>-57.013018</td>
+      <td>W Illinois</td>
+      <td>-9.905696</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>288</th>
       <td>289</td>
-      <td>North Alabama</td>
-      <td>-57.979327</td>
+      <td>E Illinois</td>
+      <td>-9.987174</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>289</th>
       <td>290</td>
-      <td>Bethune-Cookman</td>
-      <td>-58.266350</td>
+      <td>Stony Brook</td>
+      <td>-10.008251</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>290</th>
       <td>291</td>
-      <td>VMI</td>
-      <td>-59.078722</td>
+      <td>North Alabama</td>
+      <td>-10.255156</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>291</th>
       <td>292</td>
-      <td>Florida Intl</td>
-      <td>-59.699115</td>
+      <td>Ark Pine Bluff</td>
+      <td>-10.278144</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>292</th>
       <td>293</td>
-      <td>New Mexico</td>
-      <td>-59.747950</td>
+      <td>Murray St</td>
+      <td>-10.286789</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>293</th>
       <td>294</td>
-      <td>VA-Lynchburg</td>
-      <td>-62.987807</td>
+      <td>Massachusetts</td>
+      <td>-10.553665</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>294</th>
       <td>295</td>
-      <td>Central Conn</td>
-      <td>-63.207887</td>
+      <td>Marist</td>
+      <td>-10.985417</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>295</th>
       <td>296</td>
-      <td>Stony Brook</td>
-      <td>-63.932723</td>
+      <td>MS Valley St</td>
+      <td>-11.096806</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>296</th>
       <td>297</td>
-      <td>Murray St</td>
-      <td>-64.046710</td>
+      <td>Bethune-Cookman</td>
+      <td>-11.204950</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>297</th>
       <td>298</td>
-      <td>W Illinois</td>
-      <td>-64.565541</td>
+      <td>Central Conn</td>
+      <td>-11.793550</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>298</th>
       <td>299</td>
-      <td>Norfolk St</td>
-      <td>-66.431155</td>
+      <td>VA-Lynchburg</td>
+      <td>-12.028063</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>299</th>
       <td>300</td>
-      <td>Idaho St</td>
-      <td>-66.811359</td>
+      <td>Norfolk St</td>
+      <td>-12.241488</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>300</th>
       <td>301</td>
-      <td>Houston Chr</td>
-      <td>-68.630369</td>
+      <td>Lamar</td>
+      <td>-12.368052</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>301</th>
       <td>302</td>
-      <td>Presbyterian</td>
-      <td>-70.813366</td>
+      <td>Houston Chr</td>
+      <td>-12.569194</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>302</th>
       <td>303</td>
-      <td>Lamar</td>
-      <td>-72.702799</td>
+      <td>Morehead St</td>
+      <td>-13.010842</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>303</th>
       <td>304</td>
       <td>Wagner</td>
-      <td>-78.358590</td>
+      <td>-14.829867</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>304</th>
       <td>305</td>
-      <td>Massachusetts</td>
-      <td>-81.255823</td>
+      <td>Robert Morris</td>
+      <td>-15.232463</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>305</th>
       <td>306</td>
-      <td>Robert Morris</td>
-      <td>-87.989858</td>
+      <td>Presbyterian</td>
+      <td>-16.884224</td>
       <td>NaN</td>
     </tr>
   </tbody>
